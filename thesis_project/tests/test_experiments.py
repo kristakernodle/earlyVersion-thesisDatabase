@@ -2,7 +2,6 @@ import unittest
 from models.experiments import Experiments
 from database import Database
 from data.constants import dbConnection_Krista
-import os
 
 
 class TestNewExperiment(unittest.TestCase):

@@ -29,3 +29,5 @@ class Experiments:
         with Cursor() as cursor:
             cursor.execute("DELETE FROM experiments WHERE experiment_id = %s", (self.experiment_id,))
 
+
+
