@@ -1,4 +1,5 @@
 import datetime
+import re
 
 
 def convert_date_int_yyyymmdd(int_yyyymmdd):
@@ -26,6 +27,14 @@ def encode_genotype(genotype):
     elif genotype == 'wild type':
         return False
     return True
+
+
+def prep_string_for_db(instring):
+    instring_lower = instring.lower()
+    split_string = re.split('_|-|/| ', instring_lower)
+    joined_string = "_".join(split_string)
+    return joined_string
+
 
 
 

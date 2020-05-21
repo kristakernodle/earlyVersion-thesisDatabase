@@ -22,3 +22,7 @@ class Trials:
         with Cursor() as cursor:
             cursor.execute("INSERT INTO trials(experiment_id, mouse_id, trial_dir) VALUES(%s, %s, %s);",
                            (self.experiment_id, self.mouse_id, self.trial_dir))
+
+    def delete_from_db(self):
+        with Cursor() as cursor:
+            cursor.execute("DELETE FROM trials WHERE trial_id = %s", (self.trial_id,))

@@ -57,6 +57,39 @@ class TestEncodeGenotype(unittest.TestCase):
         self.assertTrue(encoded_genotype)
 
 
+class TestPrepStringForDB(unittest.TestCase):
+
+    def test_spaces_skilledreaching(self):
+        strings_to_test = ["skilled reaching", "Skilled Reaching",  "Skilled reaching", "skilled Reaching"]
+        for string in strings_to_test:
+            self.assertEqual("skilled_reaching", utilities.prep_string_for_db(string))
+
+    def test_underscore_skilledreaching(self):
+        strings_to_test = ["skilled_reaching", "Skilled_Reaching", "Skilled_reaching", "skilled_Reaching"]
+        for string in strings_to_test:
+            self.assertEqual("skilled_reaching", utilities.prep_string_for_db(string))
+
+    def test_dash_skilledreaching(self):
+        strings_to_test = ["skilled-reaching", "Skilled-Reaching", "Skilled-reaching", "skilled-Reaching"]
+        for string in strings_to_test:
+            self.assertEqual("skilled_reaching", utilities.prep_string_for_db(string))
+
+    def test_dash_skilledreaching(self):
+        strings_to_test = ["skilled/reaching", "Skilled/Reaching", "Skilled/reaching", "skilled/Reaching"]
+        for string in strings_to_test:
+            self.assertEqual("skilled_reaching", utilities.prep_string_for_db(string))
+
+
+
+
+
+
+
+
+
+
+
+
 
 if __name__ == '__main__':
     unittest.main()
