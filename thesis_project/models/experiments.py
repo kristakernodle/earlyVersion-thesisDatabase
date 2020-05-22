@@ -2,6 +2,7 @@ from database import Database, Cursor
 import utilities as util
 from models.mouse import Mouse
 import pathlib
+from data.constants import sharedx_prefix
 
 
 class Experiments:
@@ -19,13 +20,13 @@ class Experiments:
         with Cursor() as cursor:
             cursor.execute("SELECT * FROM experiments WHERE experiment_name = %s;", (experiment_name,))
             exp = cursor.fetchone()
-            return cls(experiment_name=exp[2], experiment_dir=exp[1], experiment_id=exp[0])
+            return cls(experiment_name=exp[2], experiment_dir=pathlib.PurePath(sharedx_prefix, exp[1]), experiment_id=exp[0])
 
     def save_to_db(self):
         experiment_name = util.prep_string_for_db(self.experiment_name)
         with Cursor() as cursor:
             cursor.execute("INSERT INTO experiments(experiment_dir, experiment_name) VALUES(%s, %s);",
-                           (self.experiment_dir, experiment_name))
+                           (self.experiment_dir.name, experiment_name))
         return self.from_db(experiment_name)
 
     def delete_from_db(self):

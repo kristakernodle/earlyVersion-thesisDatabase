@@ -11,7 +11,7 @@ class TestNewExperiment(unittest.TestCase):
 
     def setUp(self):
         Database.initialize(**dbConnection_Krista)
-        self.test_exp = Experiments('test experiment', '/Volumes/SharedX/Neuro-Leventhal/data/').save_to_db()
+        self.test_exp = Experiments('test experiment', 'Neuro-Leventhal/data/').save_to_db()
 
     def tearDown(self):
         self.load_exp.delete_from_db()
@@ -83,9 +83,9 @@ class TestListExperimentParticipants(unittest.TestCase):
         exp1 = []
         exp2 = []
         for mouse_detail in self.test_mouse_detail_list:
-            if mouse_detail.experiment.experiment_name == 'test_experiment_one':
+            if mouse_detail.experiment.experiment_name == 'test-experiment-one':
                 exp1.append(mouse_detail.mouse)
-            elif mouse_detail.experiment.experiment_name == 'test_experiment_two':
+            elif mouse_detail.experiment.experiment_name == 'test-experiment-two':
                 exp2.append(mouse_detail.mouse)
         self.assertListEqual(exp1, load_participants_list_exp_1)
         self.assertListEqual(exp2, load_participants_list_exp_2)
