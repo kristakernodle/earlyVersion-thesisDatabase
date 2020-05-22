@@ -34,6 +34,17 @@ class TestNewMouse(unittest.TestCase):
         self.load_mouse = Mouse.from_db(9999)
         self.assertFalse(self.load_mouse.mouse_id is None)
 
+class TestAddParticipant(unittest.TestCase):
+
+    def setUp(self):
+        pass
+
+    def tearDown(self):
+        pass
+
+    def test_add_participant(self):
+        pass
+
 
 if __name__ == '__main__':
     unittest.main()
