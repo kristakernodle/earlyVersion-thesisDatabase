@@ -3,6 +3,7 @@ import utilities as util
 from models.mouse import Mouse
 import pathlib
 from data.constants import sharedx_prefix
+from models.participant_details import ParticipantDetails
 
 
 class Experiments:
@@ -50,6 +51,9 @@ class Experiments:
                 participants = cursor.fetchall()
         participants = [Mouse.from_db(eartag) for eartag in participants]
         return participants
+
+    def add_participant(self, eartag, start_date=None, end_date=None):
+        return ParticipantDetails(eartag, self.experiment_name, start_date=start_date, end_date=end_date).save_to_db()
 
 
 

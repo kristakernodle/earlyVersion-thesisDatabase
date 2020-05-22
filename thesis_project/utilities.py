@@ -8,6 +8,8 @@ import re
 def convert_date_int_yyyymmdd(int_yyyymmdd):
     if isinstance(int_yyyymmdd, datetime.date):
         return int_yyyymmdd
+    elif int_yyyymmdd is None:
+        return None
     str_yyyymmdd = str(int_yyyymmdd)
     year = str_yyyymmdd[0:4]
     month = str_yyyymmdd[4:6]

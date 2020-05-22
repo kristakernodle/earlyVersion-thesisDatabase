@@ -116,25 +116,28 @@ class TestAddParticipant(unittest.TestCase):
         self.test_experiment_one = Experiments(self.experiment_name_one, self.experiment_dir_one).save_to_db()
         self.test_experiment_two = Experiments(self.experiment_name_two, self.experiment_dir_two).save_to_db()
         self.test_participants_list = []
-        self.test_mouse_detail_list = []
         for mouse in self.test_mouse_table_seed:
             self.test_participants_list.append(Mouse(eartag=mouse[0], birthdate=mouse[1],
                                                      genotype=mouse[2], sex=mouse[3]).save_to_db())
 
     def tearDown(self):
-        for mouse_detail in self.test_mouse_detail_list:
+        for mouse_detail in self.test_mouse_details:
             mouse_detail.delete_from_db()
-        self.test_experiment_one.delete_from_db()
-        self.test_experiment_two.delete_from_db()
         for mouse in self.test_participants_list:
             mouse.delete_from_db()
+        self.test_experiment_one.delete_from_db()
+        self.test_experiment_two.delete_from_db()
 
     def test_add_participant(self):
+        self.test_mouse_details = []
         for mouse in self.test_mouse_table_seed:
             if util.prep_string_for_db(mouse[5]) == util.prep_string_for_db(self.test_experiment_one.experiment_name):
-                self.test_experiment_one.add_participant(mouse)
+                self.test_mouse_details.append(self.test_experiment_one.add_participant(mouse[0]))
+            elif util.prep_string_for_db(mouse[5]) == util.prep_string_for_db(self.test_experiment_two.experiment_name):
+                self.test_mouse_details.append(self.test_experiment_two.add_participant(mouse[0]))
         self.assertListEqual(sorted(self.test_participants_list, key=lambda m: m.eartag),
                              sorted(Experiments.list_participants(), key=lambda m: m.eartag))
+
 
 
 

@@ -1,9 +1,6 @@
-import unittest
-
-from models.experiments import Experiments
 from models.mouse import Mouse
+import models.experiments as exp
 from database import Database, Cursor
-from data.constants import dbConnection_Krista
 import utilities as utils
 
 
@@ -11,7 +8,7 @@ class ParticipantDetails:
     def __init__(self, eartag, experiment_name, start_date, end_date,
                  exp_spec_details=None, detail_id=None):
         self.mouse = Mouse.from_db(eartag)
-        self.experiment = Experiments.from_db(experiment_name)
+        self.experiment = exp.Experiments.from_db(experiment_name)
         self.start_date = utils.convert_date_int_yyyymmdd(start_date)
         self.end_date = utils.convert_date_int_yyyymmdd(end_date)
         self.exp_spec_details = exp_spec_details
@@ -23,7 +20,7 @@ class ParticipantDetails:
     @classmethod
     def from_db(cls, eartag, experiment_name):
         mouse = Mouse.from_db(eartag)
-        experiment = Experiments.from_db(experiment_name)
+        experiment = exp.Experiments.from_db(experiment_name)
         with Cursor() as cursor:
             cursor.execute("SELECT * FROM participant_details WHERE mouse_id = %s AND experiment_id = %s;",
                            (mouse.mouse_id, experiment.experiment_id))
@@ -45,3 +42,4 @@ class ParticipantDetails:
     def delete_from_db(self):
         with Cursor() as cursor:
             cursor.execute("DELETE FROM participant_details WHERE detail_id = %s", (self.detail_id,))
+
