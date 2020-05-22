@@ -8,7 +8,10 @@ from data.constants import sharedx_prefix
 class Experiments:
     def __init__(self, experiment_name, experiment_dir, experiment_id=None):
         self.experiment_name = util.prep_string_for_db(experiment_name)
-        self.experiment_dir = pathlib.PurePath(experiment_dir)
+        if type(experiment_name) == str:
+            self.experiment_dir = pathlib.PurePath(experiment_dir)
+        else:
+            self.experiment_dir = experiment_dir
         self.experiment_id = experiment_id
 
     def __str__(self):
@@ -47,7 +50,7 @@ class Experiments:
                 participants = cursor.fetchall()
         participants = [Mouse.from_db(eartag) for eartag in participants]
         return participants
-            
+
 
 
 
