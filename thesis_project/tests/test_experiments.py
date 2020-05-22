@@ -3,16 +3,15 @@ from models.experiments import Experiments
 from models.participant_details import ParticipantDetails
 from database import Database
 from data.constants import dbConnection_Krista
-
 from models.mouse import Mouse
+import pathlib
 
 
 class TestNewExperiment(unittest.TestCase):
 
     def setUp(self):
-        self.test_exp = Experiments('test experiment', '/Volumes/SharedX/Neuro-Leventhal/data/')
         Database.initialize(**dbConnection_Krista)
-        self.test_exp.save_to_db()
+        self.test_exp = Experiments('test experiment', '/Volumes/SharedX/Neuro-Leventhal/data/').save_to_db()
 
     def tearDown(self):
         self.load_exp.delete_from_db()
@@ -90,6 +89,7 @@ class TestListExperimentParticipants(unittest.TestCase):
                 exp2.append(mouse_detail.mouse)
         self.assertListEqual(exp1, load_participants_list_exp_1)
         self.assertListEqual(exp2, load_participants_list_exp_2)
+
 
 if __name__ == '__main__':
     unittest.main()

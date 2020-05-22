@@ -1,12 +1,13 @@
 from database import Database, Cursor
 import utilities as util
 from models.mouse import Mouse
+import pathlib
 
 
 class Experiments:
     def __init__(self, experiment_name, experiment_dir, experiment_id=None):
         self.experiment_name = util.prep_string_for_db(experiment_name)
-        self.experiment_dir = experiment_dir
+        self.experiment_dir = pathlib.PurePath(experiment_dir)
         self.experiment_id = experiment_id
 
     def __str__(self):

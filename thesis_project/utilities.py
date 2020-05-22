@@ -35,7 +35,7 @@ def encode_genotype(genotype):
 def prep_string_for_db(instring):
     instring_lower = instring.lower()
     split_string = re.split('_|-|/| ', instring_lower)
-    joined_string = "_".join(split_string)
+    joined_string = "-".join(split_string)
     return joined_string
 
 

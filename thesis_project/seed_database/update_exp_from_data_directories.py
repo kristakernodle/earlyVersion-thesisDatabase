@@ -1,10 +1,12 @@
 from database import Database
-import data.constants as constants
+from data.constants import dbConnection_Krista
 from models.experiments import Experiments
 from models.mouse import Mouse
+import pathlib
 
 
-Database.initialize(database=constants.database, user=constants.user, password=constants.password, host=constants.host)
+Database.initialize(**dbConnection_Krista)
 
 experiment = 'skilled-reaching'
 sr_exp = Experiments.from_db(experiment)
+
