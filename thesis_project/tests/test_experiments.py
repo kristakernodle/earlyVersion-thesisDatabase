@@ -75,9 +75,21 @@ class TestListExperimentParticipants(unittest.TestCase):
             mouse.delete_from_db()
 
     def test_list_participants(self):
-        self.load_participants_list = Experiments.list_participants()  # should return a list of Mouse objects
-        self.assertListEqual(self.test_participants_list, self.load_participants_list)
+        load_participants_list = Experiments.list_participants()  # should return a list of Mouse objects
+        self.assertListEqual(self.test_participants_list, load_participants_list)
 
+    def test_list_participants_by_experiment(self):
+        load_participants_list_exp_1 = Experiments.list_participants("Test Experiment One")
+        load_participants_list_exp_2 = Experiments.list_participants("Test Experiment Two")
+        exp1 = []
+        exp2 = []
+        for mouse_detail in self.test_mouse_detail_list:
+            if mouse_detail.experiment.experiment_name == 'test_experiment_one':
+                exp1.append(mouse_detail.mouse)
+            elif mouse_detail.experiment.experiment_name == 'test_experiment_two':
+                exp2.append(mouse_detail.mouse)
+        self.assertListEqual(exp1, load_participants_list_exp_1)
+        self.assertListEqual(exp2, load_participants_list_exp_2)
 
 if __name__ == '__main__':
     unittest.main()

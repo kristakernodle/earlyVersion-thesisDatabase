@@ -2,6 +2,9 @@ import datetime
 import re
 
 
+# TODO: Linter for numbers
+
+
 def convert_date_int_yyyymmdd(int_yyyymmdd):
     if isinstance(int_yyyymmdd, datetime.date):
         return int_yyyymmdd
