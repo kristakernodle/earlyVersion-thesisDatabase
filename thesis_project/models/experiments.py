@@ -1,5 +1,6 @@
-from database import Cursor
+from database import Database, Cursor
 import utilities as util
+from models.mouse import Mouse
 
 
 class Experiments:
@@ -33,11 +34,17 @@ class Experiments:
     @classmethod
     def list_participants(cls, experiment_name=None):
         if experiment_name is not None:
-            # Return all mice in THIS experiment, without duplicats, as a list
-
+            experiment_name = util.prep_string_for_db(experiment_name)
+            with Cursor() as cursor:
+                cursor.execute("SELECT eartag FROM all_participants_all_experiments WHERE experiment_name = %s;",
+                               (experiment_name,))
+                participants = cursor.fetchall()
         else:
-            # Return all mice in experiments, without duplicates, as a list
-        return []
+            with Cursor() as cursor:
+                cursor.execute("SELECT eartag FROM all_participants_all_experiments;")
+                participants = cursor.fetchall()
+        participants = [Mouse.from_db(eartag) for eartag in participants]
+        return participants
             
 
 
