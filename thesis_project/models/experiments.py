@@ -24,10 +24,21 @@ class Experiments:
         with Cursor() as cursor:
             cursor.execute("INSERT INTO experiments(experiment_dir, experiment_name) VALUES(%s, %s);",
                            (self.experiment_dir, experiment_name))
+        return self.from_db(experiment_name)
 
     def delete_from_db(self):
         with Cursor() as cursor:
             cursor.execute("DELETE FROM experiments WHERE experiment_id = %s", (self.experiment_id,))
+
+    @classmethod
+    def list_participants(cls, experiment_name=None):
+        if experiment_name is not None:
+            # Return all mice in THIS experiment, without duplicats, as a list
+
+        else:
+            # Return all mice in experiments, without duplicates, as a list
+        return []
+            
 
 
 

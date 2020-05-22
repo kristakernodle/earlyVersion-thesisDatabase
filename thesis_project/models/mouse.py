@@ -13,6 +13,9 @@ class Mouse:
     def __str__(self):
         return f"< Mouse {self.eartag} >"
 
+    def __repr__(self):
+        return f"< Mouse {self.eartag} >"
+
     def __eq__(self, compare_to):
         if not isinstance(compare_to, Mouse):
             # don't attempt to compare against unrelated types
@@ -37,6 +40,7 @@ class Mouse:
                            "VALUES"
                            "    (%s, %s, %s, %s);",
                            (self.eartag, self.birthdate, util.encode_genotype(self.genotype), self.sex))
+        return self.from_db(self.eartag)
 
     def delete_from_db(self):
         with Cursor() as cursor:

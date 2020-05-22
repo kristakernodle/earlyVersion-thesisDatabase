@@ -9,7 +9,7 @@ import utilities as utils
 
 class ParticipantDetails:
     def __init__(self, eartag, experiment_name, start_date, end_date,
-                 exp_spec_details=None, detail_id=None, mouse_id=None, experiment_id=None):
+                 exp_spec_details=None, detail_id=None):
         self.mouse = Mouse.from_db(eartag)
         self.experiment = Experiments.from_db(experiment_name)
         self.start_date = utils.convert_date_int_yyyymmdd(start_date)
@@ -41,3 +41,7 @@ class ParticipantDetails:
                            (self.mouse.mouse_id, self.experiment.experiment_id,
                             self.start_date, self.end_date, self.exp_spec_details))
         return self.from_db(self.mouse.eartag, self.experiment.experiment_name)
+
+    def delete_from_db(self):
+        with Cursor() as cursor:
+            cursor.execute("DELETE FROM participant_details WHERE detail_id = %s", (self.detail_id,))
