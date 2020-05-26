@@ -28,20 +28,27 @@ class Mouse:
             cursor.execute("SELECT * FROM mouse WHERE eartag = %s", (eartag,))
             mouse_data = cursor.fetchone()
             if mouse_data is None:
-                print(f"No mouse in the database with eartag number {eartag}")
+                print(f"No mouse in the database with mouse number {eartag}")
                 return None
             return cls(eartag=mouse_data[1], birthdate=mouse_data[2],
                        genotype=util.decode_genotype(mouse_data[3]), sex=mouse_data[4], mouse_id=mouse_data[0])
 
     def save_to_db(self):
-        with Cursor() as cursor:
-            cursor.execute("INSERT INTO mouse"
-                           "    (eartag, birthdate, genotype, sex) "
-                           "VALUES"
-                           "    (%s, %s, %s, %s);",
-                           (self.eartag, self.birthdate, util.encode_genotype(self.genotype), self.sex))
-        return self.from_db(self.eartag)
+        try:
+            with Cursor() as cursor:
+                cursor.execute("INSERT INTO mouse"
+                               "    (eartag, birthdate, genotype, sex) "
+                               "VALUES"
+                               "    (%s, %s, %s, %s);",
+                               (self.eartag, self.birthdate, util.encode_genotype(self.genotype), self.sex))
+        finally:
+            return self.from_db(self.eartag)
+
 
     def delete_from_db(self):
         with Cursor() as cursor:
             cursor.execute("DELETE FROM mouse WHERE mouse_id = %s", (self.mouse_id,))
+
+    def add_participant(self, experiment_name, start_date=None, end_date=None):
+        return "ParticipantDetails(self.mouse, util.prep_string_for_db(experiment_name), start_date=start_date, " \
+               "end_date=end_date).save_to_db() "

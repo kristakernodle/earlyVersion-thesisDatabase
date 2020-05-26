@@ -18,6 +18,7 @@ class TestNewParticipantDetails(unittest.TestCase):
         self.test_participant_details = ParticipantDetails(self.test_mouse.eartag, self.test_exp.experiment_name, 20200501, 20200521).save_to_db()
 
     def tearDown(self):
+        self.load_participant_details.delete_from_db()
         self.test_participant_details.delete_from_db()
         self.test_mouse.delete_from_db()
         self.test_exp.delete_from_db()

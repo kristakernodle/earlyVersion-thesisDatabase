@@ -80,11 +80,10 @@ class TestAddParticipant(unittest.TestCase):
                                                                                         .test_experiment_one
                                                                                         .experiment_name)))
             elif util.prep_string_for_db(mouse[5]) == util.prep_string_for_db(self.test_experiment_two.experiment_name):
-                self.test_mouse_details\
-                    .append(Mouse.from_db(mouse[0])
-                            .add_participant(util
-                                             .prep_string_for_db(self
-                                                                 .test_experiment_two.experiment_name)))
+                self.test_mouse_details.append(Mouse.from_db(mouse[0])
+                                               .add_participant(util
+                                                                .prep_string_for_db(self
+                                                                                    .test_experiment_two.experiment_name)))
         self.assertListEqual(sorted(self.test_participants_list, key=lambda m: m.eartag),
                              sorted(Experiments.list_participants(), key=lambda m: m.eartag))
 

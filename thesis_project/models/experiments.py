@@ -9,7 +9,8 @@ from models.participant_details import ParticipantDetails
 class Experiments:
     def __init__(self, experiment_name, experiment_dir, experiment_id=None):
         self.experiment_name = util.prep_string_for_db(experiment_name)
-        if type(experiment_name) == str:
+
+        if type(experiment_dir) == str:
             self.experiment_dir = pathlib.PurePath(experiment_dir)
         else:
             self.experiment_dir = experiment_dir
@@ -55,6 +56,17 @@ class Experiments:
     def add_participant(self, eartag, start_date=None, end_date=None):
         return ParticipantDetails(eartag, self.experiment_name, start_date=start_date, end_date=end_date).save_to_db()
 
+    @classmethod
+    def is_member_db(cls, experiment_dir):
+        if type(experiment_dir) == str:
+            experiment_dir = pathlib.PurePath(experiment_dir)
+        else:
+            experiment_dir = experiment_dir
+        with Cursor() as cursor:
+            cursor.execute("SELECT * FROM experiments WHERE experiment_dir = %s", (experiment_dir.name,))
+            if cursor.fetchone() is None:
+                return False
+        return True
 
 
 

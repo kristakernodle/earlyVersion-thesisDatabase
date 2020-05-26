@@ -1,6 +1,6 @@
 from models.mouse import Mouse
 import models.experiments as exp
-from database import Database, Cursor
+from database import Cursor
 import utilities as utils
 
 
@@ -25,9 +25,8 @@ class ParticipantDetails:
             cursor.execute("SELECT * FROM participant_details WHERE mouse_id = %s AND experiment_id = %s;",
                            (mouse.mouse_id, experiment.experiment_id))
             participant = cursor.fetchone()
-        return cls(eartag=eartag, experiment_name=experiment_name,
-                   start_date=participant[3], end_date=participant[4],
-                   exp_spec_details=participant[5], detail_id=participant[0])
+            mouse.mouse_id = participant[0]
+        return mouse
 
     def save_to_db(self):
         with Cursor() as cursor:

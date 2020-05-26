@@ -3,7 +3,7 @@ from models.experiments import Experiments
 from models.participant_details import ParticipantDetails
 from database import Database
 from data.constants import dbConnection_Krista
-from models.mouse import Mouse
+import models.mouse as ms
 import pathlib
 import utilities as util
 
@@ -62,8 +62,8 @@ class TestListExperimentParticipants(unittest.TestCase):
                 start_x = 20200515
                 end_x = 20200615
 
-            self.test_participants_list.append(Mouse(eartag=mouse[0], birthdate=mouse[1],
-                                                     genotype=mouse[2], sex=mouse[3]).save_to_db())
+            self.test_participants_list.append(ms.Mouse(eartag=mouse[0], birthdate=mouse[1],
+                                                        genotype=mouse[2], sex=mouse[3]).save_to_db())
             self.test_mouse_detail_list.append(ParticipantDetails(mouse[0], exp_x, start_x, end_x).save_to_db())
 
     def tearDown(self):
@@ -117,8 +117,8 @@ class TestAddParticipant(unittest.TestCase):
         self.test_experiment_two = Experiments(self.experiment_name_two, self.experiment_dir_two).save_to_db()
         self.test_participants_list = []
         for mouse in self.test_mouse_table_seed:
-            self.test_participants_list.append(Mouse(eartag=mouse[0], birthdate=mouse[1],
-                                                     genotype=mouse[2], sex=mouse[3]).save_to_db())
+            self.test_participants_list.append(ms.Mouse(eartag=mouse[0], birthdate=mouse[1],
+                                                        genotype=mouse[2], sex=mouse[3]).save_to_db())
 
     def tearDown(self):
         for mouse_detail in self.test_mouse_details:
@@ -137,8 +137,6 @@ class TestAddParticipant(unittest.TestCase):
                 self.test_mouse_details.append(self.test_experiment_two.add_participant(mouse[0]))
         self.assertListEqual(sorted(self.test_participants_list, key=lambda m: m.eartag),
                              sorted(Experiments.list_participants(), key=lambda m: m.eartag))
-
-
 
 
 if __name__ == '__main__':
