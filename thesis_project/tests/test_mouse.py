@@ -4,17 +4,23 @@ from models.experiments import Experiments
 from database import Database
 from data.constants import dbConnection_Krista
 import utilities as util
+from tests.setup_DB_for_testing import handler
+import tests.setup_DB_for_testing as tdb
+import testing.postgresql as tpg
 
 
 class TestNewMouse(unittest.TestCase):
+    Postgresql = None
 
     def setUp(self):
-        self.test_mouse = Mouse(9999, 20200521, 'knock out', 'female')
-        Database.initialize(**dbConnection_Krista)
-        self.test_mouse.save_to_db()
+        self.postgresql = tpg.PostgresqlFactory(cache_initialized_db=True,
+                                                on_initialized=handler(handler_id=tdb.mouse_table_full_seed))
 
     def tearDown(self):
-        self.load_mouse.delete_from_db()
+        self.postgresql.clear_cache()
+
+    def test_setUp_tearDown(self):
+        pass
 
     def test_from_db_eartag(self):
         self.load_mouse = Mouse.from_db(9999)
