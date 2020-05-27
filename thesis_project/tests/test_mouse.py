@@ -15,9 +15,11 @@ def tearDownModule():
 
 class TestNewMouse(unittest.TestCase):
     seed_tup = mice_seed.pop()
+    birthdate = 20200527
 
     def setUp(self):
         self.postgresql = Postgresql()
+        Mouse(1111, self.birthdate, 'wild type', 'female').save_to_db(testing=True, postgresql=self.postgresql)
 
     def tearDown(self):
         self.postgresql.stop()
@@ -26,10 +28,20 @@ class TestNewMouse(unittest.TestCase):
         self.assertTrue(1)
 
     def test_add_new_mouse(self):
-        birthdate = 20200527
-        test_mouse = Mouse(1111, birthdate, 'wild type', 'female').save_to_db()
+        test_mouse = Mouse(1111, self.birthdate, 'wild type', 'female').save_to_db(testing=True,
+                                                                                   postgresql=self.postgresql)
         self.assertEqual(1111, test_mouse.eartag)
-        self.assertEqual(util.convert_date_int_yyyymmdd(birthdate), test_mouse.birthdate)
+        self.assertEqual(util.convert_date_int_yyyymmdd(self.birthdate), test_mouse.birthdate)
+        self.assertEqual('wild type', test_mouse.genotype)
+        self.assertEqual('female', test_mouse.sex)
+        self.assertFalse(test_mouse.mouse_id is None)
+
+    def test_duplicate_mouse(self):
+        test_mouse = Mouse(1111, self.birthdate, 'wild type', 'female').save_to_db(testing=True,
+                                                                                   postgresql=self.postgresql)
+        test_mouse = test_mouse.save_to_db(testing=True, postgresql=self.postgresql)
+        self.assertEqual(1111, test_mouse.eartag)
+        self.assertEqual(util.convert_date_int_yyyymmdd(self.birthdate), test_mouse.birthdate)
         self.assertEqual('wild type', test_mouse.genotype)
         self.assertEqual('female', test_mouse.sex)
         self.assertFalse(test_mouse.mouse_id is None)

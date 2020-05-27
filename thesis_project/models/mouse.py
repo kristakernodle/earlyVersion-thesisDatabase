@@ -2,6 +2,11 @@ import utilities as util
 from models.cursors import Cursor, TestingCursor
 
 
+def list_all_mice(cursor):
+    cursor.execute("SELECT eartag FROM mouse;")
+    return list(item for tup in cursor.fetchall() for item in tup)
+
+
 class Mouse:
     def __init__(self, eartag, birthdate, genotype, sex, mouse_id=None):
         self.eartag = int(eartag)
@@ -46,9 +51,16 @@ class Mouse:
                        (self.eartag, self.birthdate, util.encode_genotype(self.genotype), self.sex))
 
     def save_to_db(self, testing=False, postgresql=None):
-        # TODO Check if mouse is in database
-        cursor.execute("SELECT eartag FROM all_participants_all_experiments WHERE experiment_name = %s;",
-                       (experiment_name,))
+        if testing:
+            with TestingCursor(postgresql) as cursor:
+                if self.eartag not in list_all_mice(cursor):
+                    self.__save_to_db(cursor)
+                return self.__from_db(cursor, self.eartag)
+        else:
+            with Cursor() as cursor:
+                if self.eartag not in list_all_mice(cursor):
+                    self.__save_to_db(cursor)
+                return self.__from_db(cursor, self.eartag)
 
     def __delete_from_db(self, cursor):
         cursor.execute("DELETE FROM mouse WHERE mouse_id = %s", (self.mouse_id,))
