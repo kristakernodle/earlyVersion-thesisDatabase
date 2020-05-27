@@ -3,7 +3,8 @@ import testing.postgresql as tpg
 
 import utilities as util
 import tests.setup_DB_for_testing as testdb
-from models.mouse import Mouse
+from models.cursors import TestingCursor
+from models.mouse import Mouse, list_all_mice
 
 mice_seed = set(testdb.test_mouse_table_seed)
 Postgresql = tpg.PostgresqlFactory(cache_initialized_db=True, on_initialized=testdb.handler_create_all_empty_tables)
@@ -14,7 +15,6 @@ def tearDownModule():
 
 
 class TestNewMouse(unittest.TestCase):
-    seed_tup = mice_seed.pop()
     birthdate = 20200527
 
     def setUp(self):
@@ -67,6 +67,27 @@ class TestLoadMouse(unittest.TestCase):
         self.assertEqual(self.seed_tup[2], self.load_mouse.genotype)
         self.assertEqual(self.seed_tup[3], self.load_mouse.sex)
         self.assertFalse(self.load_mouse.mouse_id is None)
+
+
+class TestDeleteMouse(unittest.TestCase):
+    seed_tup = mice_seed.pop()
+
+    def setUp(self):
+        self.postgresql = Postgresql()
+        testdb.handler_seed_mouse(self.postgresql)
+
+    def tearDown(self):
+        self.postgresql.stop()
+
+    def test_setUp_tearDown(self):
+        self.assertTrue(1)
+
+    def test_delete_mouse(self):
+        mouse_to_delete = Mouse.from_db(self.seed_tup[0], testing=True, postgresql=self.postgresql)
+        mouse_to_delete.delete_from_db(testing=True, postgresql=self.postgresql)
+        with TestingCursor(self.postgresql) as cursor:
+            all_mice = list_all_mice(cursor)
+        self.assertFalse(self.seed_tup[0] in all_mice)
 
 
 # TODO: TestAddParticipant - I think this needs to be in a different test document, some kind of integration testing

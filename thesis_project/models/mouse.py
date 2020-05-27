@@ -72,7 +72,3 @@ class Mouse:
         else:
             with Cursor() as cursor:
                 self.__delete_from_db(cursor)
-
-    def add_participant(self, experiment_name, start_date=None, end_date=None):
-        return "ParticipantDetails(self.mouse, util.prep_string_for_db(experiment_name), start_date=start_date, " \
-               "end_date=end_date).save_to_db() "
