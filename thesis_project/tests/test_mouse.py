@@ -1,6 +1,7 @@
 import unittest
 import testing.postgresql as tpg
 
+import utilities as util
 import tests.setup_DB_for_testing as testdb
 from models.mouse import Mouse
 
@@ -25,8 +26,13 @@ class TestNewMouse(unittest.TestCase):
         self.assertTrue(1)
 
     def test_add_new_mouse(self):
-        test_mouse = Mouse(1111, 20200527, 'wild type', 'female').save_to_db()
+        birthdate = 20200527
+        test_mouse = Mouse(1111, birthdate, 'wild type', 'female').save_to_db()
         self.assertEqual(1111, test_mouse.eartag)
+        self.assertEqual(util.convert_date_int_yyyymmdd(birthdate), test_mouse.birthdate)
+        self.assertEqual('wild type', test_mouse.genotype)
+        self.assertEqual('female', test_mouse.sex)
+        self.assertFalse(test_mouse.mouse_id is None)
 
 
 class TestLoadMouse(unittest.TestCase):
