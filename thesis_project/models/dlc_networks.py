@@ -1,4 +1,4 @@
-from database import Cursor
+from models.cursors import Cursor
 
 
 class DLCNetworks:

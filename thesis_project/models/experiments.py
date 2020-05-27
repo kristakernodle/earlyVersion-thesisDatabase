@@ -1,4 +1,5 @@
-from database import Database, Cursor
+from database import Database
+from models.cursors import Cursor
 import utilities as util
 from models.mouse import Mouse
 import pathlib

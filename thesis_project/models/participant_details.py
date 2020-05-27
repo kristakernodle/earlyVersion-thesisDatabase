@@ -1,6 +1,6 @@
 from models.mouse import Mouse
 import models.experiments as exp
-from database import Cursor
+from models.cursors import Cursor
 import utilities as utils
 
 

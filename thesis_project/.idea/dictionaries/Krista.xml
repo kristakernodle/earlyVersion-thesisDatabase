@@ -3,6 +3,7 @@
     <words>
       <w>birthdate</w>
       <w>eartag</w>
+      <w>postgresql</w>
     </words>
   </dictionary>
 </component>

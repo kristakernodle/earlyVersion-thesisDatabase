@@ -1,97 +1,81 @@
 import unittest
-from models.mouse import Mouse
-from models.experiments import Experiments
-from database import Database
-from data.constants import dbConnection_Krista
-import utilities as util
-from tests.setup_DB_for_testing import handler
-import tests.setup_DB_for_testing as tdb
 import testing.postgresql as tpg
+
+import tests.setup_DB_for_testing as testdb
+from models.mouse import Mouse
+
+mice_seed = set(testdb.test_mouse_table_seed)
+Postgresql = tpg.PostgresqlFactory(cache_initialized_db=True, on_initialized=testdb.handler_create_all_empty_tables)
+
+
+def tearDownModule():
+    Postgresql.clear_cache()
 
 
 class TestNewMouse(unittest.TestCase):
-    Postgresql = None
+    seed_tup = mice_seed.pop()
 
     def setUp(self):
-        self.postgresql = tpg.PostgresqlFactory(cache_initialized_db=True,
-                                                on_initialized=handler(handler_id=tdb.mouse_table_full_seed))
+        self.postgresql = Postgresql()
 
     def tearDown(self):
-        self.postgresql.clear_cache()
+        self.postgresql.stop()
 
     def test_setUp_tearDown(self):
-        pass
+        self.assertTrue(1)
 
-    def test_from_db_eartag(self):
-        self.load_mouse = Mouse.from_db(9999)
-        self.assertEqual(self.test_mouse.eartag, self.load_mouse.eartag)
+    def test_add_new_mouse(self):
+        test_mouse = Mouse(1111, 20200527, 'wild type', 'female').save_to_db()
+        self.assertEqual(1111, test_mouse.eartag)
 
-    def test_from_db_birthdate(self):
-        self.load_mouse = Mouse.from_db(9999)
-        self.assertEqual(self.test_mouse.birthdate, self.load_mouse.birthdate)
 
-    def test_from_db_genotype(self):
-        self.load_mouse = Mouse.from_db(9999)
-        self.assertEqual(self.test_mouse.genotype, self.load_mouse.genotype)
+class TestLoadMouse(unittest.TestCase):
+    seed_tup = mice_seed.pop()
 
-    def test_from_db_sex(self):
-        self.load_mouse = Mouse.from_db(9999)
-        self.assertEqual(self.test_mouse.sex, self.load_mouse.sex)
+    def setUp(self):
+        self.postgresql = Postgresql()
+        testdb.handler_seed_mouse(self.postgresql)
 
-    def test_from_db_mouse_id(self):
-        self.load_mouse = Mouse.from_db(9999)
+    def tearDown(self):
+        self.postgresql.stop()
+
+    def test_setUp_tearDown(self):
+        self.assertTrue(1)
+
+    def test_from_db(self):
+        self.load_mouse = Mouse.from_db(self.seed_tup[0], testing=True, postgresql=self.postgresql)
+        self.assertEqual(self.seed_tup[0], self.load_mouse.eartag)
+        self.assertEqual(self.seed_tup[1], self.load_mouse.birthdate)
+        self.assertEqual(self.seed_tup[2], self.load_mouse.genotype)
+        self.assertEqual(self.seed_tup[3], self.load_mouse.sex)
         self.assertFalse(self.load_mouse.mouse_id is None)
 
 
-class TestAddParticipant(unittest.TestCase):
-
-    test_mouse_table_seed = [(9990, 20200102, 'wild type', 'male', True, 'test experiment one', 20200501, 20200601),
-                             (9991, 20200101, 'wild type', 'male', False, 'test experiment two', 20200515, 20200615),
-                             (9992, 20200101, 'wild type', 'male', True, 'test experiment one', 20200501, 20200601),
-                             (9993, 20200101, 'wild type', 'male', False, 'test experiment two', 20200515, 20200615),
-                             (9994, 20200101, 'wild type', 'female', True, 'test experiment one', 20200501, 20200601),
-                             (9995, 20200101, 'wild type', 'female', False, 'test experiment two', 20200515, 20200615),
-                             (9996, 20200101, 'knock out', 'female', True, 'test experiment one', 20200501, 20200601),
-                             (9997, 20200101, 'knock out', 'female', False, 'test experiment two', 20200515, 20200615),
-                             (9998, 20200101, 'knock out', 'female', True, 'test experiment one', 20200501, 20200601),
-                             (9999, 20200102, 'knock out', 'female', False, 'test experiment two', 20200515, 20200615)]
-    experiment_name_one = 'test experiment one'
-    experiment_name_two = 'test experiment two'
-    experiment_dir_one = '/test/directory/experiment/one'
-    experiment_dir_two = '/test/directory/experiment/two'
-
-    def setUp(self):
-        Database.initialize(**dbConnection_Krista)
-        self.test_experiment_one = Experiments(self.experiment_name_one, self.experiment_dir_one).save_to_db()
-        self.test_experiment_two = Experiments(self.experiment_name_two, self.experiment_dir_two).save_to_db()
-        self.test_participants_list = []
-        for mouse in self.test_mouse_table_seed:
-            self.test_participants_list.append(Mouse(eartag=mouse[0], birthdate=mouse[1],
-                                                     genotype=mouse[2], sex=mouse[3]).save_to_db())
-
-    def tearDown(self):
-        for mouse_detail in self.test_mouse_details:
-            mouse_detail.delete_from_db()
-        for mouse in self.test_participants_list:
-            mouse.delete_from_db()
-        self.test_experiment_one.delete_from_db()
-        self.test_experiment_two.delete_from_db()
-
-    def test_add_participant(self):
-        self.test_mouse_details = []
-        for mouse in self.test_mouse_table_seed:
-            if util.prep_string_for_db(mouse[5]) == util.prep_string_for_db(self.test_experiment_one.experiment_name):
-                self.test_mouse_details.append(Mouse.from_db(mouse[0])
-                                               .add_participant(util.prep_string_for_db(self
-                                                                                        .test_experiment_one
-                                                                                        .experiment_name)))
-            elif util.prep_string_for_db(mouse[5]) == util.prep_string_for_db(self.test_experiment_two.experiment_name):
-                self.test_mouse_details.append(Mouse.from_db(mouse[0])
-                                               .add_participant(util
-                                                                .prep_string_for_db(self
-                                                                                    .test_experiment_two.experiment_name)))
-        self.assertListEqual(sorted(self.test_participants_list, key=lambda m: m.eartag),
-                             sorted(Experiments.list_participants(), key=lambda m: m.eartag))
+# TODO: TestAddParticipant - I think this needs to be in a different test document, some kind of integration testing
+#       rather than the current set up
+# class TestAddParticipant(unittest.TestCase):
+#
+#     def setUp(self):
+#         self.postgresql = tpg.PostgresqlFactory(cache_initialized_db=True, on_initialized=testdb.handler_seed_mouse_experiments)
+#
+#     def tearDown(self):
+#         self.postgresql.stop()
+#
+#     def test_add_participant(self):
+#         self.test_mouse_details = []
+#         for mouse in self.test_mouse_table_seed:
+#             if util.prep_string_for_db(mouse[5]) == util.prep_string_for_db(self.test_experiment_one.experiment_name):
+#                 self.test_mouse_details.append(Mouse.from_db(mouse[0])
+#                                                .add_participant(util.prep_string_for_db(self
+#                                                                                         .test_experiment_one
+#                                                                                         .experiment_name)))
+#             elif util.prep_string_for_db(mouse[5]) == util.prep_string_for_db(self.test_experiment_two.experiment_name):
+#                 self.test_mouse_details.append(Mouse.from_db(mouse[0])
+#                                                .add_participant(util
+#                                                                 .prep_string_for_db(self
+#                                                                                     .test_experiment_two.experiment_name)))
+#         self.assertListEqual(sorted(self.test_participants_list, key=lambda m: m.eartag),
+#                              sorted(Experiments.list_participants(), key=lambda m: m.eartag))
 
 
 if __name__ == '__main__':

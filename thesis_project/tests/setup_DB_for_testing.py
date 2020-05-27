@@ -1,23 +1,30 @@
-import testing.postgresql as tpg
+from models.cursors import TestingCursor
+import utilities as util
 import psycopg2
 import unittest
 
-test_mouse_table_seed = [(9990, 20200102, 'wild type', 'male', True, 'test experiment one', 20200501, 20200601),
-                         (9991, 20200101, 'wild type', 'male', False, 'test experiment two', 20200515, 20200615),
-                         (9992, 20200101, 'wild type', 'male', True, 'test experiment one', 20200501, 20200601),
-                         (9993, 20200101, 'wild type', 'male', False, 'test experiment two', 20200515, 20200615),
-                         (9994, 20200101, 'wild type', 'female', True, 'test experiment one', 20200501, 20200601),
-                         (9995, 20200101, 'wild type', 'female', False, 'test experiment two', 20200515, 20200615),
-                         (9996, 20200101, 'knock out', 'female', True, 'test experiment one', 20200501, 20200601),
-                         (9997, 20200101, 'knock out', 'female', False, 'test experiment two', 20200515, 20200615),
-                         (9998, 20200101, 'knock out', 'female', True, 'test experiment one', 20200501, 20200601),
-                         (9999, 20200102, 'knock out', 'female', False, 'test experiment two', 20200515, 20200615)]
+birthdate1 = util.convert_date_int_yyyymmdd(20200101)
+birthdate2 = util.convert_date_int_yyyymmdd(20200102)
+start1 = util.convert_date_int_yyyymmdd(20200501)
+end1 = util.convert_date_int_yyyymmdd(20200601)
+start2 = util.convert_date_int_yyyymmdd(20200515)
+end2 = util.convert_date_int_yyyymmdd(20200615)
+test_mouse_table_seed = [(9990, birthdate2, 'wild type', 'male', True, 'test experiment one', start1, end1),
+                         (9991, birthdate1, 'wild type', 'male', False, 'test experiment two', start2, end2),
+                         (9992, birthdate1, 'wild type', 'male', True, 'test experiment one', start1, end1),
+                         (9993, birthdate1, 'wild type', 'male', False, 'test experiment two', start2, end2),
+                         (9994, birthdate1, 'wild type', 'female', True, 'test experiment one', start1, end1),
+                         (9995, birthdate1, 'wild type', 'female', False, 'test experiment two', start2, end2),
+                         (9996, birthdate1, 'knock out', 'female', True, 'test experiment one', start1, end1),
+                         (9997, birthdate1, 'knock out', 'female', False, 'test experiment two', start2, end2),
+                         (9998, birthdate1, 'knock out', 'female', True, 'test experiment one', start1, end1),
+                         (9999, birthdate2, 'knock out', 'female', False, 'test experiment two', start2, end2)]
 
 exp_one = ('/test/directory/experiment/one', 'test experiment one')
 exp_two = ('/test/directory/experiment/two', 'test experiment two')
 
 
-def create_mouse_table(a_cursor, seed=False):
+def create_mouse_table(a_cursor):
     a_cursor.execute("CREATE TABLE mouse("
                      "mouse_id  uuid default uuid_generate_v4() not null constraint mouse_pkey primary key,"
                      "eartag    smallint                        not null,"
@@ -25,39 +32,32 @@ def create_mouse_table(a_cursor, seed=False):
                      "genotype  boolean                         not null,"
                      "sex       varchar(6)                      not null);")
     a_cursor.execute("create unique index mouse_eartag_index on mouse (eartag);")
-    if seed:
-        a_cursor.execute("CREATE TABLE mouse("
-                         "mouse_id  uuid default uuid_generate_v4() not null constraint mouse_pkey primary key,"
-                         "eartag    smallint                        not null,"
-                         "birthdate date                            not null,"
-                         "genotype  boolean                         not null,"
-                         "sex       varchar(6)                      not null);")
-        a_cursor.execute("create unique index mouse_eartag_index on mouse (eartag);")
-        for mouse in test_mouse_table_seed:
-            a_cursor.execute("INSERT INTO mouse"
-                             "    (eartag, birthdate, genotype, sex) "
-                             "VALUES"
-                             "    (%s, %s, %s, %s);", mouse)
 
 
-def create_experiments_table(a_cursor, seed=False):
+def seed_mouse_table(a_cursor):
+    for mouse in test_mouse_table_seed:
+        genotype = util.encode_genotype(mouse[2])
+        sex = util.prep_string_for_db(mouse[3])
+
+        a_cursor.execute("INSERT INTO mouse"
+                         "    (eartag, birthdate, genotype, sex) "
+                         "VALUES"
+                         "    (%s, %s, %s, %s);", (mouse[0], mouse[1], genotype, sex))
+
+
+def create_experiments_table(a_cursor):
     a_cursor.execute("CREATE TABLE experiments( "
                      "experiment_id   uuid default uuid_generate_v4() not null constraint experiments_pkey primary key,"
                      "experiment_dir  varchar(255)                    not null,"
                      "experiment_name varchar(50)                     not null);")
     a_cursor.execute("create unique index experiments_experiment_dir_uindex on experiments (experiment_dir);")
     a_cursor.execute("create unique index experiments_experiment_name_uindex on experiments (experiment_name);")
-    if seed:
-        a_cursor.execute("INSERT INTO experiments"
-                         "    (experiment_dir, experiment_name)"
-                         "VALUES"
-                         "    (%s, %s);",
-                         exp_one)
-        a_cursor.execute("INSERT INTO experiments"
-                         "    (experiment_dir, experiment_name)"
-                         "VALUES"
-                         "    (%s, %s);",
-                         exp_two)
+
+
+def seed_experiments_table(a_cursor):
+    a_cursor.execute("INSERT INTO experiments (experiment_dir, experiment_name) VALUES (%s, %s);", exp_one)
+    a_cursor.execute("INSERT INTO experiments (experiment_dir, experiment_name) VALUES (%s, %s);", exp_two)
+
 
 def create_participant_details_table(a_cursor):
     a_cursor.execute("CREATE TABLE participant_details( "
@@ -71,61 +71,29 @@ def create_participant_details_table(a_cursor):
                      "end_date date,"
                      "exp_spec_details json);")
 
-
-# create initial data on create as fixtures into the database
-def handler(postgresql, tables_to_seed):
-
-    """
-
-    :param postgresql:
-    :param tables_to_seed: List of table names that need to be seeded
-    :return:
-    """
-
-    conn = psycopg2.connect(**postgresql.dsn())
-    cursor = conn.cursor()
-
-    if 'mouse' in tables_to_seed:
-        mouse_seed = True
-    else:
-        mouse_seed = False
-
-    if 'experiments' in tables_to_seed:
-        exp_seed = True
-    else:
-        exp_seed = False
-
     # TODO: participant details seed
     # if 'participant_details' in tables_to_seed:
     #     participant_deets_seed = True
     # else:
     #     participant_deets_seed = True
 
-    create_mouse_table(cursor, seed=mouse_seed)
-    create_experiments_table(cursor, seed=exp_seed)
-    create_participant_details_table(cursor)
 
-    cursor.close()
-    conn.commit()
-    conn.close()
-
-
-# Use `handler()` on initialize database
-Postgresql = tpg.PostgresqlFactory(cache_initialized_db=True, on_initialized=handler)
+def handler_create_all_empty_tables(postgresql):
+    with TestingCursor(postgresql) as cursor:
+        cursor.execute("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";")
+        create_mouse_table(cursor)
+        create_experiments_table(cursor)
+        create_participant_details_table(cursor)
 
 
-def tearDownModule():
-    # clear cached database at end of tests
-    Postgresql.clear_cache()
+def handler_seed_mouse(postgresql):
+    with TestingCursor(postgresql) as cursor:
+        cursor.execute("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";")
+        seed_mouse_table(cursor)
 
 
-class MyTestCase(unittest.TestCase):
-    def setUp(self):
-        # Use the generated Postgresql class instead of testing.postgresql.Postgresql
-        self.postgresql = Postgresql()
-
-    def tearDown(self):
-        self.postgresql.stop()
-
-    def test_hello(self):
-        self.assertFalse(False)
+def handler_seed_mouse_experiments(postgresql):
+    handler_create_all_empty_tables(postgresql)
+    with TestingCursor(postgresql) as cursor:
+        seed_mouse_table(cursor)
+        seed_experiments_table(cursor)
