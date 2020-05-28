@@ -16,6 +16,7 @@ def tearDownModule():
 
 
 class TestNewParticipantDetails(unittest.TestCase):
+    mouse_seed = mice_seed.pop()
 
     def setUp(self):
         self.postgresql = Postgresql()
@@ -28,10 +29,10 @@ class TestNewParticipantDetails(unittest.TestCase):
         self.assertTrue(1)
 
     def test_add_new_participant_details(self):
-        test_mouse = Mouse.from_db(9999, testing=True, postgresql=self.postgresql)
-        test_exp = Experiments.from_db('test experiment two', testing=True, postgresql=self.postgresql)
-        test_details = ParticipantDetails(test_mouse, test_exp, 20200515, 20200615).save_to_db(testing=True,
-                                                                                               postgresql=self.postgresql)
+        test_mouse = Mouse.from_db(self.mouse_seed[0], testing=True, postgresql=self.postgresql)
+        test_exp = Experiments.from_db(self.mouse_seed[5], testing=True, postgresql=self.postgresql)
+        test_details = ParticipantDetails(test_mouse, test_exp, self.mouse_seed[6], self.mouse_seed[7]).save_to_db(
+            testing=True, postgresql=self.postgresql)
         self.assertTrue(test_mouse == test_details.mouse)
         self.assertTrue(test_exp == test_details.experiment)
         self.assertFalse(test_details.detail_id is None)
