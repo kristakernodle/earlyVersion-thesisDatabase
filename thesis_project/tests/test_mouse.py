@@ -2,7 +2,7 @@ import unittest
 import testing.postgresql as tpg
 
 import utilities as util
-import tests.setup_DB_for_testing as testdb
+import setup_DB_for_testing as testdb
 from models.cursors import TestingCursor
 from models.mouse import Mouse, list_all_mice
 

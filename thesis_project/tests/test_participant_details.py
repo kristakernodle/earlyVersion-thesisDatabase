@@ -1,8 +1,7 @@
 import unittest
 import testing.postgresql as tpg
 
-import utilities as util
-import tests.setup_DB_for_testing as testdb
+import setup_DB_for_testing as testdb
 from models.mouse import Mouse
 from models.experiments import Experiments
 from models.participant_details import ParticipantDetails
