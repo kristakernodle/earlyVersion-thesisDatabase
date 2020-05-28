@@ -1,5 +1,3 @@
-import json
-
 import utilities as utils
 from models.mouse import Mouse
 from models.experiments import Experiments
@@ -24,10 +22,8 @@ class ParticipantDetails:
         cursor.execute("SELECT * FROM participant_details WHERE mouse_id = %s AND experiment_id = %s;",
                        (mouse.mouse_id, experiment.experiment_id))
         participant_details = cursor.fetchone()
-        if len(participant_details) == 3:
-            return cls(mouse, experiment)
-        elif len(participant_details) == 4:
-            if  # TODO Finish this bit...
+        return cls(mouse, experiment, start_date=participant_details[3], end_date=participant_details[4],
+                   exp_spec_details=participant_details[5], detail_id=participant_details[0])
 
     @classmethod
     def from_db(cls, eartag, experiment_name, testing=False, postgresql=None):

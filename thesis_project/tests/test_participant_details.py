@@ -36,5 +36,6 @@ class TestNewParticipantDetails(unittest.TestCase):
         self.assertTrue(test_exp == test_details.experiment)
         self.assertFalse(test_details.detail_id is None)
 
+
 if __name__ == '__main__':
     unittest.main()
