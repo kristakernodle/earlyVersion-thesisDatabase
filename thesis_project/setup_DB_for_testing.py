@@ -1,7 +1,6 @@
 from models.cursors import TestingCursor
 import utilities as util
 
-
 birthdate1 = util.convert_date_int_yyyymmdd(20200101)
 birthdate2 = util.convert_date_int_yyyymmdd(20200102)
 start1 = util.convert_date_int_yyyymmdd(20200501)
@@ -71,12 +70,6 @@ def create_participant_details_table(a_cursor):
                      "start_date date,"
                      "end_date date,"
                      "exp_spec_details json);")
-
-    # TODO: participant details seed
-    # if 'participant_details' in tables_to_seed:
-    #     participant_deets_seed = True
-    # else:
-    #     participant_deets_seed = True
 
 
 def handler_create_all_empty_tables(postgresql):

@@ -42,7 +42,7 @@ class TestNewMouse(unittest.TestCase):
         self.assertFalse(dup_mouse.mouse_id is None)
 
 
-class TestLoadMouse(unittest.TestCase):
+class TestLoadDeleteMouse(unittest.TestCase):
     seed_tup = mice_seed.pop()
 
     def setUp(self):
@@ -62,20 +62,6 @@ class TestLoadMouse(unittest.TestCase):
         self.assertEqual(self.seed_tup[2], self.load_mouse.genotype)
         self.assertEqual(self.seed_tup[3], self.load_mouse.sex)
         self.assertFalse(self.load_mouse.mouse_id is None)
-
-
-class TestDeleteMouse(unittest.TestCase):
-    seed_tup = mice_seed.pop()
-
-    def setUp(self):
-        self.postgresql = Postgresql()
-        testdb.handler_seed_mouse(self.postgresql)
-
-    def tearDown(self):
-        self.postgresql.stop()
-
-    def test_setUp_tearDown(self):
-        self.assertTrue(1)
 
     def test_delete_mouse(self):
         mouse_to_delete = Mouse.from_db(self.seed_tup[0], testing=True, postgresql=self.postgresql)
