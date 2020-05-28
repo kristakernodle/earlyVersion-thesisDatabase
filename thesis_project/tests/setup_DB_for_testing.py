@@ -99,7 +99,6 @@ def handler_seed_experiments(postgresql):
 
 
 def handler_seed_mouse_experiments(postgresql):
-    handler_create_all_empty_tables(postgresql)
     with TestingCursor(postgresql) as cursor:
         seed_mouse_table(cursor)
         seed_experiments_table(cursor)

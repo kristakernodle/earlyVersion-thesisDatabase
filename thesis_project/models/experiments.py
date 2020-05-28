@@ -16,6 +16,11 @@ class Experiments:
     def __str__(self):
         return f"< Experiment {self.experiment_name} >"
 
+    def __eq__(self, compare_to):
+        if not isinstance(compare_to, Experiments):
+            return NotImplemented
+        return self.experiment_id == compare_to.experiment_id
+
     @classmethod
     def __from_db(cls, cursor, experiment_name):
         cursor.execute("SELECT * FROM experiments WHERE experiment_name = %s;", (experiment_name,))
