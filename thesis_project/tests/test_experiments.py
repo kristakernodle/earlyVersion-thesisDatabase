@@ -1,10 +1,10 @@
 import unittest
 import testing.postgresql as tpg
-import pathlib
 
 import utilities as util
 import tests.setup_DB_for_testing as testdb
-from models.experiments import Experiments
+from models.cursors import TestingCursor
+from models.experiments import Experiments, list_all_experiments
 
 mice_seed = set(testdb.test_mouse_table_seed)
 experiment_seed = {testdb.exp_one, testdb.exp_two}
@@ -39,6 +39,29 @@ class TestNewExperiment(unittest.TestCase):
                                                                               postgresql=self.postgresql)
         dup_exp = test_exp.save_to_db(testing=True, postgresql=self.postgresql)
         self.assertFalse(dup_exp.experiment_id is None)
+
+
+class TestLoadExperiment(unittest.TestCase):
+    seed_tup = experiment_seed.pop()
+
+    def setUp(self):
+        self.postgresql = Postgresql()
+        testdb.handler_seed_experiments(self.postgresql)
+
+    def tearDwon(self):
+        self.postgresql.stop()
+
+    def test_setUp_tearDown(self):
+        self.assertTrue(1)
+        with TestingCursor(self.postgresql) as cursor:
+            print(list_all_experiments(cursor))
+
+    def test_from_db(self):
+        self.load_exp = Experiments.from_db(self.seed_tup[0], testing=True, postgresql=self.postgresql)
+        self.assertEqual(util.prep_string_for_db(self.seed_tup[0]), self.load_exp.experiment_name)
+        self.assertEqual(self.seed_tup[1], self.load_exp.experiment_dir)
+        self.assertFalse(self.load_exp.experiment_name is None)
+
 
 # class TestListExperimentParticipants(unittest.TestCase):
 #
