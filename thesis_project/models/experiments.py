@@ -49,9 +49,16 @@ class Experiments:
                     self.__save_to_db(cursor)
                 return self.__from_db(cursor, self.experiment_name)
 
-    def delete_from_db(self):
-        with Cursor() as cursor:
-            cursor.execute("DELETE FROM experiments WHERE experiment_id = %s", (self.experiment_id,))
+    def __delete_from_db(self, cursor):
+        cursor.execute("DELETE FROM experiments WHERE experiment_id = %s", (self.experiment_id,))
+
+    def delete_from_db(self, testing=False, postgresql=None):
+        if testing:
+            with TestingCursor(postgresql) as cursor:
+                self.__delete_from_db(cursor)
+        else:
+            with Cursor() as cursor:
+                self.__delete_from_db(cursor)
 
     # @classmethod
     # def list_participants(cls, experiment_name=None):

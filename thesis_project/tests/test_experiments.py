@@ -63,6 +63,27 @@ class TestLoadExperiment(unittest.TestCase):
         self.assertFalse(self.load_exp.experiment_name is None)
 
 
+class TestDeleteExperiment(unittest.TestCase):
+    seed_tup = experiment_seed.pop()
+
+    def setUp(self):
+        self.postgresql = Postgresql()
+        testdb.handler_seed_experiments(self.postgresql)
+
+    def tearDown(self):
+        self.postgresql.stop()
+
+    def test_setUp_tearDown(self):
+        self.assertTrue(1)
+
+    def test_delete_experiment(self):
+        experiment_to_delete = Experiments.from_db(self.seed_tup[0], testing=True, postgresql=self.postgresql)
+        experiment_to_delete.delete_from_db(testing=True, postgresql=self.postgresql)
+        with TestingCursor(self.postgresql) as cursor:
+            all_experiments = list_all_experiments(cursor)
+            self.assertFalse(util.prep_string_for_db(self.seed_tup[0]) in all_experiments)
+
+
 # class TestListExperimentParticipants(unittest.TestCase):
 #
 #     def setUp(self):
