@@ -34,6 +34,11 @@ class TestNewExperiment(unittest.TestCase):
         self.assertEqual(self.seed_exp[1], test_exp.experiment_dir)
         self.assertFalse(test_exp.experiment_id is None)
 
+    def test_duplicate_experiment(self):
+        test_exp = Experiments(self.seed_exp[0], self.seed_exp[1]).save_to_db(testing=True,
+                                                                              postgresql=self.postgresql)
+        dup_exp = test_exp.save_to_db(testing=True, postgresql=self.postgresql)
+        self.assertFalse(dup_exp.experiment_id is None)
 
 # class TestListExperimentParticipants(unittest.TestCase):
 #
