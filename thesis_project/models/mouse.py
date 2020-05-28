@@ -23,7 +23,6 @@ class Mouse:
 
     def __eq__(self, compare_to):
         if not isinstance(compare_to, Mouse):
-            # don't attempt to compare against unrelated types
             return NotImplemented
         return self.mouse_id == compare_to.mouse_id
 

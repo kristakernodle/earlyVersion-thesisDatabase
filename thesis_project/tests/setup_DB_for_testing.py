@@ -19,8 +19,8 @@ test_mouse_table_seed = [(9990, birthdate2, 'wild type', 'male', True, 'test exp
                          (9998, birthdate1, 'knock out', 'female', True, 'test experiment one', start1, end1),
                          (9999, birthdate2, 'knock out', 'female', False, 'test experiment two', start2, end2)]
 
-exp_one = ('/test/directory/experiment/one', 'test experiment one')
-exp_two = ('/test/directory/experiment/two', 'test experiment two')
+exp_one = ('test experiment one', '/test/directory/experiment/one')
+exp_two = ('test experiment two', '/test/directory/experiment/two')
 
 
 def create_mouse_table(a_cursor):
