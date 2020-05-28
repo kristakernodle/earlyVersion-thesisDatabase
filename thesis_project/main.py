@@ -1,4 +1,4 @@
-from database import Database
+from database.database import Database
 import data.constants as constants
 from models.mouse import Mouse
 

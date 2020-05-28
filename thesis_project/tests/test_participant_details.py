@@ -1,8 +1,8 @@
 import unittest
 import testing.postgresql as tpg
 
-import setup_DB_for_testing as testdb
-from handler_seed_participant_details import handler_seed_participant_details
+from database import setup_DB_for_testing as testdb
+from database.handler_seed_participant_details import handler_seed_participant_details
 from models.mouse import Mouse
 from models.experiments import Experiments
 from models.participant_details import ParticipantDetails

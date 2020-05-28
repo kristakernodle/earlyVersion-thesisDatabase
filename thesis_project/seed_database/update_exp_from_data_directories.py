@@ -1,9 +1,6 @@
-from database import Database
+from database.database import Database
 from data.constants import dbConnection_Krista
 from models.experiments import Experiments
-from models.mouse import Mouse
-import pathlib
-
 
 Database.initialize(**dbConnection_Krista)
 
