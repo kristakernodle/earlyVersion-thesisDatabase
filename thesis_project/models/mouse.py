@@ -1,5 +1,5 @@
 import utilities as util
-from models.cursors import Cursor, TestingCursor
+from database.cursors import Cursor, TestingCursor
 
 
 def list_all_mice(cursor):

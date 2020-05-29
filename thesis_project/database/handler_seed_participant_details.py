@@ -1,7 +1,8 @@
 from models.mouse import list_all_mice, Mouse
 from models.experiments import Experiments
-from database.setup_DB_for_testing import handler_seed_mouse_experiments, test_mouse_table_seed
-from models.cursors import TestingCursor
+from database.seed_tables.seeds import test_mouse_table_seed
+from database.seed_tables.seed_independent_tables import handler_seed_mouse_experiments
+from database.cursors import TestingCursor
 
 mouse_seed = test_mouse_table_seed
 

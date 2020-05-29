@@ -1,7 +1,7 @@
 import utilities as utils
 from models.mouse import Mouse
 from models.experiments import Experiments
-from models.cursors import TestingCursor, Cursor
+from database.cursors import TestingCursor, Cursor
 
 
 class ParticipantDetails:

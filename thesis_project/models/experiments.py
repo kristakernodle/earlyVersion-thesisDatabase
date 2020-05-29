@@ -1,4 +1,4 @@
-from models.cursors import TestingCursor, Cursor
+from database.cursors import TestingCursor, Cursor
 import utilities as util
 
 
@@ -36,7 +36,7 @@ class Experiments:
                 return cls.__from_db(cursor, experiment_name)
         else:
             with Cursor() as cursor:
-                return cls.__from_db(cursor)
+                return cls.__from_db(cursor, experiment_name)
 
     def __save_to_db(self, cursor):
         cursor.execute("INSERT INTO experiments(experiment_dir, experiment_name) VALUES(%s, %s);",
