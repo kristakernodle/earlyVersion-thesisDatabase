@@ -74,8 +74,7 @@ class TestLoadDeleteMouse(unittest.TestCase):
         self.assertFalse(self.seed_tup[0] in all_mice)
 
 
-# TODO: TestAddParticipant - I think this needs to be in a different test document, some kind of integration testing
-#       rather than the current set up
+# TODO: TestAddParticipant - THIS CANNOT BE DONE
 # class TestAddParticipant(unittest.TestCase):
 #
 #     def setUp(self):
