@@ -1,6 +1,8 @@
 import utilities as util
 from database.cursors import Cursor, TestingCursor
 
+from models.experiments import Experiments
+
 
 def list_all_mice(cursor):
     cursor.execute("SELECT eartag FROM mouse;")

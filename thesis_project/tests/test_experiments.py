@@ -87,6 +87,34 @@ class TestDeleteExperiment(unittest.TestCase):
             self.assertFalse(util.prep_string_for_db(self.seed_tup[0]) in all_experiments)
 
 
+# TODO: update existing entry
+class TestUpdateExperiment(unittest.TestCase):
+    # seed_tup = experiment_seed.pop()
+    # This line works in every other test class but not this one? It says that experiment_seed is empty.
+
+    def setUp(self):
+        self.postgresql = Postgresql()
+        database.seed_tables.seed_independent_tables.handler_seed_experiments(self.postgresql)
+        # TODO: Figure out why this seed_tup thing is happening. See class declaration for comment
+        self.seed_tup = {exp_one, exp_two}.pop()
+
+    def tearDown(self):
+        self.postgresql.stop()
+
+    def test_setUp_tearDown(self):
+        self.assertTrue(1)
+
+    def test_update_existing_experiment(self):
+        load_exp = Experiments.from_db(self.seed_tup[0], testing=True, postgresql=self.postgresql)
+        update_exp = load_exp
+        update_exp.experiment_name = "New Experiment Name"
+        saved_exp = update_exp.save_to_db(testing=True, postgresql=self.postgresql)
+        self.assertEqual(util.prep_string_for_db("New Experiment Name"), saved_exp.experiment_name)
+        self.assertTrue(load_exp.experiment_id == saved_exp.experiment_id)
+        self.assertTrue(load_exp.experiment_dir == saved_exp.experiment_dir)
+
+
+# TODO: Listing experiment participants
 # class TestListExperimentParticipants(unittest.TestCase):
 #
 #     def setUp(self):

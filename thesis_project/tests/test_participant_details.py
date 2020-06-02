@@ -41,14 +41,6 @@ class TestNewParticipantDetails(unittest.TestCase):
         self.assertTrue(test_exp == test_details.experiment)
         self.assertFalse(test_details.detail_id is None)
 
-    # TODO: add new participant details from Mouse object
-    # def test_mouse_add_new_participant_details(self):
-    #     test_mouse = Mouse.from_db(self.mouse_seed[0], testing=True, postgresql=self.postgresql)
-    #     test_exp = Experiments.from_db(self.mouse_seed[5], testing=True, postgresql=self.postgresql)
-    #     test_mouse.add_participant_details(test_exp, start_date=self.mouse_seed[6], end_date=self.mouse_seed[7])
-
-    # TODO: add new participant details from Experiments object
-
 
 class TestLoadParticipantDetails(unittest.TestCase):
     mouse_seed = mice_seed.pop()
