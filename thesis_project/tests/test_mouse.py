@@ -74,31 +74,5 @@ class TestLoadDeleteMouse(unittest.TestCase):
         self.assertFalse(self.seed_tup[0] in all_mice)
 
 
-# TODO: TestAddParticipant - THIS CANNOT BE DONE
-# class TestAddParticipant(unittest.TestCase):
-#
-#     def setUp(self):
-#         self.postgresql = tpg.PostgresqlFactory(cache_initialized_db=True, on_initialized=testdb.handler_seed_mouse_experiments)
-#
-#     def tearDown(self):
-#         self.postgresql.stop()
-#
-#     def test_add_participant(self):
-#         self.test_mouse_details = []
-#         for mouse in self.test_mouse_table_seed:
-#             if util.prep_string_for_db(mouse[5]) == util.prep_string_for_db(self.test_experiment_one.experiment_name):
-#                 self.test_mouse_details.append(Mouse.from_db(mouse[0])
-#                                                .add_participant(util.prep_string_for_db(self
-#                                                                                         .test_experiment_one
-#                                                                                         .experiment_name)))
-#             elif util.prep_string_for_db(mouse[5]) == util.prep_string_for_db(self.test_experiment_two.experiment_name):
-#                 self.test_mouse_details.append(Mouse.from_db(mouse[0])
-#                                                .add_participant(util
-#                                                                 .prep_string_for_db(self
-#                                                                                     .test_experiment_two.experiment_name)))
-#         self.assertListEqual(sorted(self.test_participants_list, key=lambda m: m.eartag),
-#                              sorted(Experiments.list_participants(), key=lambda m: m.eartag))
-
-
 if __name__ == '__main__':
     unittest.main()
