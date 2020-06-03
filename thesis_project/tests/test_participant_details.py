@@ -7,6 +7,7 @@ from models.participant_details import ParticipantDetails
 
 import database.handlers.handlers_independent_tables as handlers_id
 import database.handlers.handlers_participant_details as handlers_pd
+
 import database.seed_tables.seeds as seeds
 
 mice_seed = set(seeds.test_mouse_table_seed)
