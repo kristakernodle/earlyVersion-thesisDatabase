@@ -59,7 +59,7 @@ class ParticipantDetails:
     def __list_participants(cls, cursor, experiment_id):
         cursor.execute("SELECT eartag FROM all_participants_all_experiments WHERE experiment_id = %s;",
                        (experiment_id,))
-        return list(cursor.fetchall())
+        return utils.list_from_cursor(cursor.fetchall())
 
     # TODO: List participants
     @classmethod

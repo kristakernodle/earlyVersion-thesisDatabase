@@ -4,12 +4,12 @@ import utilities as util
 
 def list_all_experiments(cursor):
     cursor.execute("SELECT experiment_name FROM experiments;")
-    return list(item for tup in cursor.fetchall() for item in tup)
+    return util.list_from_cursor(cursor.fetchall())
 
 
 def list_all_experiment_ids(cursor):
     cursor.execute("SELECT experiment_id FROM experiments;")
-    return list(item for tup in cursor.fetchall() for item in tup)
+    return util.list_from_cursor(cursor.fetchall())
 
 
 class Experiments:

@@ -41,6 +41,6 @@ def prep_string_for_db(instring):
     return joined_string
 
 
-
-
-
+# TODO write TestUtilitiesDatabase test_list_from_cursor(self)
+def list_from_cursor(cursor_fetch):
+    return list(item for tup in cursor_fetch for item in tup)
