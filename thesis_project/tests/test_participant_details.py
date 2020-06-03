@@ -65,5 +65,28 @@ class TestLoadParticipantDetails(unittest.TestCase):
         self.assertFalse(test_details.detail_id is None)
 
 
+class TestListParticipants(unittest.TestCase):
+    exp_seed = experiment_seed.pop()
+
+    def setUp(self):
+        self.postgresql = Postgresql()
+        handler_seed_participant_details(self.postgresql)
+
+    def tearDown(self):
+        self.postgresql.stop()
+
+    def test_setUp_tearDown(self):
+        self.assertTrue(1)
+
+    def test_list_participants(self):
+        all_participants = ParticipantDetails.list_participants(self.exp_seed[0])
+        if 'one' in self.exp_seed[0]:
+            for eartag in all_participants:
+                self.assertTrue((eartag % 2) == 0)
+        else:
+            for eartag in all_participants:
+                self.assertTrue((eartag % 2) != 0)
+
+
 if __name__ == '__main__':
     unittest.main()
