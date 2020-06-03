@@ -57,8 +57,6 @@ class TestLoadExperiment(unittest.TestCase):
 
     def test_setUp_tearDown(self):
         self.assertTrue(1)
-        with TestingCursor(self.postgresql) as cursor:
-            print(list_all_experiments(cursor))
 
     def test_from_db(self):
         self.load_exp = Experiments.from_db(self.seed_tup[0], testing=True, postgresql=self.postgresql)
