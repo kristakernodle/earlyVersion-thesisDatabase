@@ -1,16 +1,16 @@
 import unittest
 import testing.postgresql as tpg
 
-import database.handlers.handlers_independent_tables
-import database.handlers.handlers_independent_tables as handlers_id
-import database.seed_tables.seed_independent_tables as seed_id
 import utilities as util
-from database.seed_tables.seeds import test_mouse_table_seed, exp_one, exp_two
-from database.cursors import TestingCursor
 from models.experiments import Experiments, list_all_experiments
 
-mice_seed = set(test_mouse_table_seed)
-experiment_seed = {exp_one, exp_two}
+from database.cursors import TestingCursor
+import database.handlers.handlers_independent_tables as handlers_id
+
+import database.seed_tables.seeds as seeds
+
+mice_seed = set(seeds.test_mouse_table_seed)
+experiment_seed = {seeds.exp_one, seeds.exp_two}
 Postgresql = tpg.PostgresqlFactory(cache_initialized_db=True,
                                    on_initialized=handlers_id.handler_create_experiments_table)
 
@@ -28,6 +28,7 @@ class TestNewExperiment(unittest.TestCase):
     def tearDown(self):
         self.postgresql.stop()
 
+    @unittest.skip("Not currently testing")
     def test_setUp_tearDown(self):
         self.assertTrue(1)
 
@@ -50,11 +51,12 @@ class TestLoadExperiment(unittest.TestCase):
 
     def setUp(self):
         self.postgresql = Postgresql()
-        database.handlers.handlers_independent_tables.handler_seed_experiments(self.postgresql)
+        handlers_id.handler_seed_experiments(self.postgresql)
 
-    def tearDwon(self):
+    def tearDown(self):
         self.postgresql.stop()
 
+    @unittest.skip("Not currently testing")
     def test_setUp_tearDown(self):
         self.assertTrue(1)
 
@@ -70,11 +72,12 @@ class TestDeleteExperiment(unittest.TestCase):
 
     def setUp(self):
         self.postgresql = Postgresql()
-        database.handlers.handlers_independent_tables.handler_seed_experiments(self.postgresql)
+        handlers_id.handler_seed_experiments(self.postgresql)
 
     def tearDown(self):
         self.postgresql.stop()
 
+    @unittest.skip("Not currently testing")
     def test_setUp_tearDown(self):
         self.assertTrue(1)
 
@@ -87,18 +90,16 @@ class TestDeleteExperiment(unittest.TestCase):
 
 
 class TestUpdateExperiment(unittest.TestCase):
-    # seed_tup = experiment_seed.pop()
-    # This line works in every other test class but not this one? It says that experiment_seed is empty.
 
     def setUp(self):
         self.postgresql = Postgresql()
-        database.handlers.handlers_independent_tables.handler_seed_experiments(self.postgresql)
-        # TODO: Figure out why this seed_tup thing is happening. See class declaration for comment
-        self.seed_tup = {exp_one, exp_two}.pop()
+        handlers_id.handler_seed_experiments(self.postgresql)
+        self.seed_tup = {seeds.exp_one, seeds.exp_two}.pop()
 
     def tearDown(self):
         self.postgresql.stop()
 
+    @unittest.skip("Not currently testing")
     def test_setUp_tearDown(self):
         self.assertTrue(1)
 

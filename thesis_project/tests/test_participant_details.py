@@ -29,6 +29,7 @@ class TestNewParticipantDetails(unittest.TestCase):
     def tearDown(self):
         self.postgresql.stop()
 
+    @unittest.skip()
     def test_setUp_tearDown(self):
         self.assertTrue(1)
 
@@ -52,6 +53,7 @@ class TestLoadParticipantDetails(unittest.TestCase):
     def tearDown(self):
         self.postgresql.stop()
 
+    @unittest.skip()
     def test_setUp_tearDown(self):
         self.assertTrue(1)
 
@@ -75,6 +77,7 @@ class TestListParticipants(unittest.TestCase):
     def tearDown(self):
         self.postgresql.stop()
 
+    @unittest.skip()
     def test_setUp_tearDown(self):
         self.assertTrue(1)
 
@@ -88,6 +91,29 @@ class TestListParticipants(unittest.TestCase):
         else:
             for eartag in all_participants:
                 self.assertTrue((eartag % 2) != 0)
+
+
+class TestUpdateParticipant(unittest.TestCase):
+
+    def setUp(self):
+        self.postgresql = Postgresql()
+        handlers_pd.handler_seed_participant_details(self.postgresql)
+        self.seed_mouse = mice_seed.pop()
+
+    def tearDown(self):
+        self.postgresql.stop()
+
+    def test_setUp_tearDown(self):
+        self.assertTrue(1)
+
+    def test_update_participant(self):
+        new_participant_dir = "/this/is/a/new/directory/"
+        load_details = ParticipantDetails.from_db(self.seed_mouse[0], self.seed_mouse[5])
+        update_details = load_details
+        update_details.participant_dir = new_participant_dir
+        saved_details = update_details.save_to_db(testing=True, postgresql=self.postgresql)
+        self.assertEqual(new_participant_dir, saved_details.participant_dir)
+        self.assertTrue(load_details.detail_id == saved_details.detail_id)
 
 
 if __name__ == '__main__':
