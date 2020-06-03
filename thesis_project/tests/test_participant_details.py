@@ -29,7 +29,7 @@ class TestNewParticipantDetails(unittest.TestCase):
     def tearDown(self):
         self.postgresql.stop()
 
-    @unittest.skip()
+    @unittest.skip("Not currently testing")
     def test_setUp_tearDown(self):
         self.assertTrue(1)
 
@@ -53,7 +53,7 @@ class TestLoadParticipantDetails(unittest.TestCase):
     def tearDown(self):
         self.postgresql.stop()
 
-    @unittest.skip()
+    @unittest.skip("Not currently testing")
     def test_setUp_tearDown(self):
         self.assertTrue(1)
 
@@ -77,7 +77,7 @@ class TestListParticipants(unittest.TestCase):
     def tearDown(self):
         self.postgresql.stop()
 
-    @unittest.skip()
+    @unittest.skip("Not currently testing")
     def test_setUp_tearDown(self):
         self.assertTrue(1)
 

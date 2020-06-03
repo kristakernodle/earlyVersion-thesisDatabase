@@ -5,10 +5,11 @@ from database.cursors import TestingCursor, Cursor
 
 
 class ParticipantDetails:
-    def __init__(self, mouse, experiment, start_date=None, end_date=None,
+    def __init__(self, mouse, experiment, participant_dir=None, start_date=None, end_date=None,
                  exp_spec_details=None, detail_id=None):
         self.mouse = mouse
         self.experiment = experiment
+        self.participant_dir = participant_dir
         self.start_date = utils.convert_date_int_yyyymmdd(start_date)
         self.end_date = utils.convert_date_int_yyyymmdd(end_date)
         self.exp_spec_details = exp_spec_details
@@ -22,7 +23,8 @@ class ParticipantDetails:
         cursor.execute("SELECT * FROM participant_details WHERE mouse_id = %s AND experiment_id = %s;",
                        (mouse.mouse_id, experiment.experiment_id))
         participant_details = cursor.fetchone()
-        return cls(mouse, experiment, start_date=participant_details[3], end_date=participant_details[4],
+        return cls(mouse, experiment, participant_dir=participant_details[6], start_date=participant_details[3],
+                   end_date=participant_details[4],
                    exp_spec_details=participant_details[5], detail_id=participant_details[0])
 
     @classmethod
@@ -61,7 +63,6 @@ class ParticipantDetails:
                        (experiment_id,))
         return utils.list_from_cursor(cursor.fetchall())
 
-    # TODO: List participants
     @classmethod
     def list_participants(cls, experiment_name, testing=False, postgresql=None):
         # First: Get the experiment_id
