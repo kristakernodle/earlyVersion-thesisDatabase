@@ -103,12 +103,14 @@ class TestUpdateParticipant(unittest.TestCase):
     def tearDown(self):
         self.postgresql.stop()
 
+    @unittest.skip("Not currently testing")
     def test_setUp_tearDown(self):
         self.assertTrue(1)
 
     def test_update_participant(self):
         new_participant_dir = "/this/is/a/new/directory/"
-        load_details = ParticipantDetails.from_db(self.seed_mouse[0], self.seed_mouse[5])
+        load_details = ParticipantDetails.from_db(self.seed_mouse[0], self.seed_mouse[5],
+                                                  testing=True, postgresql=self.postgresql)
         update_details = load_details
         update_details.participant_dir = new_participant_dir
         saved_details = update_details.save_to_db(testing=True, postgresql=self.postgresql)

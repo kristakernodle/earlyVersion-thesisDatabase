@@ -4,6 +4,11 @@ from models.experiments import Experiments
 from database.cursors import TestingCursor, Cursor
 
 
+def list_all_detail_ids(cursor):
+    cursor.execute("SELECT detail_id FROM participant_details;")
+    return utils.list_from_cursor(cursor.fetchall())
+
+
 class ParticipantDetails:
     def __init__(self, mouse, experiment, participant_dir=None, start_date=None, end_date=None,
                  exp_spec_details=None, detail_id=None):
@@ -31,13 +36,13 @@ class ParticipantDetails:
     def from_db(cls, eartag, experiment_name, testing=False, postgresql=None):
         if testing:
             with TestingCursor(postgresql) as cursor:
-                mouse = Mouse.from_db(eartag, testing=True, postgresql=postgresql)
-                experiment = Experiments.from_db(experiment_name, testing=True, postgresql=postgresql)
+                mouse = Mouse.from_db(eartag, testing=testing, postgresql=postgresql)
+                experiment = Experiments.from_db(experiment_name, testing=testing, postgresql=postgresql)
                 return cls.__from_db(cursor, mouse, experiment)
         else:
             with Cursor() as cursor:
-                mouse = Mouse.from_db(eartag, testing=True, postgresql=postgresql)
-                experiment = Experiments.from_db(experiment_name, testing=True, postgresql=postgresql)
+                mouse = Mouse.from_db(eartag)
+                experiment = Experiments.from_db(experiment_name)
                 return cls.__from_db(cursor, mouse, experiment)
 
     def __save_to_db(self, cursor):
@@ -47,15 +52,27 @@ class ParticipantDetails:
                        (self.mouse.mouse_id, self.experiment.experiment_id,
                         self.start_date, self.end_date, self.exp_spec_details))
 
+    def __update_details(self, cursor):
+        cursor.execute("UPDATE participant_details "
+                       "SET (start_date, end_date, exp_spec_details, participant_dir) = (%s, %s, %s, %s) "
+                       "WHERE detail_id = %s;",
+                       (self.start_date, self.end_date, self.exp_spec_details, self.participant_dir, self.detail_id))
+
     def save_to_db(self, testing=False, postgresql=None):
+
+        def save_to_db_main(a_cursor):
+            if self.detail_id not in list_all_detail_ids(a_cursor):
+                self.__save_to_db(a_cursor)
+            else:
+                self.__update_details(a_cursor)
+            return self.__from_db(a_cursor, self.mouse, self.experiment)
+
         if testing:
             with TestingCursor(postgresql) as cursor:
-                self.__save_to_db(cursor)
-                return self.__from_db(cursor, self.mouse, self.experiment)
+                return save_to_db_main(cursor)
         else:
             with Cursor() as cursor:
-                self.__save_to_db(cursor)
-                return self.__from_db(cursor, self.mouse, self.experiment)
+                return save_to_db_main(cursor)
 
     @classmethod
     def __list_participants(cls, cursor, experiment_id):

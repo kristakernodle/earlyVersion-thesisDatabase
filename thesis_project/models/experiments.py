@@ -1,20 +1,20 @@
 from database.cursors import TestingCursor, Cursor
-import utilities as util
+import utilities as utils
 
 
 def list_all_experiments(cursor):
     cursor.execute("SELECT experiment_name FROM experiments;")
-    return util.list_from_cursor(cursor.fetchall())
+    return utils.list_from_cursor(cursor.fetchall())
 
 
 def list_all_experiment_ids(cursor):
     cursor.execute("SELECT experiment_id FROM experiments;")
-    return util.list_from_cursor(cursor.fetchall())
+    return utils.list_from_cursor(cursor.fetchall())
 
 
 class Experiments:
     def __init__(self, experiment_name, experiment_dir, experiment_id=None):
-        self.experiment_name = util.prep_string_for_db(experiment_name)
+        self.experiment_name = utils.prep_string_for_db(experiment_name)
         self.experiment_dir = experiment_dir
         self.experiment_id = experiment_id
 
@@ -35,7 +35,7 @@ class Experiments:
 
     @classmethod
     def from_db(cls, experiment_name, testing=False, postgresql=None):
-        experiment_name = util.prep_string_for_db(experiment_name)
+        experiment_name = utils.prep_string_for_db(experiment_name)
         if testing:
             with TestingCursor(postgresql) as cursor:
                 return cls.__from_db(cursor, experiment_name)
@@ -81,7 +81,7 @@ class Experiments:
     # @classmethod
     # def list_participants(cls, experiment_name=None):
     #     if experiment_name is not None:
-    #         experiment_name = util.prep_string_for_db(experiment_name)
+    #         experiment_name = utils.prep_string_for_db(experiment_name)
     #         with Cursor() as cursor:
     #             cursor.execute("SELECT eartag FROM all_participants_all_experiments WHERE experiment_name = %s;",
     #                            (experiment_name,))
