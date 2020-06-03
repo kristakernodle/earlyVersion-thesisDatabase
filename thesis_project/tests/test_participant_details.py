@@ -79,7 +79,9 @@ class TestListParticipants(unittest.TestCase):
         self.assertTrue(1)
 
     def test_list_participants(self):
-        all_participants = ParticipantDetails.list_participants(self.exp_seed[0])
+        all_participants = ParticipantDetails.list_participants(self.exp_seed[0],
+                                                                testing=True, postgresql=self.postgresql)
+        self.assertTrue(len(all_participants) == 5)
         if 'one' in self.exp_seed[0]:
             for eartag in all_participants:
                 self.assertTrue((eartag % 2) == 0)

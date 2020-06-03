@@ -54,3 +54,22 @@ class ParticipantDetails:
             with Cursor() as cursor:
                 self.__save_to_db(cursor)
                 return self.__from_db(cursor, self.mouse, self.experiment)
+
+    @classmethod
+    def __list_participants(cls, cursor, experiment_id):
+        cursor.execute("SELECT eartag FROM all_participants_all_experiments WHERE experiment_id = %s;",
+                       (experiment_id,))
+        return list(cursor.fetchall())
+
+    # TODO: List participants
+    @classmethod
+    def list_participants(cls, experiment_name, testing=False, postgresql=None):
+        # First: Get the experiment_id
+        experiment = Experiments.from_db(experiment_name, testing, postgresql)
+        # Second: Define the cursor
+        if testing:
+            with TestingCursor(postgresql) as cursor:
+                return cls.__list_participants(cursor, experiment.experiment_id)
+        else:
+            with Cursor() as cursor:
+                return cls.__list_participants(cursor, experiment.experiment_id)
