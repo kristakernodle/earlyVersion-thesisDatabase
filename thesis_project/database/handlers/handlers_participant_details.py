@@ -3,8 +3,8 @@ from models.experiments import Experiments
 
 from database.cursors import TestingCursor
 import database.create_tables.create_participant_details as create_pd
-from database.handlers.handlers_independent_tables import handler_create_all_independent_tables
-from database.seed_tables.seed_independent_tables import handler_seed_mouse_experiments
+from database.handlers.handlers_independent_tables import handler_create_all_independent_tables, \
+    handler_seed_mouse_experiments
 from database.seed_tables.seed_participant_details import seed_participant_details
 
 from database.seed_tables.seeds import test_mouse_table_seed as mouse_seed

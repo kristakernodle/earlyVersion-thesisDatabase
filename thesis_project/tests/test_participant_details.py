@@ -1,6 +1,7 @@
 import unittest
 import testing.postgresql as tpg
 
+import database.handlers.handlers_independent_tables
 import database.handlers.handlers_participant_details as handlers_pd
 import database.seed_tables.seed_independent_tables as seed_independent_tables
 from database.handlers.handlers_participant_details import handler_seed_participant_details
@@ -24,7 +25,7 @@ class TestNewParticipantDetails(unittest.TestCase):
 
     def setUp(self):
         self.postgresql = Postgresql()
-        seed_independent_tables.handler_seed_mouse_experiments(self.postgresql)
+        database.handlers.handlers_independent_tables.handler_seed_mouse_experiments(self.postgresql)
 
     def tearDown(self):
         self.postgresql.stop()

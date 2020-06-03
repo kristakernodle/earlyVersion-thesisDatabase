@@ -10,7 +10,7 @@ from models.mouse import Mouse, list_all_mice
 
 mice_seed = set(test_mouse_table_seed)
 Postgresql = tpg.PostgresqlFactory(cache_initialized_db=True,
-                                   on_initialized=database.handlers.handlers_independent_tables.handler_create_all_independent_tables)
+                                   on_initialized=database.handlers.handlers_independent_tables.handler_create_mouse_table)
 
 
 def tearDownModule():
@@ -50,7 +50,7 @@ class TestLoadDeleteMouse(unittest.TestCase):
 
     def setUp(self):
         self.postgresql = Postgresql()
-        database.seed_tables.seed_independent_tables.handler_seed_mouse(self.postgresql)
+        database.handlers.handlers_independent_tables.handler_seed_mouse(self.postgresql)
 
     def tearDown(self):
         self.postgresql.stop()

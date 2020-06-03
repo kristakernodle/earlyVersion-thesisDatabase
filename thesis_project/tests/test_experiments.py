@@ -2,7 +2,8 @@ import unittest
 import testing.postgresql as tpg
 
 import database.handlers.handlers_independent_tables
-import database.seed_tables.seed_independent_tables
+import database.handlers.handlers_independent_tables as handlers_id
+import database.seed_tables.seed_independent_tables as seed_id
 import utilities as util
 from database.seed_tables.seeds import test_mouse_table_seed, exp_one, exp_two
 from database.cursors import TestingCursor
@@ -11,7 +12,7 @@ from models.experiments import Experiments, list_all_experiments
 mice_seed = set(test_mouse_table_seed)
 experiment_seed = {exp_one, exp_two}
 Postgresql = tpg.PostgresqlFactory(cache_initialized_db=True,
-                                   on_initialized=database.handlers.handlers_independent_tables.handler_create_all_independent_tables)
+                                   on_initialized=handlers_id.handler_create_experiments_table)
 
 
 def tearDownModule():
@@ -49,7 +50,7 @@ class TestLoadExperiment(unittest.TestCase):
 
     def setUp(self):
         self.postgresql = Postgresql()
-        database.seed_tables.seed_independent_tables.handler_seed_experiments(self.postgresql)
+        database.handlers.handlers_independent_tables.handler_seed_experiments(self.postgresql)
 
     def tearDwon(self):
         self.postgresql.stop()
@@ -71,7 +72,7 @@ class TestDeleteExperiment(unittest.TestCase):
 
     def setUp(self):
         self.postgresql = Postgresql()
-        database.seed_tables.seed_independent_tables.handler_seed_experiments(self.postgresql)
+        database.handlers.handlers_independent_tables.handler_seed_experiments(self.postgresql)
 
     def tearDown(self):
         self.postgresql.stop()
@@ -93,7 +94,7 @@ class TestUpdateExperiment(unittest.TestCase):
 
     def setUp(self):
         self.postgresql = Postgresql()
-        database.seed_tables.seed_independent_tables.handler_seed_experiments(self.postgresql)
+        database.handlers.handlers_independent_tables.handler_seed_experiments(self.postgresql)
         # TODO: Figure out why this seed_tup thing is happening. See class declaration for comment
         self.seed_tup = {exp_one, exp_two}.pop()
 

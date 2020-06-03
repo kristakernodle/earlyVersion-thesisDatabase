@@ -1,5 +1,4 @@
 import utilities as util
-from database.cursors import TestingCursor
 from database.seed_tables.seeds import test_mouse_table_seed, exp_one, exp_two
 
 
@@ -19,20 +18,3 @@ def seed_experiments_table(a_cursor):
     prepped_exp_two = (util.prep_string_for_db(exp_two[0]), exp_two[1])
     a_cursor.execute("INSERT INTO experiments (experiment_name, experiment_dir) VALUES (%s, %s);", prepped_exp_one)
     a_cursor.execute("INSERT INTO experiments (experiment_name, experiment_dir) VALUES (%s, %s);", prepped_exp_two)
-
-
-def handler_seed_mouse(postgresql):
-    with TestingCursor(postgresql) as cursor:
-        cursor.execute("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";")
-        seed_mouse_table(cursor)
-
-
-def handler_seed_experiments(postgresql):
-    with TestingCursor(postgresql) as cursor:
-        seed_experiments_table(cursor)
-
-
-def handler_seed_mouse_experiments(postgresql):
-    with TestingCursor(postgresql) as cursor:
-        seed_mouse_table(cursor)
-        seed_experiments_table(cursor)
