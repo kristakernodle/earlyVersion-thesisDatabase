@@ -10,7 +10,7 @@ from models.mouse import Mouse, list_all_mice
 
 mice_seed = set(test_mouse_table_seed)
 Postgresql = tpg.PostgresqlFactory(cache_initialized_db=True,
-                                   on_initialized=database.handlers.handlers_independent_tables.handler_create_all_empty_tables)
+                                   on_initialized=database.handlers.handlers_independent_tables.handler_create_all_independent_tables)
 
 
 def tearDownModule():

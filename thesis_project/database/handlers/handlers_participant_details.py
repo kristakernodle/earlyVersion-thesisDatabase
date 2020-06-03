@@ -1,26 +1,30 @@
+from models.mouse import list_all_mice, Mouse
+from models.experiments import Experiments
+
 from database.cursors import TestingCursor
+import database.create_tables.create_participant_details as create_pd
+from database.handlers.handlers_independent_tables import handler_create_all_independent_tables
+from database.seed_tables.seed_independent_tables import handler_seed_mouse_experiments
+from database.seed_tables.seed_participant_details import seed_participant_details
+
+from database.seed_tables.seeds import test_mouse_table_seed as mouse_seed
 
 
-def create_participant_details_table(a_cursor):
-    a_cursor.execute("CREATE TABLE participant_details( "
-                     "detail_id   uuid default uuid_generate_v4()     not null "
-                     "    constraint participant_details_pkey primary key,"
-                     "mouse_id uuid                                   not null "
-                     "    constraint participant_details_mouse_id_fkey references mouse,"
-                     "experiment_id uuid                              not null"
-                     "    constraint participant_details_experiment_id_fkey references experiments,"
-                     "start_date date,"
-                     "end_date date,"
-                     "exp_spec_details json);")
-
-
-def create_view_all_participants_all_experiments(postgresql):
+def handler_create_participant_details(postgresql):
+    handler_create_all_independent_tables(postgresql)
     with TestingCursor(postgresql) as cursor:
-        cursor.execute(
-            "CREATE VIEW all_participants_all_experiments "
-            "   (mouse_id, experiment_id, detail_id, eartag, experiment_name, start_date, end_date) AS "
-            "SELECT mouse.mouse_id, experiments.experiment_id, participant_details.detail_id, mouse.eartag, "
-            "   experiments.experiment_name, participant_details.start_date, participant_details.end_date "
-            "FROM participant_details "
-            "JOIN mouse ON mouse.mouse_id = participant_details.mouse_id "
-            "JOIN experiments ON experiments.experiment_id = participant_details.experiment_id;")
+        create_pd.create_participant_details_table(cursor)
+        create_pd.create_view_all_participants_all_experiments(cursor)
+
+
+def handler_seed_participant_details(postgresql):
+    handler_seed_mouse_experiments(postgresql)
+    with TestingCursor(postgresql) as cursor:
+        all_mice = list_all_mice(cursor)
+        for eartag in all_mice:
+            mouse = Mouse.from_db(eartag, testing=True, postgresql=postgresql)
+            for m in mouse_seed:
+                if m[0] == mouse.eartag:
+                    experiment = Experiments.from_db(m[5], testing=True, postgresql=postgresql)
+                    seed_participant_details(cursor, mouse.mouse_id, experiment.experiment_id,
+                                             start_date=m[6], end_date=m[7])

@@ -1,9 +1,9 @@
 import unittest
 import testing.postgresql as tpg
 
-import database.handlers.handlers_independent_tables as create_independent_tables
+import database.handlers.handlers_participant_details as handlers_pd
 import database.seed_tables.seed_independent_tables as seed_independent_tables
-from database.handler_seed_participant_details import handler_seed_participant_details
+from database.handlers.handlers_participant_details import handler_seed_participant_details
 from models.mouse import Mouse
 from models.experiments import Experiments
 from models.participant_details import ParticipantDetails
@@ -12,7 +12,7 @@ from database.seed_tables.seeds import test_mouse_table_seed, exp_one, exp_two
 mice_seed = set(test_mouse_table_seed)
 experiment_seed = {exp_one, exp_two}
 Postgresql = tpg.PostgresqlFactory(cache_initialized_db=True,
-                                   on_initialized=create_independent_tables.handler_create_all_empty_tables)
+                                   on_initialized=handlers_pd.handler_create_participant_details)
 
 
 def tearDownModule():
