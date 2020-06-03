@@ -1,7 +1,6 @@
 import unittest
 import testing.postgresql as tpg
 
-from database.cursors import TestingCursor
 import database.handlers.handlers_independent_tables as create_independent_tables
 import database.seed_tables.seed_independent_tables as seed_independent_tables
 from database.handler_seed_participant_details import handler_seed_participant_details
@@ -72,20 +71,6 @@ class TestListParticipants(unittest.TestCase):
     def setUp(self):
         self.postgresql = Postgresql()
         handler_seed_participant_details(self.postgresql)
-        with TestingCursor(self.postgresql) as cursor:
-            cursor.execute("CREATE VIEW all_participants_all_experiments "
-                           "    (mouse_id, experiment_id, detail_id, eartag, experiment_name, start_date, end_date) "
-                           "AS SELECT "
-                           "    mouse.mouse_id, "
-                           "    experiments.experiment_id,"
-                           "    participant_details.detail_id,"
-                           "    mouse.eartag,"
-                           "    experiments.experiment_name,"
-                           "    participant_details.start_date,"
-                           "    participant_details.end_date "
-                           "FROM participant_details "
-                           "JOIN mouse ON mouse.mouse_id = participant_details.mouse_id "
-                           "JOIN experiments ON experiments.experiment_id = participant_details.experiment_id;")
 
     def tearDown(self):
         self.postgresql.stop()
