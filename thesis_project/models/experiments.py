@@ -7,6 +7,11 @@ def list_all_experiments(cursor):
     return list(item for tup in cursor.fetchall() for item in tup)
 
 
+def list_all_experiment_ids(cursor):
+    cursor.execute("SELECT experiment_id FROM experiments;")
+    return list(item for tup in cursor.fetchall() for item in tup)
+
+
 class Experiments:
     def __init__(self, experiment_name, experiment_dir, experiment_id=None):
         self.experiment_name = util.prep_string_for_db(experiment_name)
@@ -42,17 +47,25 @@ class Experiments:
         cursor.execute("INSERT INTO experiments(experiment_dir, experiment_name) VALUES(%s, %s);",
                        (self.experiment_dir, self.experiment_name))
 
+    def __update_experiment(self, cursor):
+        cursor.execute("UPDATE experiments SET (experiment_name, experiment_dir) = (%s, %s) WHERE experiment_id = %s;",
+                       (self.experiment_name, self.experiment_dir, self.experiment_id))
+
     def save_to_db(self, testing=False, postgresql=None):
+
+        def save_to_db_main(a_cursor):
+            if self.experiment_id not in list_all_experiment_ids(a_cursor):
+                self.__save_to_db(a_cursor)
+            else:
+                self.__update_experiment(a_cursor)
+            return self.__from_db(a_cursor, self.experiment_name)
+
         if testing:
             with TestingCursor(postgresql) as cursor:
-                if self.experiment_name not in list_all_experiments(cursor):
-                    self.__save_to_db(cursor)
-                return self.__from_db(cursor, self.experiment_name)
+                return save_to_db_main(cursor)
         else:
             with Cursor() as cursor:
-                if self.experiment_name not in list_all_experiments(cursor):
-                    self.__save_to_db(cursor)
-                return self.__from_db(cursor, self.experiment_name)
+                return save_to_db_main(cursor)
 
     def __delete_from_db(self, cursor):
         cursor.execute("DELETE FROM experiments WHERE experiment_id = %s", (self.experiment_id,))

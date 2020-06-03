@@ -87,7 +87,6 @@ class TestDeleteExperiment(unittest.TestCase):
             self.assertFalse(util.prep_string_for_db(self.seed_tup[0]) in all_experiments)
 
 
-# TODO: update existing entry
 class TestUpdateExperiment(unittest.TestCase):
     # seed_tup = experiment_seed.pop()
     # This line works in every other test class but not this one? It says that experiment_seed is empty.
@@ -105,11 +104,12 @@ class TestUpdateExperiment(unittest.TestCase):
         self.assertTrue(1)
 
     def test_update_existing_experiment(self):
+        new_name = "New Experiment Name"
         load_exp = Experiments.from_db(self.seed_tup[0], testing=True, postgresql=self.postgresql)
         update_exp = load_exp
-        update_exp.experiment_name = "New Experiment Name"
+        update_exp.experiment_name = new_name
         saved_exp = update_exp.save_to_db(testing=True, postgresql=self.postgresql)
-        self.assertEqual(util.prep_string_for_db("New Experiment Name"), saved_exp.experiment_name)
+        self.assertEqual(util.prep_string_for_db(new_name), saved_exp.experiment_name)
         self.assertTrue(load_exp.experiment_id == saved_exp.experiment_id)
         self.assertTrue(load_exp.experiment_dir == saved_exp.experiment_dir)
 
