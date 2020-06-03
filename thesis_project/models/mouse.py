@@ -52,16 +52,23 @@ class Mouse:
                        (self.eartag, self.birthdate, util.encode_genotype(self.genotype), self.sex))
 
     def save_to_db(self, testing=False, postgresql=None):
+
+        # TODO: apply this format to all public methods
+        #   def save_to_db_main(eartag, a_cursor):
+        #       if eartag not in list_all_mice(a_cursor):
+        #           self.__save_to_db(a_cursor)
+        #       return self.__from_db(a_cursor, eartag)
+        def save_to_db_main(eartag, a_cursor):
+            if eartag not in list_all_mice(a_cursor):
+                self.__save_to_db(a_cursor)
+            return self.__from_db(a_cursor, eartag)
+
         if testing:
             with TestingCursor(postgresql) as cursor:
-                if self.eartag not in list_all_mice(cursor):
-                    self.__save_to_db(cursor)
-                return self.__from_db(cursor, self.eartag)
+                return save_to_db_main(self.eartag, cursor)
         else:
             with Cursor() as cursor:
-                if self.eartag not in list_all_mice(cursor):
-                    self.__save_to_db(cursor)
-                return self.__from_db(cursor, self.eartag)
+                return save_to_db_main(self.eartag, cursor)
 
     def __delete_from_db(self, cursor):
         cursor.execute("DELETE FROM mouse WHERE mouse_id = %s", (self.mouse_id,))
