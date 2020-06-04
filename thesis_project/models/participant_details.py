@@ -1,3 +1,5 @@
+from psycopg2._json import Json
+
 import utilities as utils
 from models.mouse import Mouse
 from models.experiments import Experiments
@@ -50,13 +52,14 @@ class ParticipantDetails:
                        "(mouse_id, experiment_id, start_date, end_date, exp_spec_details) "
                        "VALUES (%s, %s, %s, %s, %s);",
                        (self.mouse.mouse_id, self.experiment.experiment_id,
-                        self.start_date, self.end_date, self.exp_spec_details))
+                        self.start_date, self.end_date, Json(self.exp_spec_details)))
 
     def __update_details(self, cursor):
         cursor.execute("UPDATE participant_details "
                        "SET (start_date, end_date, exp_spec_details, participant_dir) = (%s, %s, %s, %s) "
                        "WHERE detail_id = %s;",
-                       (self.start_date, self.end_date, self.exp_spec_details, self.participant_dir, self.detail_id))
+                       (self.start_date, self.end_date, Json(self.exp_spec_details), self.participant_dir,
+                        self.detail_id))
 
     def save_to_db(self, testing=False, postgresql=None):
 
