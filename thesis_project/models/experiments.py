@@ -43,6 +43,25 @@ class Experiments:
             with Cursor() as cursor:
                 return cls.__from_db(cursor, experiment_name)
 
+    @classmethod
+    def from_db_by_id(cls, experiment_id, testing=False, postgresql=None):
+
+        def main(a_cursor, experiment_id):
+            a_cursor.execute("SELECT * FROM experiments WHERE experiment_id = %s;", (experiment_id,))
+            exp = cursor.fetchone()
+            if exp is None:
+                print("No mouse in the database with mouse id")
+                return None
+            return cls(experiment_name=exp[2], experiment_dir=exp[1],
+                       experiment_id=exp[0])
+
+        if testing:
+            with TestingCursor(postgresql) as cursor:
+                return main(cursor, experiment_id)
+        else:
+            with Cursor() as cursor:
+                return main(cursor, experiment_id)
+
     def __save_to_db(self, cursor):
         cursor.execute("INSERT INTO experiments(experiment_dir, experiment_name) VALUES(%s, %s);",
                        (self.experiment_dir, self.experiment_name))

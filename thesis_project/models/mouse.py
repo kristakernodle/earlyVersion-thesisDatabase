@@ -30,7 +30,7 @@ class Mouse:
 
     @classmethod
     def __from_db(cls, cursor, eartag):
-        cursor.execute("SELECT * FROM mouse WHERE eartag = %s", (eartag,))
+        cursor.execute("SELECT * FROM mouse WHERE eartag = %s;", (eartag,))
         mouse_data = cursor.fetchone()
         if mouse_data is None:
             print(f"No mouse in the database with mouse number {eartag}")
@@ -46,6 +46,25 @@ class Mouse:
         else:
             with Cursor() as cursor:
                 return cls.__from_db(cursor, eartag)
+
+    @classmethod
+    def from_db_by_id(cls, mouse_id, testing=False, postgresql=None):
+
+        def main(a_cursor, mouse_id):
+            a_cursor.execute("SELECT * FROM mouse WHERE mouse_id = %s;", (mouse_id,))
+            mouse_data = cursor.fetchone()
+            if mouse_data is None:
+                print("No mouse in the database with mouse id")
+                return None
+            return cls(eartag=mouse_data[1], birthdate=mouse_data[2],
+                       genotype=util.decode_genotype(mouse_data[3]), sex=mouse_data[4], mouse_id=mouse_data[0])
+
+        if testing:
+            with TestingCursor(postgresql) as cursor:
+                return main(cursor, mouse_id)
+        else:
+            with Cursor() as cursor:
+                return main(cursor, mouse_id)
 
     def __save_to_db(self, cursor):
         cursor.execute("INSERT INTO mouse (eartag, birthdate, genotype, sex) VALUES (%s, %s, %s, %s);",
