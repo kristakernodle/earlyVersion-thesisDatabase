@@ -19,6 +19,31 @@ def tearDownModule():
     Postgresql.clear_cache()
 
 
+class TestNewTrial(unittest.TestCase):
+
+    def setUp(self):
+        self.postgresql = Postgresql()
+        handlers_id.handler_seed_mouse_experiments(self.postgresql)
+        self.test_trial_key = random.choice(list(seeds.test_trial_table_seed.keys()))
+        self.test_trial_one_date = random.choice(seeds.test_trial_table_seed[self.test_trial_key])
+
+    def tearDown(self):
+        self.postgresql.stop()
+
+    @unittest.skip("Not currently testing")
+    def test_setUp_tearDown(self):
+        self.assertTrue(1)
+
+    def test_add_new_trial(self):
+        mouse = Mouse.from_db(self.test_trial_key[0], testing=True, postgresql=self.postgresql)
+        experiment = Experiments.from_db(self.test_trial_key[1], testing=True, postgresql=self.postgresql)
+        saved_trial = Trials(mouse, experiment, self.test_trial_one_date[1], self.test_trial_one_date[0]).save_to_db(
+            testing=True, postgresql=self.postgresql)
+        self.assertFalse(saved_trial.trial_id is None)
+        self.assertTrue(mouse == saved_trial.mouse)
+        self.assertTrue(experiment == saved_trial.experiment)
+
+
 class TestLoadTrial(unittest.TestCase):
 
     def setUp(self):
@@ -49,13 +74,15 @@ class TestLoadTrial(unittest.TestCase):
                         .mouse_id == test_trial.mouse.mouse_id)
 
 
-class TestNewTrial(unittest.TestCase):
+class TestListTrials(unittest.TestCase):
 
     def setUp(self):
         self.postgresql = Postgresql()
-        handlers_id.handler_seed_mouse_experiments(self.postgresql)
-        self.test_trial_key = random.choice(list(seeds.test_trial_table_seed.keys()))
-        self.test_trial_one_date = random.choice(seeds.test_trial_table_seed[self.test_trial_key])
+        handlers_tr.handler_seed_trials(self.postgresql)
+
+        self.trial_key = random.choice(list(seeds.test_trial_table_seed.keys()))
+        self.eartag, self.experiment_name = self.trial_key
+        self.trials_mouse_exp = seeds.test_trial_table_seed[self.trial_key]
 
     def tearDown(self):
         self.postgresql.stop()
@@ -64,11 +91,12 @@ class TestNewTrial(unittest.TestCase):
     def test_setUp_tearDown(self):
         self.assertTrue(1)
 
-    def test_add_new_trial(self):
-        mouse = Mouse.from_db(self.test_trial_key[0], testing=True, postgresql=self.postgresql)
-        experiment = Experiments.from_db(self.test_trial_key[1], testing=True, postgresql=self.postgresql)
-        saved_trial = Trials(mouse, experiment, self.test_trial_one_date[1], self.test_trial_one_date[0]).save_to_db(
-            testing=True, postgresql=self.postgresql)
-        self.assertFalse(saved_trial.trial_id is None)
-        self.assertTrue(mouse == saved_trial.mouse)
-        self.assertTrue(experiment == saved_trial.experiment)
+    def test_list_participants(self):
+        all_participants = Trials.list_participants(self.experiment_name, testing=True, postgresql=self.postgresql)
+        self.assertTrue(len(all_participants) == 5)
+        if 'one' in self.experiment_name:
+            for eartag in all_participants:
+                self.assertTrue((eartag % 2) == 0)
+        else:
+            for eartag in all_participants:
+                self.assertTrue((eartag % 2) != 0)
