@@ -59,6 +59,29 @@ class Trials:
             with Cursor() as cursor:
                 return main(cursor, self.trial_dir)
 
+    @classmethod
+    def __list_participants(cls, cursor, experiment_id):
+        cursor.execute("SELECT eartag FROM all_participants_all_experiments WHERE experiment_id = %s;",
+                       (experiment_id,))
+        return utils.list_from_cursor(cursor.fetchall())
+
+    @classmethod
+    def list_participants(cls, experiment_name, testing=False, postgresql=None):
+
+        def main(cursor, experiment_id):
+            cursor.execute("SELECT eartag FROM all_participants_all_experiments WHERE experiment_id = %s;",
+                           (experiment_id,))
+            return utils.list_from_cursor(cursor.fetchall())
+
+        experiment = Experiments.from_db(experiment_name, testing, postgresql)
+
+        if testing:
+            with TestingCursor(postgresql) as cursor:
+                return cls.__list_participants(cursor, experiment.experiment_id)
+        else:
+            with Cursor() as cursor:
+                return cls.__list_participants(cursor, experiment.experiment_id)
+
     # def __delete_from_db(self, cursor):
     #     cursor.execute("DELETE FROM mouse WHERE mouse_id = %s", (self.mouse_id,))
     #
