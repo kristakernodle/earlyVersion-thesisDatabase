@@ -10,7 +10,7 @@ class Trials:
         self.mouse = mouse
         self.experiment = experiment
         self.trial_dir = trial_dir
-        self.trial_date = trial_date
+        self.trial_date = utils.convert_date_int_yyyymmdd(trial_date)
         self.trial_id = trial_id
 
     def __str__(self):

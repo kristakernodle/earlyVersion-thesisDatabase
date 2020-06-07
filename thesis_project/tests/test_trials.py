@@ -2,6 +2,7 @@ import unittest
 import testing.postgresql as tpg
 import random
 
+import utilities as utils
 from models.mouse import Mouse
 from models.experiments import Experiments
 from models.trials import Trials
@@ -24,24 +25,28 @@ class TestLoadTrial(unittest.TestCase):
         self.postgresql = Postgresql()
         handlers_tr.handler_seed_trials(self.postgresql)
 
-        self.test_trial_key = random.choice(list(seeds.test_trial_table_seed.keys()))
-        self.eartag, self.experiment_name = self.test_trial_key
-        self.trial_date, self.trial_dir = random.choice(seeds.test_trial_table_seed[self.test_trial_key])
+        self.trial_key = random.choice(list(seeds.test_trial_table_seed.keys()))
+        self.eartag, self.experiment_name = self.trial_key
+        self.trial_date, self.trial_dir = random.choice(seeds.test_trial_table_seed[self.trial_key])
 
     def tearDown(self):
         self.postgresql.stop()
 
-    # @unittest.skip("Not currently testing")
+    @unittest.skip("Not currently testing")
     def test_setUp_tearDown(self):
         self.assertTrue(1)
 
-    # def test_from_db(self):
-    #     test_details = Trials.from_db(self.trial_dir, testing=True, postgresql=self.postgresql)
-    #     self.assertTrue(Mouse.from_db(self.mouse_seed[0],
-    #                                   testing=True, postgresql=self.postgresql) == test_details.mouse)
-    #     self.assertTrue(Experiments.from_db(self.mouse_seed[5],
-    #                                         testing=True, postgresql=self.postgresql) == test_details.experiment)
-    #     self.assertFalse(test_details.detail_id is None)
+    def test_from_db(self):
+        test_trial = Trials.from_db(self.trial_dir, testing=True, postgresql=self.postgresql)
+        self.assertFalse(test_trial.trial_id is None)
+        # TODO: For curiosity sake -- can I not compare equality for datetime.datetime() types?
+        #   see below for exact implementation. I ended up having to test difference (not equal)
+        self.assertFalse(utils.convert_date_int_yyyymmdd(self.trial_date) != test_trial.trial_date)
+        self.assertTrue(Experiments.from_db(self.experiment_name,
+                                            testing=True, postgresql=self.postgresql)
+                        .experiment_id == test_trial.experiment.experiment_id)
+        self.assertTrue(Mouse.from_db(self.eartag, testing=True, postgresql=self.postgresql)
+                        .mouse_id == test_trial.mouse.mouse_id)
 
 
 class TestNewTrial(unittest.TestCase):
@@ -55,6 +60,7 @@ class TestNewTrial(unittest.TestCase):
     def tearDown(self):
         self.postgresql.stop()
 
+    @unittest.skip("Not currently testing")
     def test_setUp_tearDown(self):
         self.assertTrue(1)
 
