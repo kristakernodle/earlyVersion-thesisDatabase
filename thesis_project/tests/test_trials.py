@@ -18,6 +18,32 @@ def tearDownModule():
     Postgresql.clear_cache()
 
 
+class TestLoadTrial(unittest.TestCase):
+
+    def setUp(self):
+        self.postgresql = Postgresql()
+        handlers_tr.handler_seed_trials(self.postgresql)
+
+        self.test_trial_key = random.choice(list(seeds.test_trial_table_seed.keys()))
+        self.eartag, self.experiment_name = self.test_trial_key
+        self.trial_date, self.trial_dir = random.choice(seeds.test_trial_table_seed[self.test_trial_key])
+
+    def tearDown(self):
+        self.postgresql.stop()
+
+    # @unittest.skip("Not currently testing")
+    def test_setUp_tearDown(self):
+        self.assertTrue(1)
+
+    # def test_from_db(self):
+    #     test_details = Trials.from_db(self.trial_dir, testing=True, postgresql=self.postgresql)
+    #     self.assertTrue(Mouse.from_db(self.mouse_seed[0],
+    #                                   testing=True, postgresql=self.postgresql) == test_details.mouse)
+    #     self.assertTrue(Experiments.from_db(self.mouse_seed[5],
+    #                                         testing=True, postgresql=self.postgresql) == test_details.experiment)
+    #     self.assertFalse(test_details.detail_id is None)
+
+
 class TestNewTrial(unittest.TestCase):
 
     def setUp(self):
