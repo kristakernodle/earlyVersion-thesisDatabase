@@ -41,15 +41,13 @@ class Trials:
             with Cursor() as cursor:
                 return cls.__from_db(cursor, trial_dir, testing, postgresql)
 
-    def __save_to_db(self, cursor):
-        cursor.execute("INSERT INTO trials (experiment_id, mouse_id, trial_dir, trial_date) VALUES (%s, %s, %s, %s);",
-                       (self.experiment.experiment_id, self.mouse.mouse_id, self.trial_dir,
-                        utils.convert_date_int_yyyymmdd(self.trial_date)))
-
     def save_to_db(self, testing=False, postgresql=None):
 
         def main(a_cursor, trial_dir):
-            self.__save_to_db(a_cursor)
+            cursor.execute(
+                "INSERT INTO trials (experiment_id, mouse_id, trial_dir, trial_date) VALUES (%s, %s, %s, %s);",
+                (self.experiment.experiment_id, self.mouse.mouse_id, self.trial_dir,
+                 utils.convert_date_int_yyyymmdd(self.trial_date)))
             return self.__from_db(a_cursor, trial_dir, testing, postgresql)
 
         if testing:
@@ -60,27 +58,22 @@ class Trials:
                 return main(cursor, self.trial_dir)
 
     @classmethod
-    def __list_participants(cls, cursor, experiment_id):
-        cursor.execute("SELECT eartag FROM all_participants_all_experiments WHERE experiment_id = %s;",
-                       (experiment_id,))
-        return utils.list_from_cursor(cursor.fetchall())
-
-    @classmethod
     def list_participants(cls, experiment_name, testing=False, postgresql=None):
 
-        def main(cursor, experiment_id):
-            cursor.execute("SELECT eartag FROM all_participants_all_experiments WHERE experiment_id = %s;",
-                           (experiment_id,))
-            return utils.list_from_cursor(cursor.fetchall())
+        def main(a_cursor, experiment_id):
+            a_cursor.execute("SELECT eartag FROM all_participants_all_trials "
+                             "WHERE experiment_id = %s;", (experiment_id,))
+            no_dups = sorted(set(utils.list_from_cursor(cursor.fetchall())), key=int)
+            return no_dups
 
         experiment = Experiments.from_db(experiment_name, testing, postgresql)
 
         if testing:
             with TestingCursor(postgresql) as cursor:
-                return cls.__list_participants(cursor, experiment.experiment_id)
+                return main(cursor, experiment.experiment_id)
         else:
             with Cursor() as cursor:
-                return cls.__list_participants(cursor, experiment.experiment_id)
+                return main(cursor, experiment.experiment_id)
 
     # def __delete_from_db(self, cursor):
     #     cursor.execute("DELETE FROM mouse WHERE mouse_id = %s", (self.mouse_id,))

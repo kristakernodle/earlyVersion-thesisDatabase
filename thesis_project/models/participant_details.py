@@ -86,6 +86,7 @@ class ParticipantDetails:
     @classmethod
     def list_participants(cls, experiment_name, testing=False, postgresql=None):
         # First: Get the experiment_id
+        # TODO: Refactor so that I can use a get_id function so I don't have to return an entire object
         experiment = Experiments.from_db(experiment_name, testing, postgresql)
         # Second: Define the cursor
         if testing:

@@ -17,6 +17,7 @@ def handler_create_trials_table(postgresql):
         create_id.create_mouse_table(cursor)
         create_id.create_experiments_table(cursor)
         create_tr.create_trials_table(cursor)
+        create_tr.create_view_all_participants_all_trials(cursor)
 
 
 def handler_seed_trials(postgresql):

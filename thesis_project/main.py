@@ -1,10 +1,22 @@
-from database.database import Database
-import data.constants as constants
-from models.mouse import Mouse
+from models.experiments import Experiments as Experiments
+from models.mouse import Mouse as Mouse
+from models.participant_details import ParticipantDetails as ParticipantDetails
+from models.trials import Trials as Trials
 
 
-Database.initialize(database=constants.database, user=constants.user, password=constants.password, host=constants.host)
-this_mouse = Mouse.from_db(704)
+# TODO: make the experiment_name default = 'all'
+#   and return dictionary {experiment_name: list(unique eartags)}
+def list_participants(experiment_name):
+    experiment_participant_details = ParticipantDetails.list_participants(experiment_name)
+    experiment_trials = Trials.list_participants(experiment_name)
+    return sorted(set(experiment_participant_details).union(experiment_trials), key=int)
 
-print(this_mouse)
 
+def main():
+    """ Main program """
+    # Code goes over here.
+    return 0
+
+
+if __name__ == "__main__":
+    main()
