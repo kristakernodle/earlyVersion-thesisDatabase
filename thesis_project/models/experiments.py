@@ -117,33 +117,3 @@ class Experiments:
         else:
             with Cursor() as cursor:
                 __delete_from_db(cursor, self.experiment_id)
-
-    # @classmethod
-    # def list_participants(cls, experiment_name=None):
-    #     if experiment_name is not None:
-    #         experiment_name = utils.prep_string_for_db(experiment_name)
-    #         with Cursor() as cursor:
-    #             cursor.execute("SELECT eartag FROM all_participants_all_experiments WHERE experiment_name = %s;",
-    #                            (experiment_name,))
-    #             participants = cursor.fetchall()
-    #     else:
-    #         with Cursor() as cursor:
-    #             cursor.execute("SELECT eartag FROM all_participants_all_experiments;")
-    #             participants = cursor.fetchall()
-    #     participants = [Mouse.from_db(eartag) for eartag in participants]
-    #     return participants
-    #
-    # def add_participant(self, eartag, start_date=None, end_date=None):
-    #     return ParticipantDetails(eartag, self.experiment_name, start_date=start_date, end_date=end_date).save_to_db()
-    #
-    # @classmethod
-    # def is_member_db(cls, experiment_dir):
-    #     if type(experiment_dir) == str:
-    #         experiment_dir = pathlib.PurePath(experiment_dir)
-    #     else:
-    #         experiment_dir = experiment_dir
-    #     with Cursor() as cursor:
-    #         cursor.execute("SELECT * FROM experiments WHERE experiment_dir = %s", (experiment_dir.name,))
-    #         if cursor.fetchone() is None:
-    #             return False
-    #     return True
