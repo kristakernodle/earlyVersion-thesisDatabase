@@ -61,10 +61,16 @@ class TestLoadExperiment(unittest.TestCase):
         self.assertTrue(1)
 
     def test_from_db(self):
-        self.load_exp = Experiments.from_db(self.seed_tup[0], testing=True, postgresql=self.postgresql)
-        self.assertEqual(util.prep_string_for_db(self.seed_tup[0]), self.load_exp.experiment_name)
-        self.assertEqual(self.seed_tup[1], self.load_exp.experiment_dir)
-        self.assertFalse(self.load_exp.experiment_name is None)
+        load_exp = Experiments.from_db(self.seed_tup[0], testing=True, postgresql=self.postgresql)
+        self.assertEqual(util.prep_string_for_db(self.seed_tup[0]), load_exp.experiment_name)
+        self.assertEqual(self.seed_tup[1], load_exp.experiment_dir)
+        self.assertFalse(load_exp.experiment_name is None)
+
+    def test_get_id(self):
+        load_exp_id = Experiments.get_id(self.seed_tup[0], testing=True, postgresql=self.postgresql)
+        load_fake_id = Experiments.get_id('Experiment Not Here', testing=True, postgresql=self.postgresql)
+        self.assertTrue(len(load_exp_id) == 1)
+        self.assertTrue(len(load_fake_id) == 0)
 
 
 class TestDeleteExperiment(unittest.TestCase):
