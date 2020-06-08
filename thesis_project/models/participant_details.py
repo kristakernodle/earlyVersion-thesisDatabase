@@ -1,3 +1,5 @@
+import warnings
+
 from psycopg2._json import Json
 
 import utilities as utils
@@ -78,21 +80,21 @@ class ParticipantDetails:
                 return save_to_db_main(cursor)
 
     @classmethod
-    def __list_participants(cls, cursor, experiment_id):
-        cursor.execute("SELECT eartag FROM all_participants_all_experiments WHERE experiment_id = %s;",
-                       (experiment_id,))
-        return utils.list_from_cursor(cursor.fetchall())
-
-    @classmethod
     def list_participants(cls, experiment_name, testing=False, postgresql=None):
+
+        def list_participants_main(a_cursor, exp_id):
+            a_cursor.execute("SELECT eartag FROM all_participants_all_experiments WHERE experiment_id = %s;", (exp_id,))
+            return utils.list_from_cursor(cursor.fetchall())
 
         experiment_id = Experiments.get_id(experiment_name, testing, postgresql)
         if len(experiment_id) == 1:
             experiment_id = experiment_id[0]
+        else:
+            warnings.warn("Multiple experiments in the database with the same name.")
 
         if testing:
             with TestingCursor(postgresql) as cursor:
-                return cls.__list_participants(cursor, experiment_id)
+                return list_participants_main(cursor, experiment_id)
         else:
             with Cursor() as cursor:
-                return cls.__list_participants(cursor, experiment_id)
+                return list_participants_main(cursor, experiment_id)
