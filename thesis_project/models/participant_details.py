@@ -47,27 +47,27 @@ class ParticipantDetails:
                 experiment = Experiments.from_db(experiment_name)
                 return cls.__from_db(cursor, mouse, experiment)
 
-    def __save_to_db(self, cursor):
-        cursor.execute("INSERT INTO participant_details "
-                       "(mouse_id, experiment_id, start_date, end_date, exp_spec_details) "
-                       "VALUES (%s, %s, %s, %s, %s);",
-                       (self.mouse.mouse_id, self.experiment.experiment_id,
-                        self.start_date, self.end_date, Json(self.exp_spec_details)))
-
-    def __update_details(self, cursor):
-        cursor.execute("UPDATE participant_details "
-                       "SET (start_date, end_date, exp_spec_details, participant_dir) = (%s, %s, %s, %s) "
-                       "WHERE detail_id = %s;",
-                       (self.start_date, self.end_date, Json(self.exp_spec_details), self.participant_dir,
-                        self.detail_id))
-
     def save_to_db(self, testing=False, postgresql=None):
+
+        def save_to_db(a_cursor, mouse_id, experiment_id, start_date, end_date, exp_spec_details):
+            a_cursor.execute("INSERT INTO participant_details "
+                             "(mouse_id, experiment_id, start_date, end_date, exp_spec_details) "
+                             "VALUES (%s, %s, %s, %s, %s);",
+                             (mouse_id, experiment_id, start_date, end_date, Json(exp_spec_details)))
+
+        def update_details(a_cursor, start_date, end_date, exp_spec_details, participant_dir, detail_id):
+            a_cursor.execute("UPDATE participant_details "
+                             "SET (start_date, end_date, exp_spec_details, participant_dir) = (%s, %s, %s, %s) "
+                             "WHERE detail_id = %s;",
+                             (start_date, end_date, Json(exp_spec_details), participant_dir, detail_id))
 
         def save_to_db_main(a_cursor):
             if self.detail_id not in list_all_detail_ids(a_cursor):
-                self.__save_to_db(a_cursor)
+                save_to_db(a_cursor, self.mouse.mouse_id, self.experiment.experiment_id,
+                           self.start_date, self.end_date, self.exp_spec_details)
             else:
-                self.__update_details(a_cursor)
+                update_details(a_cursor, self.start_date, self.end_date, self.exp_spec_details,
+                               self.participant_dir, self.detail_id)
             return self.__from_db(a_cursor, self.mouse, self.experiment)
 
         if testing:
