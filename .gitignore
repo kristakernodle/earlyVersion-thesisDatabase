@@ -1,1 +1,6 @@
 ./thesis_project/data
+*pycache*
+*.idea*
+thesis_project/data
+*.DS_Store
+*.pyc
