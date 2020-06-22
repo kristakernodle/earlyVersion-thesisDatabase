@@ -1,4 +1,4 @@
 [submodule "thesis_project/blind_review"]
 	path = thesis_project/blind_review
 	url = https://github.com/kristakernodle/blind_review
-	branch = model-view-submodle
+	branch = model-view-submodule
