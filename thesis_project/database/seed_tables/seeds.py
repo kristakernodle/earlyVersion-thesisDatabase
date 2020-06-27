@@ -62,8 +62,6 @@ test_trial_table_seed = {(9990, 'test-experiment-one'):
                               (20200518, '/exp/two/trial/dir/9999/3')],
                          }
 
-test_blind_review_reviewers_seed = {('reviewer', 'one',
-                                     '/blind/review/reviewer_one/toScore', '/blind/review/reviewer_one/Scored'),
-                                    ('reviewer', 'two',
-                                     '/blind/review/reviewer_two/toScore', '/blind/review/reviewer_two/Scored')
-                                    }
+test_blind_review_reviewers_seed = [
+    ('reviewer', 'one', '/blind/review/reviewer_one/toScore', '/blind/review/reviewer_one/Scored'),
+    ('reviewer', 'two', '/blind/review/reviewer_two/toScore', '/blind/review/reviewer_two/Scored')]

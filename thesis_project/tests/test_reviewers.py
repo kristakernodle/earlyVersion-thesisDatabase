@@ -29,7 +29,6 @@ class TestNewReviewer(unittest.TestCase):
     def test_add_new_reviewer(self):
         test_reviewer = Reviewer('tester', 'reviewer', 'toScore_dir', 'scored_dir').save_to_db(testing=True,
                                                                                                postgresql=self.postgresql)
-
         self.assertEqual('tester', test_reviewer.first_name)
         self.assertEqual('reviewer', test_reviewer.last_name)
         self.assertEqual('toScore_dir', test_reviewer.toScore_dir)
@@ -44,7 +43,7 @@ class TestNewReviewer(unittest.TestCase):
 
 
 class TestLoadDeleteReviewer(unittest.TestCase):
-    seed_tup = reviewer_seed.pop()
+    seed_tup = reviewer_seed[0]
 
     def setUp(self):
         self.postgresql = Postgresql()
