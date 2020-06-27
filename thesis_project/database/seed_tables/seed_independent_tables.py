@@ -8,7 +8,7 @@ def seed_mouse_table(a_cursor):
         sex = util.prep_string_for_db(mouse[3])
 
         a_cursor.execute("INSERT INTO mouse"
-                         "    (eartag, birthdate, genotype, sex) "
+                         "    (scored_dir, birthdate, genotype, sex) "
                          "VALUES"
                          "    (%s, %s, %s, %s);", (mouse[0], mouse[1], genotype, sex))
 

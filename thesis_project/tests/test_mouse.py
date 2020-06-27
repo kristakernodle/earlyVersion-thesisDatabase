@@ -4,6 +4,7 @@ import testing.postgresql as tpg
 import database.handlers.handlers_independent_tables
 import database.seed_tables.seed_independent_tables
 import utilities as util
+
 from database.seed_tables.seeds import test_mouse_table_seed
 from database.cursors import TestingCursor
 from models.mouse import Mouse, list_all_mice

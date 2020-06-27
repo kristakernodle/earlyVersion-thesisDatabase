@@ -61,7 +61,7 @@ class Trials:
     def list_participants(cls, experiment_name, testing=False, postgresql=None):
 
         def main(a_cursor, experiment_id):
-            a_cursor.execute("SELECT eartag FROM all_participants_all_trials "
+            a_cursor.execute("SELECT scored_dir FROM all_participants_all_trials "
                              "WHERE experiment_id = %s;", (experiment_id,))
             no_dups = sorted(set(utils.list_from_cursor(cursor.fetchall())), key=int)
             return no_dups

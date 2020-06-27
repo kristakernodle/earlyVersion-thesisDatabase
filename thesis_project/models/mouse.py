@@ -1,11 +1,9 @@
 import utilities as util
 from database.cursors import Cursor, TestingCursor
 
-from models.experiments import Experiments
-
 
 def list_all_mice(cursor):
-    cursor.execute("SELECT eartag FROM mouse;")
+    cursor.execute("SELECT scored_dir FROM mouse;")
     return list(item for tup in cursor.fetchall() for item in tup)
 
 
@@ -30,7 +28,7 @@ class Mouse:
 
     @classmethod
     def __from_db(cls, cursor, eartag):
-        cursor.execute("SELECT * FROM mouse WHERE eartag = %s;", (eartag,))
+        cursor.execute("SELECT * FROM mouse WHERE scored_dir = %s;", (eartag,))
         mouse_data = cursor.fetchone()
         if mouse_data is None:
             print(f"No mouse in the database with mouse number {eartag}")
@@ -67,16 +65,16 @@ class Mouse:
                 return main(cursor, mouse_id)
 
     def __save_to_db(self, cursor):
-        cursor.execute("INSERT INTO mouse (eartag, birthdate, genotype, sex) VALUES (%s, %s, %s, %s);",
+        cursor.execute("INSERT INTO mouse (scored_dir, birthdate, genotype, sex) VALUES (%s, %s, %s, %s);",
                        (self.eartag, self.birthdate, util.encode_genotype(self.genotype), self.sex))
 
     def save_to_db(self, testing=False, postgresql=None):
 
         # TODO: apply this format to all public methods
-        #   def save_to_db_main(eartag, a_cursor):
-        #       if eartag not in list_all_mice(a_cursor):
+        #   def save_to_db_main(scored_dir, a_cursor):
+        #       if scored_dir not in list_all_mice(a_cursor):
         #           self.__save_to_db(a_cursor)
-        #       return self.__from_db(a_cursor, eartag)
+        #       return self.__from_db(a_cursor, scored_dir)
         def save_to_db_main(eartag, a_cursor):
             if eartag not in list_all_mice(a_cursor):
                 self.__save_to_db(a_cursor)

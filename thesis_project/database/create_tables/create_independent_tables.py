@@ -1,11 +1,11 @@
 def create_mouse_table(a_cursor):
     a_cursor.execute("CREATE TABLE mouse("
                      "mouse_id  uuid default uuid_generate_v4() not null constraint mouse_pkey primary key,"
-                     "eartag    smallint                        not null,"
+                     "scored_dir    smallint                        not null,"
                      "birthdate date                            not null,"
                      "genotype  boolean                         not null,"
                      "sex       varchar(6)                      not null);")
-    a_cursor.execute("create unique index mouse_eartag_index on mouse (eartag);")
+    a_cursor.execute("create unique index mouse_eartag_index on mouse (scored_dir);")
 
 
 def create_experiments_table(a_cursor):
