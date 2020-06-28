@@ -31,10 +31,10 @@ class TestNewTrial(unittest.TestCase):
 
     def test_add_new_blind_trial(self):
         trial_dir = '/exp/two/trial/dir/9997/3'
-        trial = Trials.from_db(trial_dir)
+        trial = Trials.from_db(trial_dir, testing=True, postgresql=self.postgresql)
 
         reviewer_scored_dir = '/blind/review/reviewer_one/Scored'
-        reviewer = Reviewer.from_db(reviewer_scored_dir)
+        reviewer = Reviewer.from_db(reviewer_scored_dir, testing=True, postgresql=self.postgresql)
 
         len_string = 20
         blind_name = random_string_generator(len_string)
