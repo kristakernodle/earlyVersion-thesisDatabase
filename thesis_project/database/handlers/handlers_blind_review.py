@@ -24,7 +24,7 @@ def handler_seed_reviewers(postgresql):
             seed_br.seed_reviewers_table(cursor, reviewer[0], reviewer[1], reviewer[2], reviewer[3])
 
 
-def handler_create_blind_trial_table(postgresql):
+def handler_create_blind_trials_table(postgresql):
     with TestingCursor(postgresql) as cursor:
         cursor.execute("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";")
         create_id.create_mouse_table(cursor)

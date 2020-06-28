@@ -13,9 +13,16 @@ def tearDownModule():
     Postgresql.clear_cache()
 
 
-class MyTestCase(unittest.TestCase):
-    def test_something(self):
-        self.assertEqual(True, False)
+class TestNewTrial(unittest.TestCase):
+
+    def setUp(self):
+        self.postgresql = Postgresql()
+
+    def tearDown(self):
+        self.postgresql.stop()
+
+    def test_setUp_tearDown(self):
+        self.assertTrue(1)
 
 
 if __name__ == '__main__':
