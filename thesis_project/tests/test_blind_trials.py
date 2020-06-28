@@ -36,7 +36,7 @@ class TestNewTrial(unittest.TestCase):
         reviewer_scored_dir = '/blind/review/reviewer_one/Scored'
         reviewer = Reviewer.from_db(reviewer_scored_dir, testing=True, postgresql=self.postgresql)
 
-        len_string = 20
+        len_string = 10
         blind_name = random_string_generator(len_string)
 
         saved_blind_trial = BlindTrial(trial.trial_id,
