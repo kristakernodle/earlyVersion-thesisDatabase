@@ -38,6 +38,7 @@ def handler_create_blind_trials_table(postgresql):
 
 
 def handler_seed_blind_trials(postgresql):
+    all_blind_names = []
     handler_tr.handler_seed_trials(postgresql)
     handler_seed_reviewers(postgresql)
 
@@ -46,8 +47,10 @@ def handler_seed_blind_trials(postgresql):
         test_trials = cursor.fetchall()
 
         for trial in test_trials:
+            blind_name = af.random_string_generator(10)
             current_trial = Trials.from_db(trial[-2], testing=True, postgresql=postgresql)
             current_reviewer = random.choice(seed_reviewers)
             current_reviewer = Reviewer.from_db(current_reviewer[-1], testing=True, postgresql=postgresql)
-            seed_br.seed_blind_trials(cursor, current_trial.trial_id, current_reviewer.reviewer_id,
-                                      af.random_string_generator(10))
+            seed_br.seed_blind_trials(cursor, current_trial.trial_id, current_reviewer.reviewer_id, blind_name)
+            all_blind_names.append(tuple([current_trial.trial_id, current_reviewer.reviewer_id, blind_name]))
+    return all_blind_names

@@ -1,4 +1,5 @@
 import unittest
+import random
 import testing.postgresql as tpg
 
 from blind_review.blinded.common.auxiliary_functions import random_string_generator
@@ -17,7 +18,7 @@ def tearDownModule():
     Postgresql.clear_cache()
 
 
-class TestNewTrial(unittest.TestCase):
+class TestNewBlindTrial(unittest.TestCase):
 
     def setUp(self):
         self.postgresql = Postgresql()
@@ -47,6 +48,27 @@ class TestNewTrial(unittest.TestCase):
         self.assertEqual(reviewer.reviewer_id, saved_blind_trial.reviewer_id)
         self.assertEqual(blind_name, saved_blind_trial.blind_name)
         self.assertFalse(saved_blind_trial.blind_trial_id is None)
+
+
+class TestLoadBlindTrial(unittest.TestCase):
+
+    def setUp(self):
+        self.postgresql = Postgresql()
+        all_blind_names = handlers_bt.handler_seed_blind_trials(self.postgresql)
+        self.trial_id, self.reviewer_id, self.blind_name = random.choice(all_blind_names)
+
+    def tearDown(self):
+        self.postgresql.stop()
+
+    # @unittest.skip("Not currently testing")
+    def test_setUp_tearDown(self):
+        self.assertTrue(1)
+
+    def test_from_db(self):
+        test_blind_trial = BlindTrial.from_db(self.blind_name, testing=True, postgresql=self.postgresql)
+        self.assertEqual(self.trial_id, test_blind_trial.trial_id)
+        self.assertEqual(self.reviewer_id, test_blind_trial.reviewer_id)
+        self.assertFalse(test_blind_trial.blind_trial_id is None)
 
 
 if __name__ == '__main__':
