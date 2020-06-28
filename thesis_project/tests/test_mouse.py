@@ -70,9 +70,8 @@ class TestLoadDeleteMouse(unittest.TestCase):
     def test_delete_mouse(self):
         mouse_to_delete = Mouse.from_db(self.seed_tup[0], testing=True, postgresql=self.postgresql)
         mouse_to_delete.delete_from_db(testing=True, postgresql=self.postgresql)
-        with TestingCursor(self.postgresql) as cursor:
-            all_mice = list_all_mice(cursor)
-        self.assertFalse(self.seed_tup[0] in all_mice)
+        test_reload_mouse = Mouse.from_db(self.seed_tup[0], testing=True, postgresql=self.postgresql)
+        self.assertIsNone(test_reload_mouse)
 
 
 if __name__ == '__main__':
