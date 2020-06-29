@@ -43,7 +43,8 @@ class TestNewBlindTrial(unittest.TestCase):
         saved_blind_trial = BlindTrial(trial.trial_id,
                                        reviewer.reviewer_id,
                                        blind_name).save_to_db(testing=True, postgresql=self.postgresql)
-
+        print(trial)
+        print(saved_blind_trial)
         self.assertEqual(trial.trial_id, saved_blind_trial.trial_id)
         self.assertEqual(reviewer.reviewer_id, saved_blind_trial.reviewer_id)
         self.assertEqual(blind_name, saved_blind_trial.blind_name)
