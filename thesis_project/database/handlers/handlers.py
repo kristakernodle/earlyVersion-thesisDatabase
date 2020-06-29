@@ -1,6 +1,7 @@
 import random
 
 import database.create_database
+import database.create_database.create_view
 import database.seed_tables.seed_tables
 import utilities as utils
 from database.create_database import create_tables as create_tr
@@ -36,7 +37,7 @@ def handler_create_blind_trials_table(postgresql):
         database.create_database.create_tables.create_mouse_table(cursor)
         database.create_database.create_tables.create_experiments_table(cursor)
         create_tr.create_trials_table(cursor)
-        create_tr.create_view_all_participants_all_trials(cursor)
+        database.create_database.create_view.create_view_all_participants_all_trials(cursor)
         database.create_database.create_tables.create_reviewers_table(cursor)
         database.create_database.create_tables.create_blind_trials_table(cursor)
 
@@ -129,7 +130,7 @@ def handler_create_trials_table(postgresql):
         database.create_database.create_tables.create_mouse_table(cursor)
         database.create_database.create_tables.create_experiments_table(cursor)
         create_tr.create_trials_table(cursor)
-        create_tr.create_view_all_participants_all_trials(cursor)
+        database.create_database.create_view.create_view_all_participants_all_trials(cursor)
 
 
 def handler_seed_trials(postgresql):
