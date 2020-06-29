@@ -74,7 +74,7 @@ class TestPrepStringForDB(unittest.TestCase):
         for string in strings_to_test:
             self.assertEqual("skilled-reaching", utilities.prep_string_for_db(string))
 
-    def test_dash_skilledreaching(self):
+    def test_slash_skilledreaching(self):
         strings_to_test = ["skilled/reaching", "Skilled/Reaching", "Skilled/reaching", "skilled/Reaching"]
         for string in strings_to_test:
             self.assertEqual("skilled-reaching", utilities.prep_string_for_db(string))
