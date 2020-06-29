@@ -2,7 +2,7 @@ import unittest
 import random
 import testing.postgresql as tpg
 
-from blind_review.blinded.common.auxiliary_functions import random_string_generator
+from utilities import random_string_generator
 
 from models.blind_trials import BlindTrial
 from models.reviewer import Reviewer
@@ -27,6 +27,7 @@ class TestNewBlindTrial(unittest.TestCase):
     def tearDown(self):
         self.postgresql.stop()
 
+    @unittest.skip("Not currently testing")
     def test_setUp_tearDown(self):
         self.assertTrue(1)
 
@@ -61,7 +62,7 @@ class TestLoadBlindTrial(unittest.TestCase):
     def tearDown(self):
         self.postgresql.stop()
 
-    # @unittest.skip("Not currently testing")
+    @unittest.skip("Not currently testing")
     def test_setUp_tearDown(self):
         self.assertTrue(1)
 
