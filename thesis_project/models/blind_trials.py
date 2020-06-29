@@ -1,4 +1,4 @@
-from blind_review.blinded.common.auxiliary_functions import random_string_generator
+from utilities import random_string_generator
 
 from database.cursors import TestingCursor, Cursor
 

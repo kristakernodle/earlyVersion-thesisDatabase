@@ -1,8 +1,20 @@
 import datetime
+import random
 import re
+import string
 
 
 # TODO: Linter for numbers
+
+def random_string_generator(len_string=10):
+    """Generates a random string of length len_string.
+    String will contain only lowercase letters and digits.
+    :param len_string: length of returned string (default 10)
+    :return: string of length len_string
+    """
+
+    lowercase_letters_and_digits = list(string.ascii_lowercase + string.digits)
+    return ''.join(random.choices(lowercase_letters_and_digits, weights=None, k=len_string))
 
 
 def convert_date_int_yyyymmdd(int_yyyymmdd):
@@ -36,7 +48,7 @@ def encode_genotype(genotype):
 
 def prep_string_for_db(instring):
     instring_lower = instring.lower()
-    split_string = re.split('_|-|/| ', instring_lower)
+    split_string = re.split('[_\-/ ]', instring_lower)
     joined_string = "-".join(split_string)
     return joined_string
 

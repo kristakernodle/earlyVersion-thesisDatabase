@@ -2,7 +2,7 @@ import random
 
 from models.trials import Trials
 from models.reviewer import Reviewer
-from blind_review.blinded.common import auxiliary_functions as af
+from utilities import random_string_generator
 
 from database.cursors import TestingCursor
 import database.create_tables.create_independent_tables as create_id
@@ -47,7 +47,7 @@ def handler_seed_blind_trials(postgresql):
         test_trials = cursor.fetchall()
 
         for trial in test_trials:
-            blind_name = af.random_string_generator(10)
+            blind_name = random_string_generator(10)
             current_trial = Trials.from_db(trial[-2], testing=True, postgresql=postgresql)
             current_reviewer = random.choice(seed_reviewers)
             current_reviewer = Reviewer.from_db(current_reviewer[-1], testing=True, postgresql=postgresql)
