@@ -1,6 +1,7 @@
-import unittest
-import utilities
 import datetime
+import unittest
+
+import utilities
 
 
 class TestConvertDateYYYYMMDD(unittest.TestCase):

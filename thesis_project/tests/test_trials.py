@@ -1,18 +1,17 @@
-import unittest
-import testing.postgresql as tpg
 import random
+import unittest
 
+import testing.postgresql as tpg
+
+import database.handlers.handlers
+import database.seed_tables.seeds as seeds
 import utilities as utils
-from models.mouse import Mouse
 from models.experiments import Experiments
+from models.mouse import Mouse
 from models.trials import Trials
 
-import database.handlers.handlers_trials as handlers_tr
-import database.handlers.handlers_independent_tables as handlers_id
-import database.seed_tables.seeds as seeds
-
 Postgresql = tpg.PostgresqlFactory(cache_initialized_db=True,
-                                   on_initialized=handlers_tr.handler_create_trials_table)
+                                   on_initialized=database.handlers.handlers.handler_create_trials_table)
 
 
 def tearDownModule():
@@ -23,7 +22,7 @@ class TestNewTrial(unittest.TestCase):
 
     def setUp(self):
         self.postgresql = Postgresql()
-        handlers_id.handler_seed_mouse_experiments(self.postgresql)
+        database.handlers.handlers.handler_seed_mouse_experiments(self.postgresql)
         self.test_trial_key = random.choice(list(seeds.test_trial_table_seed.keys()))
         self.test_trial_one_date = random.choice(seeds.test_trial_table_seed[self.test_trial_key])
 
@@ -48,7 +47,7 @@ class TestLoadTrial(unittest.TestCase):
 
     def setUp(self):
         self.postgresql = Postgresql()
-        handlers_tr.handler_seed_trials(self.postgresql)
+        database.handlers.handlers.handler_seed_trials(self.postgresql)
 
         self.trial_key = random.choice(list(seeds.test_trial_table_seed.keys()))
         self.eartag, self.experiment_name = self.trial_key
@@ -74,7 +73,7 @@ class TestListTrials(unittest.TestCase):
 
     def setUp(self):
         self.postgresql = Postgresql()
-        handlers_tr.handler_seed_trials(self.postgresql)
+        database.handlers.handlers.handler_seed_trials(self.postgresql)
 
         self.trial_key = random.choice(list(seeds.test_trial_table_seed.keys()))
         self.eartag, self.experiment_name = self.trial_key

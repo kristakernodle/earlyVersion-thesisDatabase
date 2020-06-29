@@ -1,0 +1,9 @@
+def create_view_all_participants_all_experiments(a_cursor):
+    a_cursor.execute(
+        "CREATE VIEW all_participants_all_experiments "
+        "   (mouse_id, experiment_id, detail_id, scored_dir, experiment_name, start_date, end_date) AS "
+        "SELECT mouse.mouse_id, experiments.experiment_id, participant_details.detail_id, mouse.scored_dir, "
+        "   experiments.experiment_name, participant_details.start_date, participant_details.end_date "
+        "FROM participant_details "
+        "JOIN mouse ON mouse.mouse_id = participant_details.mouse_id "
+        "JOIN experiments ON experiments.experiment_id = participant_details.experiment_id;")

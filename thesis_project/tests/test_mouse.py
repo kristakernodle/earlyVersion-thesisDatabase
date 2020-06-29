@@ -1,17 +1,16 @@
 import unittest
 import testing.postgresql as tpg
 
-import database.handlers.handlers_independent_tables
-import database.seed_tables.seed_independent_tables
 import utilities as util
+from models.mouse import Mouse
 
+import database.handlers.handlers
+import database.seed_tables.seed_tables
 from database.seed_tables.seeds import test_mouse_table_seed
-from database.cursors import TestingCursor
-from models.mouse import Mouse, list_all_mice
 
 mice_seed = set(test_mouse_table_seed)
 Postgresql = tpg.PostgresqlFactory(cache_initialized_db=True,
-                                   on_initialized=database.handlers.handlers_independent_tables.handler_create_mouse_table)
+                                   on_initialized=database.handlers.handlers.handler_create_mouse_table)
 
 
 def tearDownModule():
@@ -51,7 +50,7 @@ class TestLoadDeleteMouse(unittest.TestCase):
 
     def setUp(self):
         self.postgresql = Postgresql()
-        database.handlers.handlers_independent_tables.handler_seed_mouse(self.postgresql)
+        database.handlers.handlers.handler_seed_mouse(self.postgresql)
 
     def tearDown(self):
         self.postgresql.stop()

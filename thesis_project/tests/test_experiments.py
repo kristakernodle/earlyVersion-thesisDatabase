@@ -1,18 +1,17 @@
 import unittest
+
 import testing.postgresql as tpg
 
-import utilities as util
-from models.experiments import Experiments, list_all_experiments
-
-from database.cursors import TestingCursor
-import database.handlers.handlers_independent_tables as handlers_id
-
+import database.handlers.handlers
 import database.seed_tables.seeds as seeds
+import utilities as util
+from database.cursors import TestingCursor
+from models.experiments import Experiments, list_all_experiments
 
 mice_seed = set(seeds.test_mouse_table_seed)
 experiment_seed = {seeds.exp_one, seeds.exp_two}
 Postgresql = tpg.PostgresqlFactory(cache_initialized_db=True,
-                                   on_initialized=handlers_id.handler_create_experiments_table)
+                                   on_initialized=database.handlers.handlers.handler_create_experiments_table)
 
 
 def tearDownModule():
@@ -51,7 +50,7 @@ class TestLoadExperiment(unittest.TestCase):
 
     def setUp(self):
         self.postgresql = Postgresql()
-        handlers_id.handler_seed_experiments(self.postgresql)
+        database.handlers.handlers.handler_seed_experiments(self.postgresql)
 
     def tearDown(self):
         self.postgresql.stop()
@@ -78,7 +77,7 @@ class TestDeleteExperiment(unittest.TestCase):
 
     def setUp(self):
         self.postgresql = Postgresql()
-        handlers_id.handler_seed_experiments(self.postgresql)
+        database.handlers.handlers.handler_seed_experiments(self.postgresql)
 
     def tearDown(self):
         self.postgresql.stop()
@@ -99,7 +98,7 @@ class TestUpdateExperiment(unittest.TestCase):
 
     def setUp(self):
         self.postgresql = Postgresql()
-        handlers_id.handler_seed_experiments(self.postgresql)
+        database.handlers.handlers.handler_seed_experiments(self.postgresql)
         self.seed_tup = {seeds.exp_one, seeds.exp_two}.pop()
 
     def tearDown(self):

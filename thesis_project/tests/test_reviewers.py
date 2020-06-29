@@ -1,14 +1,13 @@
 import unittest
+
 import testing.postgresql as tpg
 
-import database.handlers.handlers_blind_review as handlers_br
-from database.cursors import TestingCursor
-
+import database.handlers.handlers
 from database.seed_tables.seeds import test_blind_review_reviewers_seed as reviewer_seed
-from models.reviewer import Reviewer, list_all_scored_dirs
+from models.reviewer import Reviewer
 
 Postgresql = tpg.PostgresqlFactory(cache_initialized_db=True,
-                                   on_initialized=handlers_br.handler_create_reviewers_table)
+                                   on_initialized=database.handlers.handlers.handler_create_reviewers_table)
 
 
 def tearDownModule():
@@ -47,7 +46,7 @@ class TestLoadDeleteReviewer(unittest.TestCase):
 
     def setUp(self):
         self.postgresql = Postgresql()
-        handlers_br.handler_seed_reviewers(self.postgresql)
+        database.handlers.handlers.handler_seed_reviewers(self.postgresql)
 
     def tearDown(self):
         self.postgresql.stop()

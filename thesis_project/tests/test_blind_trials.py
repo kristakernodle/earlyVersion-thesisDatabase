@@ -1,17 +1,17 @@
-import unittest
 import random
+import unittest
+
 import testing.postgresql as tpg
 
-from utilities import random_string_generator
-
+import database.handlers.handlers
+import database.handlers.handlers
 from models.blind_trials import BlindTrial
 from models.reviewer import Reviewer
 from models.trials import Trials
-
-import database.handlers.handlers_blind_review as handlers_bt
+from utilities import random_string_generator
 
 Postgresql = tpg.PostgresqlFactory(cache_initialized_db=True,
-                                   on_initialized=handlers_bt.handler_create_blind_trials_table)
+                                   on_initialized=database.handlers.handlers.handler_create_blind_trials_table)
 
 
 def tearDownModule():
@@ -22,7 +22,7 @@ class TestNewBlindTrial(unittest.TestCase):
 
     def setUp(self):
         self.postgresql = Postgresql()
-        handlers_bt.handler_seed_blind_trials(self.postgresql)
+        database.handlers.handlers.handler_seed_blind_trials(self.postgresql)
 
     def tearDown(self):
         self.postgresql.stop()
@@ -56,7 +56,7 @@ class TestLoadBlindTrial(unittest.TestCase):
 
     def setUp(self):
         self.postgresql = Postgresql()
-        all_blind_names = handlers_bt.handler_seed_blind_trials(self.postgresql)
+        all_blind_names = database.handlers.handlers.handler_seed_blind_trials(self.postgresql)
         self.trial_id, self.reviewer_id, self.blind_name = random.choice(all_blind_names)
 
     def tearDown(self):

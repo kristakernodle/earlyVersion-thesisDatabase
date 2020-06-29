@@ -1,19 +1,17 @@
 import unittest
+
 import testing.postgresql as tpg
 
-from models.mouse import Mouse
-from models.experiments import Experiments
-from models.participant_details import ParticipantDetails
-
-import database.handlers.handlers_independent_tables as handlers_id
-import database.handlers.handlers_participant_details as handlers_pd
-
+import database.handlers.handlers
 import database.seed_tables.seeds as seeds
+from models.experiments import Experiments
+from models.mouse import Mouse
+from models.participant_details import ParticipantDetails
 
 mice_seed = set(seeds.test_mouse_table_seed)
 experiment_seed = {seeds.exp_one, seeds.exp_two}
 Postgresql = tpg.PostgresqlFactory(cache_initialized_db=True,
-                                   on_initialized=handlers_pd.handler_create_participant_details)
+                                   on_initialized=database.handlers.handlers.handler_create_participant_details)
 
 
 def tearDownModule():
@@ -25,7 +23,7 @@ class TestNewParticipantDetails(unittest.TestCase):
 
     def setUp(self):
         self.postgresql = Postgresql()
-        handlers_id.handler_seed_mouse_experiments(self.postgresql)
+        database.handlers.handlers.handler_seed_mouse_experiments(self.postgresql)
 
     def tearDown(self):
         self.postgresql.stop()
@@ -49,7 +47,7 @@ class TestLoadParticipantDetails(unittest.TestCase):
 
     def setUp(self):
         self.postgresql = Postgresql()
-        handlers_pd.handler_seed_participant_details(self.postgresql)
+        database.handlers.handlers.handler_seed_participant_details(self.postgresql)
 
     def tearDown(self):
         self.postgresql.stop()
@@ -73,7 +71,7 @@ class TestListParticipants(unittest.TestCase):
 
     def setUp(self):
         self.postgresql = Postgresql()
-        handlers_pd.handler_seed_participant_details(self.postgresql)
+        database.handlers.handlers.handler_seed_participant_details(self.postgresql)
 
     def tearDown(self):
         self.postgresql.stop()
@@ -98,7 +96,7 @@ class TestUpdateParticipant(unittest.TestCase):
 
     def setUp(self):
         self.postgresql = Postgresql()
-        handlers_pd.handler_seed_participant_details(self.postgresql)
+        database.handlers.handlers.handler_seed_participant_details(self.postgresql)
         self.seed_mouse = mice_seed.pop()
 
     def tearDown(self):
