@@ -10,7 +10,7 @@ from database.seed_tables.seeds import test_blind_review_reviewers_seed as seed_
 import utilities as utils
 from models.experiments import Experiments
 from models.mouse import list_all_mice, Mouse
-from models.reviewer import Reviewer
+from models.reviewers import Reviewer
 from models.trials import Trials
 
 

@@ -4,7 +4,7 @@ import testing.postgresql as tpg
 
 import database.handlers.handlers
 from database.seed_tables.seeds import test_blind_review_reviewers_seed as reviewer_seed
-from models.reviewer import Reviewer
+from models.reviewers import Reviewer
 
 Postgresql = tpg.PostgresqlFactory(cache_initialized_db=True,
                                    on_initialized=database.handlers.handlers.handler_create_reviewers_table)

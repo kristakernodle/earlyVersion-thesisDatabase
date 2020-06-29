@@ -5,6 +5,7 @@ import random
 import database.handlers.handlers
 import database.seed_tables.seeds as seeds
 
+import utilities as utils
 from models.mouse import Mouse
 from models.experiments import Experiments
 from models.sessions import Session
@@ -23,7 +24,8 @@ class TestNewSession(unittest.TestCase):
         self.postgresql = Postgresql()
         database.handlers.handlers.handler_seed_sessions_table(self.postgresql)
         self.test_session_key = random.choice(list(seeds.test_trial_table_seed.keys()))
-        self.test_session_one_date = random.choice(seeds.test_trial_table_seed[self.test_session_key])
+        self.test_session_date, self.test_session_dir = random.choice(
+            seeds.test_trial_table_seed[self.test_session_key])
 
     def tearDown(self):
         self.postgresql.stop()
@@ -34,9 +36,9 @@ class TestNewSession(unittest.TestCase):
     def test_add_new_session(self):
         mouse = Mouse.from_db(self.test_session_key[0], testing=True, postgresql=self.postgresql)
         experiment = Experiments.from_db(self.test_session_key[1], testing=True, postgresql=self.postgresql)
-        saved_session = Session(mouse, experiment, self.test_session_one_date[1],
-                                self.test_session_one_date[0]).save_to_db(testing=True, postgresql=self.postgresql)
-        self.assertFalse(saved_session.trial_id is None)
+        saved_session = Session(mouse, experiment, self.test_session_date,
+                                self.test_session_dir).save_to_db(testing=True, postgresql=self.postgresql)
+        self.assertFalse(saved_session.session_id is None)
         self.assertTrue(mouse == saved_session.mouse)
         self.assertTrue(experiment == saved_session.experiment)
 
