@@ -66,9 +66,8 @@ class TestLoadDeleteReviewer(unittest.TestCase):
     def test_delete_reviewer(self):
         reviewer_to_delete = Reviewer.from_db(self.seed_tup[-1], testing=True, postgresql=self.postgresql)
         reviewer_to_delete.delete_from_db(testing=True, postgresql=self.postgresql)
-        with TestingCursor(self.postgresql) as cursor:
-            all_scored_dirs = list_all_scored_dirs(cursor)
-        self.assertFalse(self.seed_tup[-1] in all_scored_dirs)
+        reload_reviewer = Reviewer.from_db(self.seed_tup[-1], testing=True, postgresql=self.postgresql)
+        self.assertIsNone(reload_reviewer)
 
 
 if __name__ == '__main__':

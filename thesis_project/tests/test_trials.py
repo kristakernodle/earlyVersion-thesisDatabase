@@ -64,14 +64,10 @@ class TestLoadTrial(unittest.TestCase):
     def test_from_db(self):
         test_trial = Trials.from_db(self.trial_dir, testing=True, postgresql=self.postgresql)
         self.assertFalse(test_trial.trial_id is None)
-        # TODO: For curiosity sake -- can I not compare equality for datetime.datetime() types?
-        #   see below for exact implementation. I ended up having to test difference (not equal)
         self.assertFalse(utils.convert_date_int_yyyymmdd(self.trial_date) != test_trial.trial_date)
         self.assertTrue(Experiments.from_db(self.experiment_name,
-                                            testing=True, postgresql=self.postgresql)
-                        .experiment_id == test_trial.experiment.experiment_id)
-        self.assertTrue(Mouse.from_db(self.eartag, testing=True, postgresql=self.postgresql)
-                        .mouse_id == test_trial.mouse.mouse_id)
+                                            testing=True, postgresql=self.postgresql) == test_trial.experiment)
+        self.assertTrue(Mouse.from_db(self.eartag, testing=True, postgresql=self.postgresql) == test_trial.mouse)
 
 
 class TestListTrials(unittest.TestCase):
