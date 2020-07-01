@@ -4,7 +4,7 @@ import testing.postgresql as tpg
 
 import database.handlers.handlers
 from database.seed_tables.seeds import test_blind_review_reviewers_seed as reviewer_seed
-from models.reviewers import Reviewer
+from models.reviewer import Reviewer
 
 Postgresql = tpg.PostgresqlFactory(cache_initialized_db=True,
                                    on_initialized=database.handlers.handlers.handler_create_reviewers_table)
@@ -46,7 +46,7 @@ class TestLoadDeleteReviewer(unittest.TestCase):
 
     def setUp(self):
         self.postgresql = Postgresql()
-        database.handlers.handlers.handler_seed_reviewers_table(self.postgresql)
+        database.handlers.handlers.handler_seed_reviewers(self.postgresql)
 
     def tearDown(self):
         self.postgresql.stop()

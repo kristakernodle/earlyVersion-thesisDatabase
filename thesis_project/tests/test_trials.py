@@ -22,8 +22,7 @@ class TestNewTrial(unittest.TestCase):
 
     def setUp(self):
         self.postgresql = Postgresql()
-        database.handlers.handlers.handler_seed_mouse(self.postgresql)
-        database.handlers.handlers.handler_seed_experiments(self.postgresql)
+        database.handlers.handlers.handler_seed_mouse_experiments(self.postgresql)
         self.test_trial_key = random.choice(list(seeds.test_trial_table_seed.keys()))
         self.test_trial_one_date = random.choice(seeds.test_trial_table_seed[self.test_trial_key])
 
@@ -48,7 +47,7 @@ class TestLoadTrial(unittest.TestCase):
 
     def setUp(self):
         self.postgresql = Postgresql()
-        database.handlers.handlers.handler_seed_trials_table(self.postgresql)
+        database.handlers.handlers.handler_seed_trials(self.postgresql)
 
         self.trial_key = random.choice(list(seeds.test_trial_table_seed.keys()))
         self.eartag, self.experiment_name = self.trial_key
@@ -74,7 +73,7 @@ class TestListTrials(unittest.TestCase):
 
     def setUp(self):
         self.postgresql = Postgresql()
-        database.handlers.handlers.handler_seed_trials_table(self.postgresql)
+        database.handlers.handlers.handler_seed_trials(self.postgresql)
 
         self.trial_key = random.choice(list(seeds.test_trial_table_seed.keys()))
         self.eartag, self.experiment_name = self.trial_key
