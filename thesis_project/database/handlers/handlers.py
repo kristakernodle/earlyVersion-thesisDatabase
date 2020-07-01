@@ -4,7 +4,8 @@ import database.create_database.create_tables
 import database.create_database.create_views
 from database.cursors import TestingCursor
 import database.seed_tables.seed_tables
-from database.seed_tables.seeds import test_blind_review_reviewers_seed as seed_reviewers, \
+from database.seed_tables.seeds import test_mouse_table_seed as seed_mouse, \
+    exp_one, exp_two, test_blind_review_reviewers_seed as seed_reviewers, \
     test_mouse_table_seed as mouse_seed, test_trial_table_seed as trial_seed
 
 import utilities as utils
@@ -22,9 +23,12 @@ def handler_create_mouse_table(postgresql):
 
 
 def handler_seed_mouse(postgresql):
-    with TestingCursor(postgresql) as cursor:
-        cursor.execute("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";")
-        database.seed_tables.seed_tables.seed_mouse_table(cursor)
+    for mouse in seed_mouse:
+        genotype = utils.encode_genotype(mouse[2])
+        sex = utils.prep_string_for_db(mouse[3])
+        with TestingCursor(postgresql) as cursor:
+            cursor.execute("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";")
+            database.seed_tables.seed_tables.seed_mouse_table(cursor, mouse[0], mouse[1], genotype, sex)
 
 
 # EXPERIMENTS TABLE
@@ -35,20 +39,10 @@ def handler_create_experiments_table(postgresql):
 
 
 def handler_seed_experiments(postgresql):
+    prepped_exp_one = (utils.prep_string_for_db(exp_one[0]), exp_one[1])
+    prepped_exp_two = (utils.prep_string_for_db(exp_two[0]), exp_two[1])
     with TestingCursor(postgresql) as cursor:
-        database.seed_tables.seed_tables.seed_experiments_table(cursor)
-
-
-# def handler_create_mouse_experiments_tables(postgresql):
-#     with TestingCursor(postgresql) as cursor:
-#         cursor.execute("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";")
-#         database.create_database.create_tables.create_mouse_table(cursor)
-#         database.create_database.create_tables.create_experiments_table(cursor)
-
-# def handler_seed_mouse_experiments(postgresql):
-#     with TestingCursor(postgresql) as cursor:
-#         database.seed_tables.seed_tables.seed_mouse_table(cursor)
-#         database.seed_tables.seed_tables.seed_experiments_table(cursor)
+        database.seed_tables.seed_tables.seed_experiments_table(cursor, prepped_exp_one, prepped_exp_two)
 
 
 # PARTICIPANT DETAILS TABLE

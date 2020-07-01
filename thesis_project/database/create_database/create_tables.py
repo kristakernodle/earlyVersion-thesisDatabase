@@ -1,3 +1,5 @@
+
+
 def create_mouse_table(a_cursor):
     a_cursor.execute("CREATE TABLE mouse("
                      "mouse_id  uuid default uuid_generate_v4() not null constraint mouse_pkey primary key,"
