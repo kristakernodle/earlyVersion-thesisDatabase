@@ -20,47 +20,47 @@ test_mouse_table_seed = [(9990, birthdate2, 'wild type', 'male', True, 'test exp
 exp_one = ('test experiment one', '/test/directory/experiment/one')
 exp_two = ('test experiment two', '/test/directory/experiment/two')
 
-test_trial_table_seed = {(9990, 'test-experiment-one'):
-                             [(20200502, '/exp/one/trial/dir/9990/1'),
-                              (20200503, '/exp/one/trial/dir/9990/2'),
-                              (20200504, '/exp/one/trial/dir/9990/3')],
-                         (9991, 'test-experiment-two'):
-                             [(20200516, '/exp/two/trial/dir/9991/1'),
-                              (20200517, '/exp/two/trial/dir/9991/2'),
-                              (20200518, '/exp/two/trial/dir/9991/3')],
-                         (9992, 'test-experiment-one'):
-                             [(20200502, '/exp/one/trial/dir/9992/1'),
-                              (20200503, '/exp/one/trial/dir/9992/2'),
-                              (20200504, '/exp/one/trial/dir/9992/3')],
-                         (9993, 'test-experiment-two'):
-                             [(20200516, '/exp/two/trial/dir/9993/1'),
-                              (20200517, '/exp/two/trial/dir/9993/2'),
-                              (20200518, '/exp/two/trial/dir/9993/3')],
-                         (9994, 'test-experiment-one'):
-                             [(20200502, '/exp/one/trial/dir/9994/1'),
-                              (20200503, '/exp/one/trial/dir/9994/2'),
-                              (20200504, '/exp/one/trial/dir/9994/3')],
-                         (9995, 'test-experiment-two'):
-                             [(20200516, '/exp/two/trial/dir/9995/1'),
-                              (20200517, '/exp/two/trial/dir/9995/2'),
-                              (20200518, '/exp/two/trial/dir/9995/3')],
-                         (9996, 'test-experiment-one'):
-                             [(20200502, '/exp/one/trial/dir/9996/1'),
-                              (20200503, '/exp/one/trial/dir/9996/2'),
-                              (20200504, '/exp/one/trial/dir/9996/3')],
-                         (9997, 'test-experiment-two'):
-                             [(20200516, '/exp/two/trial/dir/9997/1'),
-                              (20200517, '/exp/two/trial/dir/9997/2'),
-                              (20200518, '/exp/two/trial/dir/9997/3')],
-                         (9998, 'test-experiment-one'):
-                             [(20200502, '/exp/one/trial/dir/9998/1'),
-                              (20200503, '/exp/one/trial/dir/9998/2'),
-                              (20200504, '/exp/one/trial/dir/9998/3')],
-                         (9999, 'test-experiment-two'):
-                             [(20200516, '/exp/two/trial/dir/9999/1'),
-                              (20200517, '/exp/two/trial/dir/9999/2'),
-                              (20200518, '/exp/two/trial/dir/9999/3')],
-                         }
+test_session_table_seed = {(9990, 'test-experiment-one'):
+                               [(20200502, '/exp/one/trial/dir/9990/Training/20200502'),
+                                (20200503, '/exp/one/trial/dir/9990/Training/20200503'),
+                                (20200504, '/exp/one/trial/dir/9990/Training/20200504')],
+                           (9991, 'test-experiment-two'):
+                               [(20200516, '/exp/two/trial/dir/9991/Training/20200516'),
+                                (20200517, '/exp/two/trial/dir/9991/Training/20200517'),
+                                (20200518, '/exp/two/trial/dir/9991/Training/20200518')],
+                           (9992, 'test-experiment-one'):
+                               [(20200502, '/exp/one/trial/dir/9992/Training/20200502'),
+                                (20200503, '/exp/one/trial/dir/9992/Training/20200503'),
+                                (20200504, '/exp/one/trial/dir/9992/Training/20200504')],
+                           (9993, 'test-experiment-two'):
+                               [(20200516, '/exp/two/trial/dir/9993/Training/20200516'),
+                                (20200517, '/exp/two/trial/dir/9993/Training/20200517'),
+                                (20200518, '/exp/two/trial/dir/9993/Training/20200517')],
+                           (9994, 'test-experiment-one'):
+                               [(20200502, '/exp/one/trial/dir/9994/Training/20200502'),
+                                (20200503, '/exp/one/trial/dir/9994/Training/20200503'),
+                                (20200504, '/exp/one/trial/dir/9994/Training/20200504')],
+                           (9995, 'test-experiment-two'):
+                               [(20200516, '/exp/two/trial/dir/9995/Training/20200516'),
+                                (20200517, '/exp/two/trial/dir/9995/Training/20200517'),
+                                (20200518, '/exp/two/trial/dir/9995/Training/20200518')],
+                           (9996, 'test-experiment-one'):
+                               [(20200502, '/exp/one/trial/dir/9996/Training/20200502'),
+                                (20200503, '/exp/one/trial/dir/9996/Training/20200503'),
+                                (20200504, '/exp/one/trial/dir/9996/Training/20200504')],
+                           (9997, 'test-experiment-two'):
+                               [(20200516, '/exp/two/trial/dir/9997/Training/20200516'),
+                                (20200517, '/exp/two/trial/dir/9997/Training/20200517'),
+                                (20200518, '/exp/two/trial/dir/9997/Training/20200518')],
+                           (9998, 'test-experiment-one'):
+                               [(20200502, '/exp/one/trial/dir/9998/Training/20200502'),
+                                (20200503, '/exp/one/trial/dir/9998/Training/20200503'),
+                                (20200504, '/exp/one/trial/dir/9998/Training/20200504')],
+                           (9999, 'test-experiment-two'):
+                               [(20200516, '/exp/two/trial/dir/9999/Training/20200516'),
+                                (20200517, '/exp/two/trial/dir/9999/Training/20200517'),
+                                (20200518, '/exp/two/trial/dir/9999/Training/20200518')],
+                           }
 
 test_blind_review_reviewers_seed = [
     ('reviewer', 'one', '/blind/review/reviewer_one/toScore', '/blind/review/reviewer_one/Scored'),
