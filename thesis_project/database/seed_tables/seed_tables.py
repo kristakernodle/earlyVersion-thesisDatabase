@@ -20,9 +20,9 @@ def seed_experiments_table(a_cursor):
     a_cursor.execute("INSERT INTO experiments (experiment_name, experiment_dir) VALUES (%s, %s);", prepped_exp_two)
 
 
-def seed_participant_details(cursor, mouse_id, experiment_id, start_date, end_date):
-    cursor.execute("INSERT INTO participant_details (mouse_id, experiment_id, start_date, end_date) "
-                   "VALUES (%s, %s, %s, %s);", (mouse_id, experiment_id, start_date, end_date))
+def seed_participant_details(a_cursor, mouse_id, experiment_id, start_date, end_date):
+    a_cursor.execute("INSERT INTO participant_details (mouse_id, experiment_id, start_date, end_date) "
+                     "VALUES (%s, %s, %s, %s);", (mouse_id, experiment_id, start_date, end_date))
 
 
 def seed_reviewers_table(cursor, first_name, last_name, toScore_dir, scored_dir):
@@ -35,11 +35,21 @@ def seed_sessions_table(cursor, mouse_id, experiment_id, session_date, session_d
                    "VALUES (%s, %s, %s, %s);", (mouse_id, experiment_id, session_date, session_dir))
 
 
-def seed_trials_table(cursor, mouse_id, experiment_id, trial_date, trial_dir):
-    cursor.execute("INSERT INTO trials (experiment_id, mouse_id, trial_dir, trial_date) "
-                   "VALUES (%s, %s, %s, %s);", (experiment_id, mouse_id, trial_dir, trial_date))
+def seed_folders_table(cursor, folder_id, session_id, folder_dir):
+    cursor.execute("INSERT INTO folders (folder_id, session_id, folder_dir) "
+                   "VALUES (%s, %s, %s);", (folder_id, session_id, folder_dir))
 
 
-def seed_blind_trials_table(cursor, trial_id, reviewer_id, blind_name):
-    cursor.execute("INSERT INTO blind_trials (trial_id, reviewer_id, blind_name) "
-                   "VALUES (%s, %s, %s);", (trial_id, reviewer_id, blind_name))
+def seed_blind_folders_table(cursor, blind_folder_id, folder_id, reviewer_id, blind_name):
+    cursor.execute("INSERT INTO blind_folders (blind_folder_id, folder_id, reviewer_id, blind_name) "
+                   "VALUES (%s, %s, %s, %s);", (blind_folder_id, folder_id, reviewer_id, blind_name))
+
+
+def seed_trials_table(cursor, session_id, experiment_id, trial_date, trial_dir):
+    cursor.execute("INSERT INTO trials (experiment_id, session_id, trial_dir, trial_date) "
+                   "VALUES (%s, %s, %s, %s);", (experiment_id, session_id, trial_dir, trial_date))
+
+
+def seed_blind_trials_table(cursor, blind_trial_id, trial_id, folder_id, full_path):
+    cursor.execute("INSERT INTO blind_trials (blind_trial_id, trial_id, folder_id, full_path) "
+                   "VALUES (%s, %s, %s, %s);", (blind_trial_id, trial_id, folder_id, full_path))
