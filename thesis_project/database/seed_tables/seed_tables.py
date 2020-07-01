@@ -35,7 +35,7 @@ def seed_blind_folders_table(cursor, folder_id, reviewer_id, blind_name):
                    "VALUES (%s, %s, %s);", (folder_id, reviewer_id, blind_name))
 
 
-def seed_trials_table(cursor, session_id, experiment_id, trial_date, trial_dir):
+def seed_trials_table(cursor, experiment_id, session_id, trial_date, trial_dir):
     cursor.execute("INSERT INTO trials (experiment_id, session_id, trial_dir, trial_date) "
                    "VALUES (%s, %s, %s, %s);", (experiment_id, session_id, trial_dir, trial_date))
 

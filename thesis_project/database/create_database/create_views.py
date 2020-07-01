@@ -18,3 +18,11 @@ def create_view_all_participants_all_trials(a_cursor):
         "FROM trials "
         "JOIN mouse on mouse.mouse_id = trials.mouse_id "
         "JOIN experiments on experiments.experiment_id = trials.experiment_id;")
+
+
+def create_view_folder_details(a_cursor):
+    a_cursor.execute(
+        "CREATE VIEW folder_details "
+        " (sessions.mouse_id, sessions.experiment_id, sessions.session_date folders.folder_id, folders.folder_dir) "
+        "FROM folders "
+        "JOIN session on session.experiment_id, session.session_date;")
