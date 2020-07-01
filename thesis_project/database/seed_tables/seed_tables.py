@@ -25,14 +25,14 @@ def seed_sessions_table(cursor, mouse_id, experiment_id, session_date, session_d
                    "VALUES (%s, %s, %s, %s);", (mouse_id, experiment_id, session_date, session_dir))
 
 
-def seed_folders_table(cursor, folder_id, session_id, folder_dir):
-    cursor.execute("INSERT INTO folders (folder_id, session_id, folder_dir) "
-                   "VALUES (%s, %s, %s);", (folder_id, session_id, folder_dir))
+def seed_folders_table(cursor, session_id, folder_dir):
+    cursor.execute("INSERT INTO folders (session_id, folder_dir) "
+                   "VALUES (%s, %s);", (session_id, folder_dir))
 
 
-def seed_blind_folders_table(cursor, blind_folder_id, folder_id, reviewer_id, blind_name):
-    cursor.execute("INSERT INTO blind_folders (blind_folder_id, folder_id, reviewer_id, blind_name) "
-                   "VALUES (%s, %s, %s, %s);", (blind_folder_id, folder_id, reviewer_id, blind_name))
+def seed_blind_folders_table(cursor, folder_id, reviewer_id, blind_name):
+    cursor.execute("INSERT INTO blind_folders (folder_id, reviewer_id, blind_name) "
+                   "VALUES (%s, %s, %s);", (folder_id, reviewer_id, blind_name))
 
 
 def seed_trials_table(cursor, session_id, experiment_id, trial_date, trial_dir):
@@ -40,6 +40,6 @@ def seed_trials_table(cursor, session_id, experiment_id, trial_date, trial_dir):
                    "VALUES (%s, %s, %s, %s);", (experiment_id, session_id, trial_dir, trial_date))
 
 
-def seed_blind_trials_table(cursor, blind_trial_id, trial_id, folder_id, full_path):
-    cursor.execute("INSERT INTO blind_trials (blind_trial_id, trial_id, folder_id, full_path) "
-                   "VALUES (%s, %s, %s, %s);", (blind_trial_id, trial_id, folder_id, full_path))
+def seed_blind_trials_table(cursor, trial_id, folder_id, full_path):
+    cursor.execute("INSERT INTO blind_trials (trial_id, folder_id, full_path) "
+                   "VALUES (%s, %s, %s);", (trial_id, folder_id, full_path))
