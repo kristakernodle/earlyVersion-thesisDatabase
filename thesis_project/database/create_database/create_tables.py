@@ -55,14 +55,35 @@ def create_sessions_table(a_cursor):
                      "session_dir varchar(255) not null);")
 
 
+def create_folders_table(a_cursor):
+    a_cursor.execute("CREATE TABLE folders( "
+                     "folder_id uuid default uuid_generate_v4() not null "
+                     "  constraint folders_pkey primary key, "
+                     "session_id uuid not null "
+                     "  constraint folders_session_id_fkey references sessions, "
+                     "folder_dir varchar(255) not null);")
+
+
+def create_blind_folders_table(a_cursor):
+    a_cursor.execute("CREATE TABLE blind_folders( "
+                     "blind_folder_id uuid default uuid_generate_v4() not null "
+                     "  constraint blind_folders_pkey primary key, "
+                     "folder_id uuid not null "
+                     "  constraint blind_folders_folder_id_fkey references folders, "
+                     "reviewer_id uuid not null "
+                     "  constraint blind_folders_reviewer_id_fkey references reviewers, "
+                     "blind_name varchar(255) not null);")
+    a_cursor.execute("create unique index blind_name_index on blind_folders (blind_name);")
+
+
 def create_trials_table(a_cursor):
     a_cursor.execute("CREATE TABLE trials( "
                      "trial_id   uuid default uuid_generate_v4()     not null "
                      "    constraint trials_pkey primary key,"
                      "experiment_id uuid                                   not null "
                      "    constraint participant_details_experiments_id_fkey references experiments,"
-                     "mouse_id uuid                              not null"
-                     "    constraint participant_details_mouse_id_fkey references mouse,"
+                     "folder_id uuid                              not null"
+                     "    constraint participant_details_folder_id_fkey references folders,"
                      "trial_dir varchar(255),"
                      "trial_date date);")
     a_cursor.execute("create unique index trial_dir_index on trials (trial_dir);")
@@ -70,8 +91,9 @@ def create_trials_table(a_cursor):
 
 def create_blind_trials_table(a_cursor):
     a_cursor.execute("CREATE TABLE blind_folders( "
-                     "blind_trial_id   uuid default uuid_generate_v4() not null constraint trial_pkey primary key,"
-                     "trial_id uuid references trials not null,"
-                     "folder_id  uuid references folders not null,"
-                     "blind_name varchar(15) not null);")
-    a_cursor.execute("create unique index folders_blind_name_uindex on blind_folders (blind_name);")
+                     "blind_trial_id   uuid default uuid_generate_v4() not null "
+                     "  constraint trial_pkey primary key, "
+                     "trial_id uuid references trials not null, "
+                     "folder_id  uuid references folders not null, "
+                     "full_path varchar(15) not null);")
+    a_cursor.execute("create unique index blind_folders_full_path_uindex on blind_folders (full_path);")

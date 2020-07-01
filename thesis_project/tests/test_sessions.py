@@ -5,7 +5,6 @@ import random
 import database.handlers.handlers
 import database.seed_tables.seeds as seeds
 
-import utilities as utils
 from models.mouse import Mouse
 from models.experiments import Experiments
 from models.sessions import Session
