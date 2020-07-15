@@ -6,6 +6,12 @@ def list_all_scored_dirs(cursor):
     return list(item for tup in cursor.fetchall() for item in tup)
 
 
+# TODO: Testing - list all reviewer ids
+def list_all_reviewer_ids(cursor):
+    cursor.execute("SELECT reviewer_id FROM reviewers;")
+    return list(item for tup in cursor.fetchall() for item in tup)
+
+
 class Reviewer:
     def __init__(self, first_name, last_name, toScore_dir, scored_dir, reviewer_id=None):
         self.first_name = first_name
@@ -26,7 +32,7 @@ class Reviewer:
         return self.reviewer_id == compare_to.reviewer_id
 
     @classmethod
-    def __from_db(cls, cursor, scored_dir):
+    def __from_db_by_scored_dir(cls, cursor, scored_dir):
         cursor.execute("SELECT * FROM reviewers WHERE scored_dir = %s;", (scored_dir,))
         reviewer_data = cursor.fetchone()
         if reviewer_data is None:
@@ -36,13 +42,31 @@ class Reviewer:
                    scored_dir=reviewer_data[4], reviewer_id=reviewer_data[0])
 
     @classmethod
-    def from_db(cls, scored_dir, testing=False, postgresql=None):
-        if testing:
-            with TestingCursor(postgresql) as cursor:
-                return cls.__from_db(cursor, scored_dir)
-        else:
-            with Cursor() as cursor:
-                return cls.__from_db(cursor, scored_dir)
+    def __from_db_by_reviewer_id(cls, cursor, reviewer_id):
+        cursor.execute("SELECT * FROM reviewers WHERE reviewer_id = %s;", (reviewer_id,))
+        reviewer_data = cursor.fetchone()
+        if reviewer_data is None:
+            print(f"No reviewer in the database with ID {reviewer_id}")
+            return None
+        return cls(first_name=reviewer_data[1], last_name=reviewer_data[2], toScore_dir=reviewer_data[3],
+                   scored_dir=reviewer_data[4], reviewer_id=reviewer_data[0])
+
+    @classmethod
+    def from_db(cls, scored_dir=None, reviewer_id=None, testing=False, postgresql=None):
+        if reviewer_id is None:
+            if testing:
+                with TestingCursor(postgresql) as cursor:
+                    return cls.__from_db_by_scored_dir(cursor, scored_dir)
+            else:
+                with Cursor() as cursor:
+                    return cls.__from_db_by_scored_dir(cursor, scored_dir)
+        elif scored_dir is None:
+            if testing:
+                with TestingCursor(postgresql) as cursor:
+                    return cls.__from_db_by_reviewer_id(cursor, reviewer_id)
+            else:
+                with Cursor() as cursor:
+                    return cls.__from_db_by_reviewer_id(cursor, reviewer_id)
 
     def __save_to_db(self, cursor):
         cursor.execute("INSERT INTO reviewers (first_name, last_name, toScore_dir, scored_dir) "
@@ -53,7 +77,7 @@ class Reviewer:
         def save_to_db_main(scored_dir, a_cursor):
             if scored_dir not in list_all_scored_dirs(a_cursor):
                 self.__save_to_db(a_cursor)
-            return self.__from_db(a_cursor, scored_dir)
+            return self.__from_db_by_scored_dir(a_cursor, scored_dir)
 
         if testing:
             with TestingCursor(postgresql) as cursor:
