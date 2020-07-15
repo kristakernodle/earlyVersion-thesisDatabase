@@ -33,7 +33,7 @@ def create_view_trials_all_upstream_ids(a_cursor):
     a_cursor.execute(
         "CREATE VIEW trials_all_upstream_ids "
         "   (mouse_id, experiment_id, session_id, folder_id, trial_id) AS "
-        "SELECT mouse_id, experiment_id, sessoion_id, folder_id, trial_id "
-        "FROM trial "
-        "JOIN folders on folders.folder_id = trial.folder_id "
-        "JOIN sessions on sessions.session_id = folder.session_id;")
+        "SELECT mouse_id, trials.experiment_id, sessions.session_id, folders.folder_id, trial_id "
+        "FROM trials "
+        "JOIN folders on folders.folder_id = trials.folder_id "
+        "JOIN sessions on sessions.experiment_id = trials.experiment_id;")

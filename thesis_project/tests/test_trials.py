@@ -22,9 +22,8 @@ class TestNewTrial(unittest.TestCase):
 
     def setUp(self):
         self.postgresql = Postgresql()
-        database.handlers.handlers.handler_seed_mouse_experiments(self.postgresql)
-        self.test_trial_key = random.choice(list(seeds.test_trial_table_seed.keys()))
-        self.test_trial_one_date = random.choice(seeds.test_trial_table_seed[self.test_trial_key])
+        database.handlers.handlers.handler_create_trials_table(self.postgresql)
+        database.handlers.handlers.handler_seed_folders_table(self.postgresql)
 
     def tearDown(self):
         self.postgresql.stop()
@@ -34,64 +33,70 @@ class TestNewTrial(unittest.TestCase):
         self.assertTrue(1)
 
     def test_add_new_trial(self):
-        mouse = Mouse.from_db(self.test_trial_key[0], testing=True, postgresql=self.postgresql)
-        experiment = Experiments.from_db(self.test_trial_key[1], testing=True, postgresql=self.postgresql)
-        saved_trial = Trials(mouse, experiment, self.test_trial_one_date[1], self.test_trial_one_date[0]).save_to_db(
-            testing=True, postgresql=self.postgresql)
-        self.assertFalse(saved_trial.trial_id is None)
-        self.assertTrue(mouse == saved_trial.mouse)
-        self.assertTrue(experiment == saved_trial.experiment)
+        test_folder_dir = '/exp/two/dir/9993/20200516_S1/Reaches01'
+        test_trial = 'trial_2.txt'
 
+        trial_dir = '/'.join([test_folder_dir, test_trial])
 
-class TestLoadTrial(unittest.TestCase):
+        test_folder = Folder.from_db(folder_dir=test_folder_dir)
+        test_session = Session.from_db(test_folder.session_id)
+        test_trial = Trial(test_session.experiment_id, test_folder.folder_id, trial_dir, test_session.session_date)
 
-    def setUp(self):
-        self.postgresql = Postgresql()
-        database.handlers.handlers.handler_seed_trials(self.postgresql)
-
-        self.trial_key = random.choice(list(seeds.test_trial_table_seed.keys()))
-        self.eartag, self.experiment_name = self.trial_key
-        self.trial_date, self.trial_dir = random.choice(seeds.test_trial_table_seed[self.trial_key])
-
-    def tearDown(self):
-        self.postgresql.stop()
-
-    @unittest.skip("Not currently testing")
-    def test_setUp_tearDown(self):
-        self.assertTrue(1)
-
-    def test_from_db(self):
-        test_trial = Trials.from_db(self.trial_dir, testing=True, postgresql=self.postgresql)
+        self.assertEqual(test_session.experiment_id, test_trial.experiment_id)
+        self.assertEqual(test_folder.folder_id, test_trial.folder_id)
+        self.assertEqual(trial_dir, test_trial.trial_dir)
+        self.assertEqual(test_session.session_date, test_trial.trial_date)
         self.assertFalse(test_trial.trial_id is None)
-        self.assertFalse(utils.convert_date_int_yyyymmdd(self.trial_date) != test_trial.trial_date)
-        self.assertTrue(Experiments.from_db(self.experiment_name,
-                                            testing=True, postgresql=self.postgresql) == test_trial.experiment)
-        self.assertTrue(Mouse.from_db(self.eartag, testing=True, postgresql=self.postgresql) == test_trial.mouse)
-
-
-class TestListTrials(unittest.TestCase):
-
-    def setUp(self):
-        self.postgresql = Postgresql()
-        database.handlers.handlers.handler_seed_trials(self.postgresql)
-
-        self.trial_key = random.choice(list(seeds.test_trial_table_seed.keys()))
-        self.eartag, self.experiment_name = self.trial_key
-        self.trials_mouse_exp = seeds.test_trial_table_seed[self.trial_key]
-
-    def tearDown(self):
-        self.postgresql.stop()
-
-    @unittest.skip("Not currently testing")
-    def test_setUp_tearDown(self):
-        self.assertTrue(1)
-
-    def test_list_participants(self):
-        all_participants = Trials.list_participants(self.experiment_name, testing=True, postgresql=self.postgresql)
-        self.assertTrue(len(all_participants) == 5)
-        if 'one' in self.experiment_name:
-            for eartag in all_participants:
-                self.assertTrue((eartag % 2) == 0)
-        else:
-            for eartag in all_participants:
-                self.assertTrue((eartag % 2) != 0)
+#
+# class TestLoadTrial(unittest.TestCase):
+#
+#     def setUp(self):
+#         self.postgresql = Postgresql()
+#         database.handlers.handlers.handler_seed_trials(self.postgresql)
+#
+#         self.trial_key = random.choice(list(seeds.test_trial_table_seed.keys()))
+#         self.eartag, self.experiment_name = self.trial_key
+#         self.trial_date, self.trial_dir = random.choice(seeds.test_trial_table_seed[self.trial_key])
+#
+#     def tearDown(self):
+#         self.postgresql.stop()
+#
+#     @unittest.skip("Not currently testing")
+#     def test_setUp_tearDown(self):
+#         self.assertTrue(1)
+#
+#     def test_from_db(self):
+#         test_trial = Trials.from_db(self.trial_dir, testing=True, postgresql=self.postgresql)
+#         self.assertFalse(test_trial.trial_id is None)
+#         self.assertFalse(utils.convert_date_int_yyyymmdd(self.trial_date) != test_trial.trial_date)
+#         self.assertTrue(Experiments.from_db(self.experiment_name,
+#                                             testing=True, postgresql=self.postgresql) == test_trial.experiment)
+#         self.assertTrue(Mouse.from_db(self.eartag, testing=True, postgresql=self.postgresql) == test_trial.mouse)
+#
+#
+# class TestListTrials(unittest.TestCase):
+#
+#     def setUp(self):
+#         self.postgresql = Postgresql()
+#         database.handlers.handlers.handler_seed_trials(self.postgresql)
+#
+#         self.trial_key = random.choice(list(seeds.test_trial_table_seed.keys()))
+#         self.eartag, self.experiment_name = self.trial_key
+#         self.trials_mouse_exp = seeds.test_trial_table_seed[self.trial_key]
+#
+#     def tearDown(self):
+#         self.postgresql.stop()
+#
+#     @unittest.skip("Not currently testing")
+#     def test_setUp_tearDown(self):
+#         self.assertTrue(1)
+#
+#     def test_list_participants(self):
+#         all_participants = Trials.list_participants(self.experiment_name, testing=True, postgresql=self.postgresql)
+#         self.assertTrue(len(all_participants) == 5)
+#         if 'one' in self.experiment_name:
+#             for eartag in all_participants:
+#                 self.assertTrue((eartag % 2) == 0)
+#         else:
+#             for eartag in all_participants:
+#                 self.assertTrue((eartag % 2) != 0)
