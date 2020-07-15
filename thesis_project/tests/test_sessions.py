@@ -32,7 +32,7 @@ class TestNewSession(unittest.TestCase):
     def tearDown(self):
         self.postgresql.stop()
 
-    # @unittest.skip("Not currently testing")
+    @unittest.skip("Not currently testing")
     def test_setUp_tearDown(self):
         self.assertTrue(1)
 

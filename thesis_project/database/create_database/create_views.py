@@ -24,7 +24,7 @@ def create_view_folders_all_upstream_ids(a_cursor):
     a_cursor.execute(
         "CREATE VIEW folders_all_upstream_ids "
         "   (mouse_id, experiment_id, session_id, folder_id) AS "
-        "SELECT mouse_id, experiment_id, session_id, folder_id "
+        "SELECT mouse_id, sessions.experiment_id, sessions.session_id, folder_id "
         "FROM folders "
         "JOIN sessions on sessions.session_id = folders.session_id;")
 

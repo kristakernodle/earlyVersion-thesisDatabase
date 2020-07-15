@@ -65,13 +65,13 @@ class Session:
             with Cursor() as cursor:
                 return save_to_db_main(self.session_dir, cursor)
 
-    def __delete_from_db(self, cursor):
-        cursor.execute("DELETE FROM sessions WHERE session_id = %s", (self.session_id,))
-
-    def delete_from_db(self, testing=False, postgresql=None):
-        if testing:
-            with TestingCursor(postgresql) as cursor:
-                self.__delete_from_db(cursor)
-        else:
-            with Cursor() as cursor:
-                self.__delete_from_db(cursor)
+    # def __delete_from_db(self, cursor):
+    #     cursor.execute("DELETE FROM sessions WHERE session_id = %s", (self.session_id,))
+    #
+    # def delete_from_db(self, testing=False, postgresql=None):
+    #     if testing:
+    #         with TestingCursor(postgresql) as cursor:
+    #             self.__delete_from_db(cursor)
+    #     else:
+    #         with Cursor() as cursor:
+    #             self.__delete_from_db(cursor)

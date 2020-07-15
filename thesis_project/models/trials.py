@@ -4,7 +4,7 @@ from models.experiments import Experiments
 from database.cursors import TestingCursor, Cursor
 
 
-class Trials:
+class Trial:
 
     def __init__(self, mouse, experiment, trial_dir, trial_date, trial_id=None):
         self.mouse = mouse
