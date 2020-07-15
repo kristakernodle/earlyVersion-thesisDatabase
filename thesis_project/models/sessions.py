@@ -28,7 +28,17 @@ class Session:
         return self.session_id == compare_to.session_id
 
     @classmethod
-    def __from_db(cls, cursor, session_dir):
+    def __from_db_by_id(cls, cursor, session_id):
+        cursor.execute("SELECT * FROM sessions WHERE session_id = %s;", (session_id,))
+        session_data = cursor.fetchone()
+        if session_data is None:
+            print(f"No session in the database with session_id {session_id}")
+            return None
+        return cls(mouse_id=session_data[1], experiment_id=session_data[2], session_date=session_data[3],
+                   session_dir=session_data[4], session_id=session_data[0])
+
+    @classmethod
+    def __from_db_by_dir(cls, cursor, session_dir):
         cursor.execute("SELECT * FROM sessions WHERE session_dir = %s;", (session_dir,))
         session_data = cursor.fetchone()
         if session_data is None:
@@ -38,13 +48,21 @@ class Session:
                    session_dir=session_data[4], session_id=session_data[0])
 
     @classmethod
-    def from_db(cls, session_dir, testing=False, postgresql=None):
-        if testing:
-            with TestingCursor(postgresql) as cursor:
-                return cls.__from_db(cursor, session_dir)
-        else:
-            with Cursor() as cursor:
-                return cls.__from_db(cursor, session_dir)
+    def from_db(cls, session_id=None, session_dir=None, testing=False, postgresql=None):
+        if session_dir is None:
+            if testing:
+                with TestingCursor(postgresql) as cursor:
+                    return cls.__from_db_by_id(cursor, session_id)
+            else:
+                with Cursor() as cursor:
+                    return cls.__from_db_by_id(cursor, session_id)
+        elif session_id is None:
+            if testing:
+                with TestingCursor(postgresql) as cursor:
+                    return cls.__from_db_by_dir(cursor, session_dir)
+            else:
+                with Cursor() as cursor:
+                    return cls.__from_db_by_dir(cursor, session_dir)
 
     def __save_to_db(self, cursor):
         cursor.execute("INSERT INTO sessions (mouse_id, experiment_id, session_date, session_dir) "
@@ -56,7 +74,7 @@ class Session:
         def save_to_db_main(session_dir, a_cursor):
             if session_dir not in list_all_session_dir(a_cursor):
                 self.__save_to_db(a_cursor)
-            return self.__from_db(a_cursor, session_dir)
+            return self.__from_db_by_dir(a_cursor, session_dir)
 
         if testing:
             with TestingCursor(postgresql) as cursor:

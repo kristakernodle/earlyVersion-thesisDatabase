@@ -21,7 +21,8 @@ class TestNewFolder(unittest.TestCase):
     def setUp(self):
         self.postgresql = Postgresql()
         database.handlers.handlers.handler_seed_sessions_table(self.postgresql)
-        self.session = Session.from_db('/exp/one/dir/9990/20200503_S2', testing=True, postgresql=self.postgresql)
+        self.session = Session.from_db(session_dir='/exp/one/dir/9990/20200503_S2', testing=True,
+                                       postgresql=self.postgresql)
         self.folder_dir = '/exp/one/dir/9990/20200503_S2/Reaches02'
 
     def tearDown(self):
@@ -52,7 +53,7 @@ class TestLoadFolder(unittest.TestCase):
         seed_eartag, seed_experiment = seed_sessions.pop()
         all_sessions = test_session_table_seed[seed_eartag, seed_experiment]
         session_date, session_dir = all_sessions.pop()
-        self.session = Session.from_db(session_dir, testing=True, postgresql=self.postgresql)
+        self.session = Session.from_db(session_dir=session_dir, testing=True, postgresql=self.postgresql)
         self.folder_dir = '/'.join([session_dir, 'Reaches01'])
 
     def tearDown(self):
@@ -63,7 +64,7 @@ class TestLoadFolder(unittest.TestCase):
         self.assertTrue(1)
 
     def test_from_db(self):
-        load_folder = Folder.from_db(self.folder_dir, testing=True, postgresql=self.postgresql)
+        load_folder = Folder.from_db(folder_dir=self.folder_dir, testing=True, postgresql=self.postgresql)
         self.assertEqual(self.session.session_id, load_folder.session_id)
         self.assertEqual(self.folder_dir, load_folder.folder_dir)
         self.assertFalse(load_folder.folder_id is None)

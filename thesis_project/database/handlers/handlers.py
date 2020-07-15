@@ -168,7 +168,7 @@ def handler_seed_trials_table(postgresql):
         cursor.execute("SELECT * from folders_all_upstream_ids;")
         all_ids = cursor.fetchall()
         for [_, experiment_id, session_id, folder_id] in all_ids:
-            folder = Folder.from_db(folder_id, testing=True, postgresql=postgresql)
+            folder = Folder.from_db(folder_id=folder_id, testing=True, postgresql=postgresql)
             session = Session.from_db(session_id, testing=True, postgresql=postgresql)
             for trial in all_trials:
                 trial_dir = '/'.join([folder.folder_dir, trial])

@@ -24,7 +24,7 @@ class Folder:
         return self.folder_id == compare_to.folder_id
 
     @classmethod
-    def __from_db(cls, cursor, folder_dir):
+    def __from_db_by_dir(cls, cursor, folder_dir):
         cursor.execute("SELECT * FROM folders WHERE folder_dir = %s;", (folder_dir,))
         folder_data = cursor.fetchone()
         if folder_data is None:
@@ -33,13 +33,30 @@ class Folder:
         return cls(session_id=folder_data[1], folder_dir=folder_data[2], folder_id=folder_data[0])
 
     @classmethod
-    def from_db(cls, folder_dir, testing=False, postgresql=None):
-        if testing:
-            with TestingCursor(postgresql) as cursor:
-                return cls.__from_db(cursor, folder_dir)
-        else:
-            with Cursor() as cursor:
-                return cls.__from_db(cursor, folder_dir)
+    def __from_db_by_id(cls, cursor, folder_id):
+        cursor.execute("SELECT * FROM folders WHERE folder_id = %s;", (folder_id,))
+        folder_data = cursor.fetchone()
+        if folder_data is None:
+            print(f"No folder in the database with ID {folder_id}")
+            return None
+        return cls(session_id=folder_data[1], folder_dir=folder_data[2], folder_id=folder_data[0])
+
+    @classmethod
+    def from_db(cls, folder_dir=None, folder_id=None, testing=False, postgresql=None):
+        if folder_id is None:
+            if testing:
+                with TestingCursor(postgresql) as cursor:
+                    return cls.__from_db_by_dir(cursor, folder_dir)
+            else:
+                with Cursor() as cursor:
+                    return cls.__from_db_by_dir(cursor, folder_dir)
+        elif folder_dir is None:
+            if testing:
+                with TestingCursor(postgresql) as cursor:
+                    return cls.__from_db_by_id(cursor, folder_id)
+            else:
+                with Cursor() as cursor:
+                    return cls.__from_db_by_id(cursor, folder_id)
 
     def __save_to_db(self, cursor):
         cursor.execute("INSERT INTO folders (session_id, folder_dir) "
@@ -51,7 +68,7 @@ class Folder:
         def save_to_db_main(folder_dir, a_cursor):
             if folder_dir not in list_all_folder_dir(a_cursor):
                 self.__save_to_db(a_cursor)
-            return self.__from_db(a_cursor, folder_dir)
+            return self.__from_db_by_dir(a_cursor, folder_dir)
 
         if testing:
             with TestingCursor(postgresql) as cursor:

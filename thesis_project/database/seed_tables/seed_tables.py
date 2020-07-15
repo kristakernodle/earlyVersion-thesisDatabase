@@ -42,7 +42,7 @@ def seed_blind_folders_table(cursor, folder_id, reviewer_id, blind_name):
 
 # TRIALS TABLE
 def seed_trials_table(cursor, experiment_id, folder_id, trial_dir, trial_date):
-    cursor.execute("INSERT INTO trials (experiment_id, session_id, trial_dir, trial_date) "
+    cursor.execute("INSERT INTO trials (experiment_id, folder_id, trial_dir, trial_date) "
                    "VALUES (%s, %s, %s, %s);", (experiment_id, folder_id, trial_dir, trial_date))
 
 

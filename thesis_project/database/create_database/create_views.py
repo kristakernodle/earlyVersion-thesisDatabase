@@ -12,12 +12,17 @@ def create_view_all_participants_all_experiments(a_cursor):
 def create_view_all_participants_all_trials(a_cursor):
     a_cursor.execute(
         "CREATE VIEW all_participants_all_trials "
-        "   (trial_id, experiment_id, mouse_id, trial_dir, trial_date, scored_dir, experiment_name) AS "
-        "SELECT trial_id, trials.experiment_id, trials.mouse_id, trial_dir, trial_date, mouse.eartag, "
-        "   experiments.experiment_name "
+        "   (trial_id, experiment_id, folder_id, trial_dir, trial_date, scored_dir, experiment_name) AS "
+        "SELECT trial_id, trials.experiment_id, trials.folder_id, trial_dir, trial_date, "
+        "folders.folder_id, folders.folder_dir, "
+        "sessions.session_id, sessions.mouse_id, sessions.session_dir, "
+        "experiments.experimnet_id, experiments.experiment_name, "
+        "mouse.mouse_id, mouse.eartag, mouse.birthdate, mouse.genotype, mouse.sex "
         "FROM trials "
-        "JOIN mouse on mouse.mouse_id = trials.mouse_id "
-        "JOIN experiments on experiments.experiment_id = trials.experiment_id;")
+        "JOIN folders on folders.folder_id = trials.folder_id "
+        "JOIN sessions on sessions.session_id = folders.session_id "
+        "JOIN experiments on experiments.experiment_id = trials.experiment_id "
+        "JOIN mouse on mouse.mouse_id = sessions.mouse_id;")
 
 
 def create_view_folders_all_upstream_ids(a_cursor):

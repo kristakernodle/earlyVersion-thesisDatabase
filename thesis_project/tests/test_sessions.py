@@ -67,7 +67,7 @@ class TestLoadSession(unittest.TestCase):
         self.assertTrue(1)
 
     def test_from_db(self):
-        load_session = Session.from_db(self.session_dir, testing=True, postgresql=self.postgresql)
+        load_session = Session.from_db(session_dir=self.session_dir, testing=True, postgresql=self.postgresql)
         self.assertEqual(self.mouse.mouse_id, load_session.mouse_id)
         self.assertEqual(self.experiment.experiment_id, load_session.experiment_id)
         self.assertEqual(utils.convert_date_int_yyyymmdd(self.session_date), load_session.session_date)
