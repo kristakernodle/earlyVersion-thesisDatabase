@@ -64,7 +64,7 @@ def create_folders_table(a_cursor):
     a_cursor.execute("create unique index folders_folder_dir_uindex on folders (folder_dir);")
 
 
-# BLIND FOLDERS
+# BLIND FOLDERS TABLE
 def create_blind_folders_table(a_cursor):
     a_cursor.execute("CREATE TABLE blind_folders("
                      "blind_folder_id uuid default uuid_generate_v4() constraint blind_folders_pkey primary key,"
