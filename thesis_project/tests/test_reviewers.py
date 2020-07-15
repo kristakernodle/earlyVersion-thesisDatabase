@@ -46,7 +46,7 @@ class TestLoadDeleteReviewer(unittest.TestCase):
 
     def setUp(self):
         self.postgresql = Postgresql()
-        database.handlers.handlers.handler_seed_reviewers(self.postgresql)
+        database.handlers.handlers.handler_seed_reviewers_table(self.postgresql)
 
     def tearDown(self):
         self.postgresql.stop()
