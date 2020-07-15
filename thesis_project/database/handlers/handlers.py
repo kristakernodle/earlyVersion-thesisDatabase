@@ -98,12 +98,16 @@ def handler_seed_sessions_table(postgresql):
     handler_seed_mouse(postgresql)
     handler_seed_experiments(postgresql)
     with TestingCursor(postgresql) as cursor:
-        for [mouse_eartag, experiment_name], all_sessions in session_seed:
+        for [mouse_eartag, experiment_name] in session_seed.keys():
+            all_sessions = session_seed[mouse_eartag, experiment_name]
             mouse = Mouse.from_db(mouse_eartag, testing=True, postgresql=postgresql)
             experiment = Experiments.from_db(experiment_name, testing=True, postgresql=postgresql)
             for [session_date, session_dir] in all_sessions:
-                database.seed_tables.seed_tables.seed_sessions_table(cursor, mouse.mouse_id, experiment.experiment_id,
-                                                                     session_date, session_dir)
+                database.seed_tables.seed_tables.seed_sessions_table(cursor,
+                                                                     mouse.mouse_id,
+                                                                     experiment.experiment_id,
+                                                                     utils.convert_date_int_yyyymmdd(session_date),
+                                                                     session_dir)
 
 
 # FOLDERS TABLE
