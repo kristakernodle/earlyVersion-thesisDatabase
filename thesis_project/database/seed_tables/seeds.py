@@ -20,48 +20,48 @@ test_mouse_table_seed = [(9990, birthdate2, 'wild type', 'male', True, 'test exp
 exp_one = ('test experiment one', '/test/directory/experiment/one')
 exp_two = ('test experiment two', '/test/directory/experiment/two')
 
-test_trial_table_seed = {(9990, 'test-experiment-one'):
-                             [(20200502, '/exp/one/trial/dir/9990/1'),
-                              (20200503, '/exp/one/trial/dir/9990/2'),
-                              (20200504, '/exp/one/trial/dir/9990/3')],
-                         (9991, 'test-experiment-two'):
-                             [(20200516, '/exp/two/trial/dir/9991/1'),
-                              (20200517, '/exp/two/trial/dir/9991/2'),
-                              (20200518, '/exp/two/trial/dir/9991/3')],
-                         (9992, 'test-experiment-one'):
-                             [(20200502, '/exp/one/trial/dir/9992/1'),
-                              (20200503, '/exp/one/trial/dir/9992/2'),
-                              (20200504, '/exp/one/trial/dir/9992/3')],
-                         (9993, 'test-experiment-two'):
-                             [(20200516, '/exp/two/trial/dir/9993/1'),
-                              (20200517, '/exp/two/trial/dir/9993/2'),
-                              (20200518, '/exp/two/trial/dir/9993/3')],
-                         (9994, 'test-experiment-one'):
-                             [(20200502, '/exp/one/trial/dir/9994/1'),
-                              (20200503, '/exp/one/trial/dir/9994/2'),
-                              (20200504, '/exp/one/trial/dir/9994/3')],
-                         (9995, 'test-experiment-two'):
-                             [(20200516, '/exp/two/trial/dir/9995/1'),
-                              (20200517, '/exp/two/trial/dir/9995/2'),
-                              (20200518, '/exp/two/trial/dir/9995/3')],
-                         (9996, 'test-experiment-one'):
-                             [(20200502, '/exp/one/trial/dir/9996/1'),
-                              (20200503, '/exp/one/trial/dir/9996/2'),
-                              (20200504, '/exp/one/trial/dir/9996/3')],
-                         (9997, 'test-experiment-two'):
-                             [(20200516, '/exp/two/trial/dir/9997/1'),
-                              (20200517, '/exp/two/trial/dir/9997/2'),
-                              (20200518, '/exp/two/trial/dir/9997/3')],
-                         (9998, 'test-experiment-one'):
-                             [(20200502, '/exp/one/trial/dir/9998/1'),
-                              (20200503, '/exp/one/trial/dir/9998/2'),
-                              (20200504, '/exp/one/trial/dir/9998/3')],
-                         (9999, 'test-experiment-two'):
-                             [(20200516, '/exp/two/trial/dir/9999/1'),
-                              (20200517, '/exp/two/trial/dir/9999/2'),
-                              (20200518, '/exp/two/trial/dir/9999/3')],
-                         }
-
 test_blind_review_reviewers_seed = [
     ('reviewer', 'one', '/blind/review/reviewer_one/toScore', '/blind/review/reviewer_one/Scored'),
     ('reviewer', 'two', '/blind/review/reviewer_two/toScore', '/blind/review/reviewer_two/Scored')]
+
+test_session_table_seed = {(9990, 'test-experiment-one'):
+                               [(20200502, '/exp/one/dir/9990/20200502_S1'),
+                                (20200503, '/exp/one/dir/9990/20200503_S2'),
+                                (20200504, '/exp/one/dir/9990/20200504_S3')],
+                           (9991, 'test-experiment-two'):
+                               [(20200516, '/exp/two/dir/9991/20200516_S1'),
+                                (20200517, '/exp/two/dir/9991/20200517_S2'),
+                                (20200518, '/exp/two/dir/9991/20200518_S3')],
+                           (9992, 'test-experiment-one'):
+                               [(20200502, '/exp/one/dir/9992/20200502_S1'),
+                                (20200503, '/exp/one/dir/9992/20200503_S2'),
+                                (20200504, '/exp/one/dir/9992/20200504_S3')],
+                           (9993, 'test-experiment-two'):
+                               [(20200516, '/exp/two/dir/9993/20200516_S1'),
+                                (20200517, '/exp/two/dir/9993/20200517_S2'),
+                                (20200518, '/exp/two/dir/9993/20200518_S3')],
+                           (9994, 'test-experiment-one'):
+                               [(20200502, '/exp/one/dir/9994/20200502_S1'),
+                                (20200503, '/exp/one/dir/9994/20200503_S2'),
+                                (20200504, '/exp/one/dir/9994/20200504_S3')],
+                           (9995, 'test-experiment-two'):
+                               [(20200516, '/exp/two/dir/9995/20200516_S1'),
+                                (20200517, '/exp/two/dir/9995/20200517_S2'),
+                                (20200518, '/exp/two/dir/9995/20200518_S3')],
+                           (9996, 'test-experiment-one'):
+                               [(20200502, '/exp/one/dir/9996/20200502_S1'),
+                                (20200503, '/exp/one/dir/9996/20200503_S2'),
+                                (20200504, '/exp/one/dir/9996/20200504_S3')],
+                           (9997, 'test-experiment-two'):
+                               [(20200516, '/exp/two/dir/9997/20200516_S1'),
+                                (20200517, '/exp/two/dir/9997/20200517_S2'),
+                                (20200518, '/exp/two/dir/9997/20200518_S3')],
+                           (9998, 'test-experiment-one'):
+                               [(20200502, '/exp/one/dir/9998/20200502_S1'),
+                                (20200503, '/exp/one/dir/9998/20200503_S2'),
+                                (20200504, '/exp/one/dir/9998/20200504_S3')],
+                           (9999, 'test-experiment-two'):
+                               [(20200516, '/exp/two/dir/9999/20200516_S1'),
+                                (20200517, '/exp/two/dir/9999/20200517_S2'),
+                                (20200518, '/exp/two/dir/9999/20200518_S3')],
+                           }

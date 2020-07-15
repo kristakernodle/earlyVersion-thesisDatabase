@@ -23,12 +23,11 @@ def handler_create_mouse_table(postgresql):
 
 
 def handler_seed_mouse(postgresql):
-    for mouse in seed_mouse:
-        genotype = utils.encode_genotype(mouse[2])
-        sex = utils.prep_string_for_db(mouse[3])
+    for [eartag, birthdate, genotype, sex, _, _, _, _] in seed_mouse:
+        genotype = utils.encode_genotype(genotype)
+        sex = utils.prep_string_for_db(sex)
         with TestingCursor(postgresql) as cursor:
-            cursor.execute("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";")
-            database.seed_tables.seed_tables.seed_mouse_table(cursor, mouse[0], mouse[1], genotype, sex)
+            database.seed_tables.seed_tables.seed_mouse_table(cursor, eartag, birthdate, genotype, sex)
 
 
 # EXPERIMENTS TABLE
@@ -48,7 +47,6 @@ def handler_seed_experiments(postgresql):
 # PARTICIPANT DETAILS TABLE
 def handler_create_participant_details(postgresql):
     with TestingCursor(postgresql) as cursor:
-        cursor.execute("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";")
         database.create_database.create_tables.create_mouse_table(cursor)
         database.create_database.create_tables.create_experiments_table(cursor)
         database.create_database.create_tables.create_participant_details_table(cursor)
@@ -56,21 +54,24 @@ def handler_create_participant_details(postgresql):
 
 
 def handler_seed_participant_details(postgresql):
+    handler_seed_mouse(postgresql)
+    handler_seed_experiments(postgresql)
+
     with TestingCursor(postgresql) as cursor:
-        database.seed_tables.seed_tables.seed_mouse_table(cursor)
-        database.seed_tables.seed_tables.seed_experiments_table(cursor)
         all_mice = list_all_mice(cursor)
         for eartag in all_mice:
             mouse = Mouse.from_db(eartag, testing=True, postgresql=postgresql)
             for m in mouse_seed:
                 if m[0] == mouse.eartag:
                     experiment = Experiments.from_db(m[5], testing=True, postgresql=postgresql)
-                    database.seed_tables.seed_tables.seed_participant_details(cursor, mouse.mouse_id,
+                    database.seed_tables.seed_tables.seed_participant_details(cursor,
+                                                                              mouse.mouse_id,
                                                                               experiment.experiment_id,
-                                                                              start_date=m[6], end_date=m[7])
+                                                                              start_date=m[6],
+                                                                              end_date=m[7])
 
 
-# REVIEWER TABLE
+# REVIEWERS TABLE
 def handler_create_reviewers_table(postgresql):
     with TestingCursor(postgresql) as cursor:
         cursor.execute("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";")
@@ -78,10 +79,9 @@ def handler_create_reviewers_table(postgresql):
 
 
 def handler_seed_reviewers_table(postgresql):
-    for reviewer in seed_reviewers:
+    for [first_name, last_name, toScore, scored] in seed_reviewers:
         with TestingCursor(postgresql) as cursor:
-            database.seed_tables.seed_tables.seed_reviewers_table(cursor, reviewer[0], reviewer[1], reviewer[2],
-                                                                  reviewer[3])
+            database.seed_tables.seed_tables.seed_reviewers_table(cursor, first_name, last_name, toScore, scored)
 
 
 # SESSIONS TABLE
@@ -114,7 +114,8 @@ def handler_seed_sessions_table(postgresql):
 
 # FOLDERS TABLE
 def handler_create_folders_table(postgresql):
-    database.create_database.create_tables.create_folders_table(cursor)
+    with TestingCursor(postgresql) as cursor:
+        database.create_database.create_tables.create_folders_table(cursor)
     handler_create_sessions_table(postgresql)
 
 
