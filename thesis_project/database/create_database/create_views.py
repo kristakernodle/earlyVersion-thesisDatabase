@@ -20,10 +20,20 @@ def create_view_all_participants_all_trials(a_cursor):
         "JOIN experiments on experiments.experiment_id = trials.experiment_id;")
 
 
-def create_view_folder_details(a_cursor):
+def create_view_folders_all_upstream_ids(a_cursor):
     a_cursor.execute(
-        "CREATE VIEW folder_details "
-        " (sessions.mouse_id, sessions.experiment_id, sessions.session_date folders.folder_id, folders.folder_dir, "
-        "folder.blind_name) "
+        "CREATE VIEW folders_all_upstream_ids "
+        "   (mouse_id, experiment_id, session_id, folder_id) AS "
+        "SELECT mouse_id, experiment_id, sessoion_id, folder_id "
         "FROM folders "
-        "JOIN sessions on sessions.experiment_id, sessions.session_date;")
+        "JOIN sessions on sessions.mouse_id, sessions.experiment_id, sessions.session_id;")
+
+
+def create_view_trials_all_upstream_ids(a_cursor):
+    a_cursor.execute(
+        "CREATE VIEW trials_all_upstream_ids "
+        "   (mouse_id, experiment_id, session_id, folder_id, trial_id) AS "
+        "SELECT mouse_id, experiment_id, sessoion_id, folder_id, trial_id "
+        "FROM folders "
+        "JOIN sessions on sessions.mouse_id, sessions.experiment_id, sessions.session_id "
+        "JOIN trials on trials.trial_id;")

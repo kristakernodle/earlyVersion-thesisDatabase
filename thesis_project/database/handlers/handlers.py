@@ -12,6 +12,8 @@ import utilities as utils
 from models.experiments import Experiments
 from models.mouse import list_all_mice, Mouse
 from models.reviewers import Reviewer
+from models.folders import Folder
+from models.sessions import Session
 from models.trials import Trials
 
 
@@ -86,51 +88,42 @@ def handler_seed_reviewers_table(postgresql):
 
 # SESSIONS TABLE
 def handler_create_sessions_table(postgresql):
+    handler_create_mouse_table(postgresql)
+    handler_create_experiments_table(postgresql)
     with TestingCursor(postgresql) as cursor:
-        database.create_database.create_tables.create_mouse_table(cursor)
-        database.create_database.create_tables.create_experiments_table(cursor)
         database.create_database.create_tables.create_sessions_table(cursor)
 
 
 def handler_seed_sessions_table(postgresql):
+    handler_seed_mouse(postgresql)
+    handler_seed_experiments(postgresql)
     with TestingCursor(postgresql) as cursor:
-        database.seed_tables.seed_tables.seed_mouse_table(cursor)
-        database.seed_tables.seed_tables.seed_experiments_table(cursor)
-        all_mice = list_all_mice(cursor)
-        for eartag in all_mice:
-            mouse = Mouse.from_db(eartag, testing=True, postgresql=postgresql)
-            for m in mouse_seed:
-                if m[0] == mouse.eartag:
-                    experiment = Experiments.from_db(m[5], testing=True, postgresql=postgresql)
-                    seed_mouse_all_sessions = session_seed[(mouse.eartag, experiment.experiment_name)]
-                    for session in seed_mouse_all_sessions:
-                        session_date, session_dir = session
-                        database.seed_tables.seed_tables.seed_sessions_table(cursor, mouse.mouse_id,
-                                                                             experiment.experiment_id,
-                                                                             utils.convert_date_int_yyyymmdd(
-                                                                                 session_date),
-                                                                             session_dir)
+        for [mouse_eartag, experiment_name], all_sessions in session_seed:
+            mouse = Mouse.from_db(mouse_eartag, testing=True, postgresql=postgresql)
+            experiment = Experiments.from_db(experiment_name, testing=True, postgresql=postgresql)
+            for [session_date, session_dir] in all_sessions:
+                database.seed_tables.seed_tables.seed_sessions_table(cursor, mouse.mouse_id, experiment.experiment_id,
+                                                                     session_date, session_dir)
 
 
 # FOLDERS TABLE
 def handler_create_folders_table(postgresql):
+    handler_create_sessions_table(postgresql)
     with TestingCursor(postgresql) as cursor:
         database.create_database.create_tables.create_folders_table(cursor)
-    handler_create_sessions_table(postgresql)
 
 
 def handler_seed_folders_table(postgresql):
-    folders = ['R01', 'R02', 'R03']
     handler_seed_sessions_table(postgresql)
 
+    folders = ['Reaches01', 'Reaches02', 'Reaches03']
     with TestingCursor(postgresql) as cursor:
         cursor.execute("SELECT session_id, session_dir FROM sessions;")
         all_sessions = cursor.fetchall()
-        for session in all_sessions:
-            session_id, session_dir = session
+        for [session_id, session_dir] in all_sessions:
             for folder in folders:
                 database.seed_tables.seed_tables.seed_folders_table(session_id, '/'.join([session_dir, folder]))
-        database.create_database.create_views.create_view_folder_details(cursor)
+        database.create_database.create_views.create_view_folders_all_upstream_ids(cursor)
 
 
 # BLIND FOLDERS TABLE
@@ -160,48 +153,45 @@ def handler_create_trials_table(postgresql):
     handler_create_folders_table(postgresql)
     with TestingCursor(postgresql) as cursor:
         database.create_database.create_tables.create_trials_table(cursor)
+        database.create_database.create_views.create_view_trials_all_upstream_ids(cursor)
 
 
 def handler_seed_trials_table(postgresql):
     handler_seed_folders_table(postgresql)
+
+    all_trials = ['trial_1.txt', 'trial_2.txt', 'trial_3.txt', 'trial_4.txt', 'trial_5.txt']
     with TestingCursor(postgresql) as cursor:
-        cursor.execute("SELECT * FROM folder_details;")
-        all_folder_details = cursor.fetchall()
-        for folder in all_folder_details:
-            mouse_id, experiment_id, session_date, folder_id, folder_dir, blind_name = folder
-            for trial in ['T1.txt', 'T2.txt', 'T3.txt', 'T4.txt', 'T5.txt']:
-                trial_dir = '/'.join([folder_dir, trial])
-                database.seed_tables.seed_tables.seed_trials_table(cursor, experiment_id, folder_id,
-                                                                   session_date, trial_dir)
+        cursor.execute("SELECT * from folders_all_upstream_ids;")
+        all_ids = cursor.fetchall()
+        for [_, experiment_id, session_id, folder_id] in all_ids:
+            folder = Folder.from_db(folder_id, testing=True, postgresql=postgresql)
+            session = Session.from_db(session_id, testing=True, postgresql=postgresql)
+            for trial in all_trials:
+                trial_dir = '/'.join([folder.folder_dir, trial])
+                database.seed_tables.seed_tables.seed_trials_table(cursor,
+                                                                   experiment_id,
+                                                                   folder_id,
+                                                                   trial_dir,
+                                                                   session.session_date)
 
 
 # BLIND TRIALS TABLE
 def handler_create_blind_trials_table(postgresql):
+    handler_create_trials_table(postgresql)
+    handler_create_blind_folders_table(postgresql)
     with TestingCursor(postgresql) as cursor:
-        cursor.execute("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";")
-        database.create_database.create_tables.create_mouse_table(cursor)
-        database.create_database.create_tables.create_experiments_table(cursor)
-        database.create_database.create_tables.create_trials_table(cursor)
-        database.create_database.create_views.create_view_all_participants_all_trials(cursor)
-        database.create_database.create_tables.create_reviewers_table(cursor)
         database.create_database.create_tables.create_blind_trials_table(cursor)
 
 
 def handler_seed_blind_trials(postgresql):
-    all_blind_names = []
     handler_seed_trials_table(postgresql)
-    handler_seed_reviewers_table(postgresql)
+    handler_seed_blind_folders_table(postgresql)
 
     with TestingCursor(postgresql) as cursor:
-        cursor.execute("SELECT * FROM trials WHERE random() <= 0.5 ORDER BY random() LIMIT 10;")
-        test_trials = cursor.fetchall()
-
-        for trial in test_trials:
-            blind_name = utils.random_string_generator(10)
-            current_trial = Trials.from_db(trial[-2], testing=True, postgresql=postgresql)
-            current_reviewer = random.choice(seed_reviewers)
-            current_reviewer = Reviewer.from_db(current_reviewer[-1], testing=True, postgresql=postgresql)
-            database.seed_tables.seed_tables.seed_blind_trials_table(cursor, current_trial.trial_id,
-                                                                     current_reviewer.reviewer_id, blind_name)
-            all_blind_names.append(tuple([current_trial.trial_id, current_reviewer.reviewer_id, blind_name]))
-    return all_blind_names
+        cursor.execute("SELECT * from trials_all_upstream_ids;")
+        all_ids = cursor.fetchall()
+        for count, [_, _, _, folder_id, trial_id] in enumerate(all_ids):
+            blind_folder = BlindFolder.from_db(folder_id, testing=True, postgresql=postgresql)
+            reviewer = Reviewer.from_db(blind_folder.reviewer_id)
+            full_path = '/'.join([reviewer.toScore_dir, blind_folder.blind_name, count])
+            database.seed_tables.seed_tables.seed_blind_trials_table(cursor, trial_id, folder_id, full_path)
