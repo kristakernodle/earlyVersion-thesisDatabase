@@ -4,7 +4,6 @@ import testing.postgresql as tpg
 
 import database.handlers.handlers
 from database.cursors import TestingCursor
-import models.sessions
 from models.sessions import Session
 from models.folders import Folder
 from models.trials import Trial
@@ -65,7 +64,7 @@ class TestLoadTrial(unittest.TestCase):
     def tearDown(self):
         self.postgresql.stop()
 
-    # @unittest.skip("Not currently testing")
+    @unittest.skip("Not currently testing")
     def test_setUp_tearDown(self):
         self.assertTrue(1)
 
@@ -77,31 +76,3 @@ class TestLoadTrial(unittest.TestCase):
         self.assertTrue(self.folder.folder_id == test_trial.folder_id)
         self.assertTrue(self.trial_dir == test_trial.trial_dir)
         self.assertFalse(self.session.session_date != test_trial.trial_date)
-
-#
-# class TestListTrials(unittest.TestCase):
-#
-#     def setUp(self):
-#         self.postgresql = Postgresql()
-#         database.handlers.handlers.handler_seed_trials(self.postgresql)
-#
-#         self.trial_key = random.choice(list(seeds.test_trial_table_seed.keys()))
-#         self.eartag, self.experiment_name = self.trial_key
-#         self.trials_mouse_exp = seeds.test_trial_table_seed[self.trial_key]
-#
-#     def tearDown(self):
-#         self.postgresql.stop()
-#
-#     @unittest.skip("Not currently testing")
-#     def test_setUp_tearDown(self):
-#         self.assertTrue(1)
-#
-#     def test_list_participants(self):
-#         all_participants = Trials.list_participants(self.experiment_name, testing=True, postgresql=self.postgresql)
-#         self.assertTrue(len(all_participants) == 5)
-#         if 'one' in self.experiment_name:
-#             for eartag in all_participants:
-#                 self.assertTrue((eartag % 2) == 0)
-#         else:
-#             for eartag in all_participants:
-#                 self.assertTrue((eartag % 2) != 0)
