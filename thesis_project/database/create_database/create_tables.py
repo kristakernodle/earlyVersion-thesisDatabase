@@ -6,7 +6,7 @@ def create_mouse_table(a_cursor):
                      "birthdate date not null,"
                      "genotype boolean not null,"
                      "sex varchar(6) not null);")
-    a_cursor.execute("create unique index mouse_eartag_uindex on mouse (scored_dir);")
+    a_cursor.execute("create unique index mouse_eartag_uindex on mouse (eartag);")
 
 
 # EXPERIMENTS TABLE
