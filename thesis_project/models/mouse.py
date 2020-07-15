@@ -3,7 +3,7 @@ from database.cursors import Cursor, TestingCursor
 
 
 def list_all_mice(cursor):
-    cursor.execute("SELECT scored_dir FROM mouse;")
+    cursor.execute("SELECT eartag FROM mouse;")
     return list(item for tup in cursor.fetchall() for item in tup)
 
 
@@ -28,7 +28,7 @@ class Mouse:
 
     @classmethod
     def __from_db(cls, cursor, eartag):
-        cursor.execute("SELECT * FROM mouse WHERE scored_dir = %s;", (eartag,))
+        cursor.execute("SELECT * FROM mouse WHERE eartag = %s;", (eartag,))
         mouse_data = cursor.fetchone()
         if mouse_data is None:
             print(f"No mouse in the database with mouse number {eartag}")
@@ -65,7 +65,7 @@ class Mouse:
                 return main(cursor, mouse_id)
 
     def __save_to_db(self, cursor):
-        cursor.execute("INSERT INTO mouse (scored_dir, birthdate, genotype, sex) VALUES (%s, %s, %s, %s);",
+        cursor.execute("INSERT INTO mouse (eartag, birthdate, genotype, sex) VALUES (%s, %s, %s, %s);",
                        (self.eartag, self.birthdate, util.encode_genotype(self.genotype), self.sex))
 
     def save_to_db(self, testing=False, postgresql=None):

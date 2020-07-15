@@ -13,8 +13,8 @@ from models.experiments import Experiments
 from models.mouse import list_all_mice, Mouse
 from models.reviewers import Reviewer
 from models.folders import Folder
+from models.blind_folders import BlindFolder
 from models.sessions import Session
-from models.trials import Trials
 
 
 # MOUSE TABLE
@@ -48,9 +48,9 @@ def handler_seed_experiments(postgresql):
 
 # PARTICIPANT DETAILS TABLE
 def handler_create_participant_details(postgresql):
+    handler_create_mouse_table(postgresql)
+    handler_create_experiments_table(postgresql)
     with TestingCursor(postgresql) as cursor:
-        database.create_database.create_tables.create_mouse_table(cursor)
-        database.create_database.create_tables.create_experiments_table(cursor)
         database.create_database.create_tables.create_participant_details_table(cursor)
         database.create_database.create_views.create_view_all_participants_all_experiments(cursor)
 
@@ -122,7 +122,7 @@ def handler_seed_folders_table(postgresql):
         all_sessions = cursor.fetchall()
         for [session_id, session_dir] in all_sessions:
             for folder in folders:
-                database.seed_tables.seed_tables.seed_folders_table(session_id, '/'.join([session_dir, folder]))
+                database.seed_tables.seed_tables.seed_folders_table(cursor, session_id, '/'.join([session_dir, folder]))
         database.create_database.create_views.create_view_folders_all_upstream_ids(cursor)
 
 

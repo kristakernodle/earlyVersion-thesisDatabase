@@ -23,7 +23,7 @@ class TestNewParticipantDetails(unittest.TestCase):
 
     def setUp(self):
         self.postgresql = Postgresql()
-        database.handlers.handlers.handler_seed_mouse_experiments(self.postgresql)
+        database.handlers.handlers.handler_seed_participant_details(self.postgresql)
 
     def tearDown(self):
         self.postgresql.stop()

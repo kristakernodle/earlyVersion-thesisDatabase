@@ -6,7 +6,7 @@ import testing.postgresql as tpg
 import database.handlers.handlers
 import database.handlers.handlers
 from models.blind_trials import BlindTrial
-from models.reviewer import Reviewer
+from models.reviewers import Reviewer
 from models.trials import Trials
 from utilities import random_string_generator
 
