@@ -1,5 +1,6 @@
 import random
 
+
 import database.create_database.create_tables
 import database.create_database.create_views
 from database.cursors import TestingCursor
@@ -15,6 +16,8 @@ from models.reviewers import Reviewer
 from models.folders import Folder
 from models.blind_folders import BlindFolder
 from models.sessions import Session
+from models.trials import Trial
+import models.blind_folders
 
 
 # MOUSE TABLE
@@ -115,6 +118,7 @@ def handler_create_folders_table(postgresql):
     handler_create_sessions_table(postgresql)
     with TestingCursor(postgresql) as cursor:
         database.create_database.create_tables.create_folders_table(cursor)
+        database.create_database.create_views.create_view_folders_all_upstream_ids(cursor)
 
 
 def handler_seed_folders_table(postgresql):
@@ -127,29 +131,36 @@ def handler_seed_folders_table(postgresql):
         for [session_id, session_dir] in all_sessions:
             for folder in folders:
                 database.seed_tables.seed_tables.seed_folders_table(cursor, session_id, '/'.join([session_dir, folder]))
-        database.create_database.create_views.create_view_folders_all_upstream_ids(cursor)
 
 
 # BLIND FOLDERS TABLE
+def handler_create_blind_folders_table_only(postgresql):
+    with TestingCursor(postgresql) as cursor:
+        database.create_database.create_tables.create_blind_folders_table(cursor)
+
+
 def handler_create_blind_folders_table(postgresql):
     handler_create_folders_table(postgresql)
     handler_create_reviewers_table(postgresql)
-    with TestingCursor(postgresql) as cursor:
-        database.create_database.create_tables.create_blind_folders_table(cursor)
+    handler_create_blind_folders_table_only(postgresql)
+
+
+def handler_seed_blind_folders_table_only(cursor):
+    cursor.execute("SELECT reviewer_id FROM reviewers;")
+    all_reviewer_ids = cursor.fetchall()
+    cursor.execute("SELECT folder_id from folders;")
+    all_folder_ids = cursor.fetchall()
+    for folder_id in all_folder_ids:
+        reviewer_id = random.choice(all_reviewer_ids)
+        blind_name = utils.random_string_generator(10)
+        database.seed_tables.seed_tables.seed_blind_folders_table(cursor, folder_id, reviewer_id, blind_name)
 
 
 def handler_seed_blind_folders_table(postgresql):
     handler_seed_folders_table(postgresql)
     handler_seed_reviewers_table(postgresql)
     with TestingCursor(postgresql) as cursor:
-        cursor.execute("SELECT reviewer_id FROM reviewers;")
-        all_reviewer_ids = cursor.fetchall()
-        cursor.execute("SELECT folder_id from folders;")
-        all_folder_ids = cursor.fetchall()
-        for folder_id in all_folder_ids:
-            reviewer_id = random.choice(all_reviewer_ids)
-            blind_name = utils.random_string_generator(10)
-            database.seed_tables.seed_tables.seed_blind_folders_table(cursor, folder_id, reviewer_id, blind_name)
+        handler_seed_blind_folders_table_only(cursor)
 
 
 # TRIALS TABLE
@@ -182,20 +193,21 @@ def handler_seed_trials_table(postgresql):
 # BLIND TRIALS TABLE
 def handler_create_blind_trials_table(postgresql):
     handler_create_trials_table(postgresql)
-    handler_create_blind_folders_table(postgresql)
+    handler_create_reviewers_table(postgresql)
+    handler_create_blind_folders_table_only(postgresql)
     with TestingCursor(postgresql) as cursor:
+        handler_seed_blind_folders_table_only(cursor)
         database.create_database.create_tables.create_blind_trials_table(cursor)
 
 
-def handler_seed_blind_trials(postgresql):
-    handler_seed_trials_table(postgresql)
-    handler_seed_blind_folders_table(postgresql)
-
-    with TestingCursor(postgresql) as cursor:
-        cursor.execute("SELECT * from trials_all_upstream_ids;")
-        all_ids = cursor.fetchall()
-        for count, [_, _, _, folder_id, trial_id] in enumerate(all_ids):
-            blind_folder = BlindFolder.from_db(folder_id, testing=True, postgresql=postgresql)
-            reviewer = Reviewer.from_db(blind_folder.reviewer_id)
-            full_path = '/'.join([reviewer.toScore_dir, blind_folder.blind_name, count])
-            database.seed_tables.seed_tables.seed_blind_trials_table(cursor, trial_id, folder_id, full_path)
+def handler_seed_blind_trials(cursor, postgresql):
+    all_trials = ['trial_1.txt', 'trial_2.txt', 'trial_3.txt', 'trial_4.txt', 'trial_5.txt']
+    all_blind_names = models.blind_folders.list_all_blind_names(cursor)
+    for blind_name in all_blind_names:
+        blind_folder = BlindFolder.from_db(blind_name=blind_name, testing=True, postgresql=postgresql)
+        reviewer = Reviewer.from_db(reviewer_id=blind_folder.reviewer_id, testing=True, postgresql=postgresql)
+        folder = Folder.from_db(folder_id=blind_folder.folder_id, testing=True, postgresql=postgresql)
+        for trial_file in all_trials:
+            trial = Trial.from_db(trial_dir='/'.join([folder.folder_dir, trial_file]))
+            full_path = '/'.join([reviewer.toScore_dir, blind_name, blind_name + trial_file])
+            database.seed_tables.seed_tables.seed_blind_trials_table(cursor, trial.trial_id, trial.folder_id, full_path)

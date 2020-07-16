@@ -4,6 +4,11 @@ from models.experiments import Experiments
 from database.cursors import TestingCursor, Cursor
 
 
+def list_all_trial_dirs(cursor):
+    cursor.execute("SELECT trial_dir FROM trials;")
+    return list(item for tup in cursor.fetchall() for item in tup)
+
+
 class Trial:
 
     def __init__(self, experiment_id, folder_id, trial_dir, trial_date, trial_id=None):

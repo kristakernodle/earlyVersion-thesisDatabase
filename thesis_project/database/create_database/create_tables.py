@@ -87,9 +87,9 @@ def create_trials_table(a_cursor):
 
 # BLIND TRIALS TABLE
 def create_blind_trials_table(a_cursor):
-    a_cursor.execute("CREATE TABLE blind_folders("
+    a_cursor.execute("CREATE TABLE blind_trials("
                      "blind_trial_id uuid default uuid_generate_v4() constraint blind_trial_pkey primary key,"
                      "trial_id uuid references trials not null,"
                      "folder_id  uuid references folders not null,"
-                     "full_path varchar(15) not null);")
+                     "full_path varchar(255) not null);")
     a_cursor.execute("create unique index blind_trials_full_path_uindex on blind_trials (full_path);")
