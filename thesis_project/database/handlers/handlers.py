@@ -200,14 +200,19 @@ def handler_create_blind_trials_table(postgresql):
         database.create_database.create_tables.create_blind_trials_table(cursor)
 
 
-def handler_seed_blind_trials(cursor, postgresql):
+def handler_seed_blind_trials(postgresql):
     all_trials = ['trial_1.txt', 'trial_2.txt', 'trial_3.txt', 'trial_4.txt', 'trial_5.txt']
-    all_blind_names = models.blind_folders.list_all_blind_names(cursor)
+    with TestingCursor(postgresql) as cursor:
+        handler_seed_blind_folders_table_only(cursor)
+        all_blind_names = models.blind_folders.list_all_blind_names(cursor)
     for blind_name in all_blind_names:
         blind_folder = BlindFolder.from_db(blind_name=blind_name, testing=True, postgresql=postgresql)
         reviewer = Reviewer.from_db(reviewer_id=blind_folder.reviewer_id, testing=True, postgresql=postgresql)
         folder = Folder.from_db(folder_id=blind_folder.folder_id, testing=True, postgresql=postgresql)
         for trial_file in all_trials:
-            trial = Trial.from_db(trial_dir='/'.join([folder.folder_dir, trial_file]))
+            trial = Trial.from_db(trial_dir='/'.join([folder.folder_dir, trial_file]),
+                                  testing=True, postgresql=postgresql)
             full_path = '/'.join([reviewer.toScore_dir, blind_name, blind_name + trial_file])
-            database.seed_tables.seed_tables.seed_blind_trials_table(cursor, trial.trial_id, trial.folder_id, full_path)
+            with TestingCursor(postgresql) as cursor:
+                database.seed_tables.seed_tables.seed_blind_trials_table(cursor, trial.trial_id,
+                                                                         trial.folder_id, full_path)

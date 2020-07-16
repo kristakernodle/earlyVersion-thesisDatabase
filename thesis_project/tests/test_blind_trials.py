@@ -4,7 +4,6 @@ import testing.postgresql as tpg
 
 import database.handlers.handlers
 from database.cursors import TestingCursor
-from models.sessions import Session
 from models.folders import Folder
 from models.trials import Trial
 import models.blind_folders
@@ -58,19 +57,20 @@ class TestLoadBlindTrial(unittest.TestCase):
         self.postgresql = Postgresql()
         database.handlers.handlers.handler_seed_trials_table(self.postgresql)
         database.handlers.handlers.handler_seed_reviewers_table(self.postgresql)
+        database.handlers.handlers.handler_seed_blind_trials(self.postgresql)
+
         with TestingCursor(self.postgresql) as cursor:
-            database.handlers.handlers.handler_seed_blind_folders_table_only(cursor)
-            database.handlers.handlers.handler_seed_blind_trials(cursor, self.postgresql)
-            blind_name = models.blind_folders.list_all_blind_names(cursor).pop()
-        trial = 'trial_1.txt'
+            all_blind_names = models.blind_folders.list_all_blind_names(cursor)
+        blind_name = all_blind_names.pop()
+        trial_file = 'trial_1.txt'
         self.blind_folder = BlindFolder.from_db(blind_name=blind_name, testing=True, postgresql=self.postgresql)
         self.folder = Folder.from_db(folder_id=self.blind_folder.folder_id, testing=True, postgresql=self.postgresql)
         self.reviewer = Reviewer.from_db(reviewer_id=self.blind_folder.reviewer_id,
                                          testing=True, postgresql=self.postgresql)
-        self.trial = Trial.from_db(trial_dir='/'.join([self.folder.folder_dir, trial]),
+        self.trial = Trial.from_db(trial_dir='/'.join([self.folder.folder_dir, trial_file]),
                                    testing=True, postgresql=self.postgresql)
         self.full_path = '/'.join([self.reviewer.toScore_dir, self.blind_folder.blind_name,
-                                   self.blind_folder.blind_name + '_1.txt'])
+                                   self.blind_folder.blind_name + trial_file])
 
     def tearDown(self):
         self.postgresql.stop()
