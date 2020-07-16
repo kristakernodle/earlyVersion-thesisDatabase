@@ -12,7 +12,7 @@ def list_all_experiment_ids(cursor):
     return utils.list_from_cursor(cursor.fetchall())
 
 
-class Experiments:
+class Experiment:
     def __init__(self, experiment_name, experiment_dir, experiment_id=None):
         self.experiment_name = utils.prep_string_for_db(experiment_name)
         self.experiment_dir = experiment_dir
@@ -22,7 +22,7 @@ class Experiments:
         return f"< Experiment {self.experiment_name} >"
 
     def __eq__(self, compare_to):
-        if not isinstance(compare_to, Experiments):
+        if not isinstance(compare_to, Experiment):
             return NotImplemented
         return self.experiment_id == compare_to.experiment_id
 

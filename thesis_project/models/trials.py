@@ -1,6 +1,6 @@
 import utilities as utils
 from models.mouse import Mouse
-from models.experiments import Experiments
+from models.experiments import Experiment
 from database.cursors import TestingCursor, Cursor
 
 
@@ -70,7 +70,7 @@ class Trial:
             no_dups = sorted(set(utils.list_from_cursor(cursor.fetchall())), key=int)
             return no_dups
 
-        experiment = Experiments.from_db(experiment_name, testing, postgresql)
+        experiment = Experiment.from_db(experiment_name, testing, postgresql)
 
         if testing:
             with TestingCursor(postgresql) as cursor:

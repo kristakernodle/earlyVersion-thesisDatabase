@@ -4,7 +4,7 @@ from psycopg2._json import Json
 
 import utilities as utils
 from models.mouse import Mouse
-from models.experiments import Experiments
+from models.experiments import Experiment
 from database.cursors import TestingCursor, Cursor
 
 
@@ -41,12 +41,12 @@ class ParticipantDetails:
         if testing:
             with TestingCursor(postgresql) as cursor:
                 mouse = Mouse.from_db(eartag, testing=testing, postgresql=postgresql)
-                experiment = Experiments.from_db(experiment_name, testing=testing, postgresql=postgresql)
+                experiment = Experiment.from_db(experiment_name, testing=testing, postgresql=postgresql)
                 return cls.__from_db(cursor, mouse, experiment)
         else:
             with Cursor() as cursor:
                 mouse = Mouse.from_db(eartag)
-                experiment = Experiments.from_db(experiment_name)
+                experiment = Experiment.from_db(experiment_name)
                 return cls.__from_db(cursor, mouse, experiment)
 
     def save_to_db(self, testing=False, postgresql=None):
@@ -87,7 +87,7 @@ class ParticipantDetails:
                              (exp_id,))
             return utils.list_from_cursor(cursor.fetchall())
 
-        experiment_id = Experiments.get_id(experiment_name, testing, postgresql)
+        experiment_id = Experiment.get_id(experiment_name, testing, postgresql)
         if len(experiment_id) == 1:
             experiment_id = experiment_id[0]
         else:

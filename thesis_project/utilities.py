@@ -46,6 +46,15 @@ def encode_genotype(genotype):
     return True
 
 
+def decode_genotype_tf(genotype):
+    if genotype == 't':
+        return True
+    elif genotype == 'f':
+        return False
+    else:
+        return genotype
+
+
 def prep_string_for_db(instring):
     instring_lower = instring.lower()
     split_string = re.split('[_\-/ ]', instring_lower)

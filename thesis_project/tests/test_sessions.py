@@ -3,7 +3,7 @@ import testing.postgresql as tpg
 
 import utilities as utils
 from models.mouse import Mouse
-from models.experiments import Experiments
+from models.experiments import Experiment
 from models.sessions import Session
 
 import database.handlers.handlers
@@ -25,7 +25,7 @@ class TestNewSession(unittest.TestCase):
         database.handlers.handlers.handler_seed_mouse(self.postgresql)
         database.handlers.handlers.handler_seed_experiments(self.postgresql)
         self.mouse = Mouse.from_db(9990, testing=True, postgresql=self.postgresql)
-        self.experiment = Experiments.from_db('test-experiment-one', testing=True, postgresql=self.postgresql)
+        self.experiment = Experiment.from_db('test-experiment-one', testing=True, postgresql=self.postgresql)
         self.session_date = 20200503
         self.session_dir = '/exp/one/dir/9990/20200503_S2'
 
@@ -55,7 +55,7 @@ class TestLoadSession(unittest.TestCase):
         database.handlers.handlers.handler_seed_sessions_table(self.postgresql)
         [eartag, _, _, _, _, experiment_name, _, _] = test_mouse_table_seed.pop()
         self.mouse = Mouse.from_db(eartag, testing=True, postgresql=self.postgresql)
-        self.experiment = Experiments.from_db(experiment_name, testing=True, postgresql=self.postgresql)
+        self.experiment = Experiment.from_db(experiment_name, testing=True, postgresql=self.postgresql)
         possible_sessions = test_session_table_seed[eartag, utils.prep_string_for_db(experiment_name)]
         self.session_date, self.session_dir = possible_sessions.pop()
 

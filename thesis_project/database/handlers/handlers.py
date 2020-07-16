@@ -10,7 +10,7 @@ from database.seed_tables.seeds import test_mouse_table_seed as seed_mouse, \
     test_mouse_table_seed as mouse_seed, test_session_table_seed as session_seed
 
 import utilities as utils
-from models.experiments import Experiments
+from models.experiments import Experiment
 from models.mouse import list_all_mice, Mouse
 from models.reviewers import Reviewer
 from models.folders import Folder
@@ -68,7 +68,7 @@ def handler_seed_participant_details(postgresql):
             mouse = Mouse.from_db(eartag, testing=True, postgresql=postgresql)
             for m in mouse_seed:
                 if m[0] == mouse.eartag:
-                    experiment = Experiments.from_db(m[5], testing=True, postgresql=postgresql)
+                    experiment = Experiment.from_db(m[5], testing=True, postgresql=postgresql)
                     database.seed_tables.seed_tables.seed_participant_details(cursor,
                                                                               mouse.mouse_id,
                                                                               experiment.experiment_id,
@@ -104,7 +104,7 @@ def handler_seed_sessions_table(postgresql):
         for [mouse_eartag, experiment_name] in session_seed.keys():
             all_sessions = session_seed[mouse_eartag, experiment_name]
             mouse = Mouse.from_db(mouse_eartag, testing=True, postgresql=postgresql)
-            experiment = Experiments.from_db(experiment_name, testing=True, postgresql=postgresql)
+            experiment = Experiment.from_db(experiment_name, testing=True, postgresql=postgresql)
             for [session_date, session_dir] in all_sessions:
                 database.seed_tables.seed_tables.seed_sessions_table(cursor,
                                                                      mouse.mouse_id,

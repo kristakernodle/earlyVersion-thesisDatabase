@@ -4,7 +4,7 @@ import testing.postgresql as tpg
 
 import database.handlers.handlers
 import database.seed_tables.seeds as seeds
-from models.experiments import Experiments
+from models.experiments import Experiment
 from models.mouse import Mouse
 from models.participant_details import ParticipantDetails
 
@@ -34,7 +34,7 @@ class TestNewParticipantDetails(unittest.TestCase):
 
     def test_add_new_participant_details(self):
         test_mouse = Mouse.from_db(self.mouse_seed[0], testing=True, postgresql=self.postgresql)
-        test_exp = Experiments.from_db(self.mouse_seed[5], testing=True, postgresql=self.postgresql)
+        test_exp = Experiment.from_db(self.mouse_seed[5], testing=True, postgresql=self.postgresql)
         test_details = ParticipantDetails(test_mouse, test_exp, self.mouse_seed[6], self.mouse_seed[7]).save_to_db(
             testing=True, postgresql=self.postgresql)
         self.assertTrue(test_mouse == test_details.mouse)
@@ -61,8 +61,8 @@ class TestLoadParticipantDetails(unittest.TestCase):
                                                   testing=True, postgresql=self.postgresql)
         self.assertTrue(Mouse.from_db(self.mouse_seed[0],
                                       testing=True, postgresql=self.postgresql) == test_details.mouse)
-        self.assertTrue(Experiments.from_db(self.mouse_seed[5],
-                                            testing=True, postgresql=self.postgresql) == test_details.experiment)
+        self.assertTrue(Experiment.from_db(self.mouse_seed[5],
+                                           testing=True, postgresql=self.postgresql) == test_details.experiment)
         self.assertFalse(test_details.detail_id is None)
 
 

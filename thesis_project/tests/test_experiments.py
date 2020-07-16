@@ -6,7 +6,7 @@ import database.handlers.handlers
 import database.seed_tables.seeds as seeds
 import utilities as util
 from database.cursors import TestingCursor
-from models.experiments import Experiments, list_all_experiments
+from models.experiments import Experiment, list_all_experiments
 
 mice_seed = set(seeds.test_mouse_table_seed)
 experiment_seed = {seeds.exp_one, seeds.exp_two}
@@ -32,15 +32,15 @@ class TestNewExperiment(unittest.TestCase):
         self.assertTrue(1)
 
     def test_add_new_experiment(self):
-        test_exp = Experiments(self.seed_exp[0], self.seed_exp[1]).save_to_db(testing=True,
-                                                                              postgresql=self.postgresql)
+        test_exp = Experiment(self.seed_exp[0], self.seed_exp[1]).save_to_db(testing=True,
+                                                                             postgresql=self.postgresql)
         self.assertEqual(util.prep_string_for_db(self.seed_exp[0]), test_exp.experiment_name)
         self.assertEqual(self.seed_exp[1], test_exp.experiment_dir)
         self.assertFalse(test_exp.experiment_id is None)
 
     def test_duplicate_experiment(self):
-        test_exp = Experiments(self.seed_exp[0], self.seed_exp[1]).save_to_db(testing=True,
-                                                                              postgresql=self.postgresql)
+        test_exp = Experiment(self.seed_exp[0], self.seed_exp[1]).save_to_db(testing=True,
+                                                                             postgresql=self.postgresql)
         dup_exp = test_exp.save_to_db(testing=True, postgresql=self.postgresql)
         self.assertFalse(dup_exp.experiment_id is None)
 
@@ -60,14 +60,14 @@ class TestLoadExperiment(unittest.TestCase):
         self.assertTrue(1)
 
     def test_from_db(self):
-        load_exp = Experiments.from_db(self.seed_tup[0], testing=True, postgresql=self.postgresql)
+        load_exp = Experiment.from_db(self.seed_tup[0], testing=True, postgresql=self.postgresql)
         self.assertEqual(util.prep_string_for_db(self.seed_tup[0]), load_exp.experiment_name)
         self.assertEqual(self.seed_tup[1], load_exp.experiment_dir)
         self.assertFalse(load_exp.experiment_name is None)
 
     def test_get_id(self):
-        load_exp_id = Experiments.get_id(self.seed_tup[0], testing=True, postgresql=self.postgresql)
-        load_fake_id = Experiments.get_id('Experiment Not Here', testing=True, postgresql=self.postgresql)
+        load_exp_id = Experiment.get_id(self.seed_tup[0], testing=True, postgresql=self.postgresql)
+        load_fake_id = Experiment.get_id('Experiment Not Here', testing=True, postgresql=self.postgresql)
         self.assertTrue(len(load_exp_id) == 1)
         self.assertTrue(len(load_fake_id) == 0)
 
@@ -87,7 +87,7 @@ class TestDeleteExperiment(unittest.TestCase):
         self.assertTrue(1)
 
     def test_delete_experiment(self):
-        experiment_to_delete = Experiments.from_db(self.seed_tup[0], testing=True, postgresql=self.postgresql)
+        experiment_to_delete = Experiment.from_db(self.seed_tup[0], testing=True, postgresql=self.postgresql)
         experiment_to_delete.delete_from_db(testing=True, postgresql=self.postgresql)
         with TestingCursor(self.postgresql) as cursor:
             all_experiments = list_all_experiments(cursor)
@@ -110,7 +110,7 @@ class TestUpdateExperiment(unittest.TestCase):
 
     def test_update_existing_experiment(self):
         new_name = "New Experiment Name"
-        load_exp = Experiments.from_db(self.seed_tup[0], testing=True, postgresql=self.postgresql)
+        load_exp = Experiment.from_db(self.seed_tup[0], testing=True, postgresql=self.postgresql)
         update_exp = load_exp
         update_exp.experiment_name = new_name
         saved_exp = update_exp.save_to_db(testing=True, postgresql=self.postgresql)

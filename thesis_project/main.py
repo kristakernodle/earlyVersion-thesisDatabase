@@ -1,4 +1,4 @@
-from models.experiments import Experiments as Experiments
+from models.experiments import Experiment as Experiments
 from models.mouse import Mouse as Mouse
 from models.participant_details import ParticipantDetails as ParticipantDetails
 from models.trials import Trials as Trials
