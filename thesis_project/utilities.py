@@ -32,6 +32,10 @@ def convert_date_int_yyyymmdd(int_yyyymmdd):
 
 def decode_genotype(genotype):
     if type(genotype) is str:
+        if genotype == 't':
+            return 'knock out'
+        elif genotype == 'f':
+            return 'wild type'
         return genotype
     if genotype == 0:
         return 'wild type'
@@ -44,15 +48,6 @@ def encode_genotype(genotype):
     elif genotype == 'wild type':
         return False
     return True
-
-
-def decode_genotype_tf(genotype):
-    if genotype == 't':
-        return True
-    elif genotype == 'f':
-        return False
-    else:
-        return genotype
 
 
 def prep_string_for_db(instring):

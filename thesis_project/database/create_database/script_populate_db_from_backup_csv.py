@@ -8,6 +8,8 @@ from models.mouse import Mouse
 from models.experiments import Experiment
 from models.participant_details import ParticipantDetails
 
+from templates.experiment_specific_details import skilled_reaching
+
 
 def read_table_csv_to_list(backup_folder_path, table_name):
     table_filename = table_name + '.csv'
@@ -36,3 +38,33 @@ for [experiment_id, experiment_dir, experiment_name] in all_experiments:
 
 # PARTICIPANT DETAILS TABLE
 all_participant_details = read_table_csv_to_list(backup_csv_path, 'participant_details')
+for participant_detail in all_participant_details:
+    detail_id = participant_detail[0]
+    mouse_id = participant_detail[1]
+    experiment_id = participant_detail[2]
+    start_date = participant_detail[3]
+    end_date = participant_detail[4]
+    particpant_dir = participant_detail[-1]
+    exp_spec_details = ''.join(participant_detail[5:-1])
+    paw_preference = None
+    reaching_box = None
+    if 'right' in exp_spec_details:
+        paw_preference = 'right'
+    elif 'left' in exp_spec_details:
+        paw_preference = 'left'
+    if '1' in exp_spec_details:
+        reaching_box = 1
+    elif '2' in exp_spec_details:
+        reaching_box = 2
+    if paw_preference is None or reaching_box is None:
+        print('Something decoded incorrectly')
+        print(f'paw preference: {paw_preference}')
+        print(f'reaching box: {reaching_box}')
+        print(f'exp_spec_details: {exp_spec_details}')
+    mouse = Mouse.from_db_by_id(mouse_id)
+    experiment = Experiment.from_db_by_id(experiment_id)
+    exp_spec_details = skilled_reaching
+    exp_spec_details["paw preference"] = paw_preference
+    exp_spec_details["reaching box"] = reaching_box
+    ParticipantDetails(mouse, experiment, particpant_dir, start_date, end_date,
+                       exp_spec_details, detail_id).save_to_db()

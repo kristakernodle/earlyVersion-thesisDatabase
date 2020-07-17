@@ -9,7 +9,6 @@ def list_all_mice(cursor):
 
 class Mouse:
     def __init__(self, eartag, birthdate, genotype, sex, mouse_id=None):
-        genotype = util.decode_genotype_tf(genotype)
         genotype = util.decode_genotype(genotype)
 
         self.eartag = int(eartag)
