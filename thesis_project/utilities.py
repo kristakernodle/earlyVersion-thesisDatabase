@@ -1,4 +1,6 @@
+import csv
 import datetime
+import os
 import random
 import re
 import string
@@ -60,3 +62,11 @@ def prep_string_for_db(instring):
 # TODO write TestUtilitiesDatabase test_list_from_cursor(self)
 def list_from_cursor(cursor_fetch):
     return list(item for tup in cursor_fetch for item in tup)
+
+
+def read_table_csv_to_list(backup_folder_path, table_name):
+    table_filename = table_name + '.csv'
+    table_dir = os.path.join(backup_folder_path, table_filename)
+    with open(table_dir) as f:
+        contents = list(csv.reader(f))
+    return contents

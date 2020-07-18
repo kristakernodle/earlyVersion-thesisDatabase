@@ -1,4 +1,3 @@
-import csv
 import os
 from pathlib import Path
 
@@ -9,15 +8,7 @@ from models.experiments import Experiment
 from models.participant_details import ParticipantDetails
 
 from templates.experiment_specific_details import skilled_reaching
-
-
-def read_table_csv_to_list(backup_folder_path, table_name):
-    table_filename = table_name + '.csv'
-    table_dir = os.path.join(backup_folder_path, table_filename)
-    with open(table_dir) as f:
-        contents = list(csv.reader(f))
-    return contents
-
+from utilities import read_table_csv_to_list
 
 Database.initialize(**dbDetails, **dbUser_Krista)
 
