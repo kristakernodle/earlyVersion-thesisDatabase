@@ -8,15 +8,7 @@ def list_all_trial_dirs(cursor):
     return list(item for tup in cursor.fetchall() for item in tup)
 
 
-def list_trial_dir_for_folder(folder_id, testing=False, postgresql=None):
-    if testing:
-        with TestingCursor(postgresql) as cursor:
-            cursor.execute("SELECT trial_dir FROM trials WHERE folder_id = %s;", (folder_id,))
-            return list(item for tup in cursor.fetchall() for item in tup)
-    else:
-        with Cursor() as cursor:
-            cursor.execute("SELECT trial_dir FROM trials WHERE folder_id = %s;", (folder_id,))
-            return list(item for tup in cursor.fetchall() for item in tup)
+
 
 
 class Trial:
@@ -99,3 +91,19 @@ class Trial:
     #     else:
     #         with Cursor() as cursor:
     #             self.__delete_from_db(cursor)
+
+    @classmethod
+    def list_trial_dir_for_folder(cls, folder_id, testing=False, postgresql=None):
+        if testing:
+            with TestingCursor(postgresql) as cursor:
+                cursor.execute("SELECT trial_dir FROM trials WHERE folder_id = %s;", (folder_id,))
+                return list(item for tup in cursor.fetchall() for item in tup)
+        else:
+            with Cursor() as cursor:
+                cursor.execute("SELECT trial_dir FROM trials WHERE folder_id = %s;", (folder_id,))
+                return list(item for tup in cursor.fetchall() for item in tup)
+
+    @classmethod
+    def list_trials_for_folder(cls, folder_id, testing=False, postgresql=None):
+        all_trial_dirs = cls.list_trial_dir_for_folder(folder_id, testing, postgresql)
+        return [cls.from_db(trial_dir, testing, postgresql) for trial_dir in all_trial_dirs]

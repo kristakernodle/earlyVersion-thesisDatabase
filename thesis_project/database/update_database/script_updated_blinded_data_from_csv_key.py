@@ -22,7 +22,7 @@ for (LED_detection_output_csv, reviewer_fullname, blind_name) in scrambled_mask_
     folder = Folder.from_db(str(folder_dir))
     reviewer = Reviewer.from_db(reviewer_fullname)
     blind_folder = BlindFolder(folder.folder_id, reviewer.reviewer_id, blind_name).save_to_db()
-    all_trial_dirs_for_folder = models.trials.list_trial_dir_for_folder(folder.folder_id)
+    all_trial_dirs_for_folder = Trial.list_trial_dir_for_folder(folder.folder_id)
     count = 0
     for trial_dir in all_trial_dirs_for_folder:
         count += 1
@@ -52,7 +52,7 @@ for (LED_detection_output_csv, reviewer_fullname, blind_name) in not_scrambled_m
     folder = Folder.from_db(str(folder_dir))
     reviewer = Reviewer.from_db(reviewer_fullname)
     blind_folder = BlindFolder(folder.folder_id, reviewer.reviewer_id, blind_name).save_to_db()
-    all_trial_dirs_for_folder = models.trials.list_trial_dir_for_folder(folder.folder_id)
+    all_trial_dirs_for_folder = Trial.list_trial_dir_for_folder(folder.folder_id)
     count = 0
     for trial_dir in sorted(all_trial_dirs_for_folder):
         count += 1
