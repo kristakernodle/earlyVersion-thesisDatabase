@@ -88,4 +88,18 @@ class Folder:
     #         with Cursor() as cursor:
     #             self.__delete_from_db(cursor)
 
-    # TODO: list_all_folders(sr_exp.experiment_id)
+    @classmethod
+    def list_all_folders(cls, experiment_id, testing=False, postgresql=None):
+
+        def main_list_all_folders(a_cursor):
+            a_cursor.execute("SELECT folder_id FROM folders_all_upstream_ids WHERE experiment_id = %s",
+                             (experiment_id,))
+            all_folder_ids = a_cursor.fetchall()
+            return [cls.from_db(folder_id=folder_id[0]) for folder_id in all_folder_ids]
+
+        if testing:
+            with TestingCursor(postgresql) as cursor:
+                return main_list_all_folders(cursor)
+        else:
+            with Cursor() as cursor:
+                return main_list_all_folders(cursor)
