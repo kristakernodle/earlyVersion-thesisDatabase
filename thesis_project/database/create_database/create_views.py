@@ -26,3 +26,16 @@ def create_view_trials_all_upstream_ids(a_cursor):
         "FROM trials "
         "JOIN folders on folders.folder_id = trials.folder_id "
         "JOIN sessions on sessions.experiment_id = trials.experiment_id;")
+
+
+def create_view_blind_folders_all_upstream_ids(a_cursor):
+    a_cursor.execute("""
+        CREATE VIEW blind_folders_all_upstream_ids 
+            (mouse_id, experiment_id, session_id, folder_id, reviewer_id, blind_folder_id) AS 
+        SELECT sessions.mouse_id, sessions.experiment_id, 
+            folders.session_id, folders.folder_id, 
+            blind_folders.reviewer_id, blind_folders.blind_folder_id 
+        FROM blind_folders 
+        JOIN folders on folders.folder_id = blind_folders.folder_id 
+        JOIN sessions on sessions.session_id = folders.session_id;
+        """)
