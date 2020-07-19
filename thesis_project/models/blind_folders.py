@@ -79,3 +79,5 @@ class BlindFolder:
         else:
             with Cursor() as cursor:
                 return save_to_db_main(self.blind_name, cursor)
+
+    # TODO: list_all_blind_folders(sr_exp.experiment_id)

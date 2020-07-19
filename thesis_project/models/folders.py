@@ -87,3 +87,5 @@ class Folder:
     #     else:
     #         with Cursor() as cursor:
     #             self.__delete_from_db(cursor)
+
+    # TODO: list_all_folders(sr_exp.experiment_id)
