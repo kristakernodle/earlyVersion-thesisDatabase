@@ -52,21 +52,40 @@ class Reviewer:
                    scored_dir=reviewer_data[4], reviewer_id=reviewer_data[0])
 
     @classmethod
-    def from_db(cls, scored_dir=None, reviewer_id=None, testing=False, postgresql=None):
-        if reviewer_id is None:
+    def __from_db_by_reviewer_fullname(cls, cursor, reviewer_fullname):
+        reviewer_name = reviewer_fullname.split(' ')
+        cursor.execute("SELECT * FROM reviewers WHERE first_name = %s AND last_name = %s;",
+                       (reviewer_name[0], reviewer_name[1]))
+        reviewer_data = cursor.fetchone()
+        if reviewer_data is None:
+            print(f"No reviewer in the database with name {reviewer_name[0]} {reviewer_name[1]}")
+            return None
+        return cls(first_name=reviewer_data[1], last_name=reviewer_data[2], toScore_dir=reviewer_data[3],
+                   scored_dir=reviewer_data[4], reviewer_id=reviewer_data[0])
+
+    @classmethod
+    def from_db(cls, reviewer_fullname=None, scored_dir=None, reviewer_id=None, testing=False, postgresql=None):
+        if reviewer_id is None and reviewer_fullname is None:
             if testing:
                 with TestingCursor(postgresql) as cursor:
                     return cls.__from_db_by_scored_dir(cursor, scored_dir)
             else:
                 with Cursor() as cursor:
                     return cls.__from_db_by_scored_dir(cursor, scored_dir)
-        elif scored_dir is None:
+        elif scored_dir is None and reviewer_fullname is None:
             if testing:
                 with TestingCursor(postgresql) as cursor:
                     return cls.__from_db_by_reviewer_id(cursor, reviewer_id)
             else:
                 with Cursor() as cursor:
                     return cls.__from_db_by_reviewer_id(cursor, reviewer_id)
+        elif reviewer_id is None and scored_dir is None:
+            if testing:
+                with TestingCursor(postgresql) as cursor:
+                    return cls.__from_db_by_reviewer_fullname(cursor, reviewer_fullname)
+            else:
+                with Cursor() as cursor:
+                    return cls.__from_db_by_reviewer_fullname(cursor, reviewer_fullname)
 
     def __save_to_db(self, cursor):
         cursor.execute("INSERT INTO reviewers (first_name, last_name, toScore_dir, scored_dir) "
