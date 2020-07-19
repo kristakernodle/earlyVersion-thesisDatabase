@@ -1,5 +1,4 @@
 import utilities as utils
-from models.mouse import Mouse
 from models.experiments import Experiment
 from database.cursors import TestingCursor, Cursor
 
