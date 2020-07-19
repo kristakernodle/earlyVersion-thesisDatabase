@@ -9,6 +9,17 @@ def list_all_trial_dirs(cursor):
     return list(item for tup in cursor.fetchall() for item in tup)
 
 
+def list_trial_dir_for_folder(folder_id, testing=False, postgresql=None):
+    if testing:
+        with TestingCursor(postgresql) as cursor:
+            cursor.execute("SELECT trial_dir FROM trials WHERE folder_id = %s;", (folder_id,))
+            return list(item for tup in cursor.fetchall() for item in tup)
+    else:
+        with Cursor() as cursor:
+            cursor.execute("SELECT trial_dir FROM trials WHERE folder_id = %s;", (folder_id,))
+            return list(item for tup in cursor.fetchall() for item in tup)
+
+
 class Trial:
 
     def __init__(self, experiment_id, folder_id, trial_dir, trial_date, trial_id=None):
