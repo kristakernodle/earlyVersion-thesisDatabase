@@ -15,7 +15,7 @@ Database.initialize(**dbDetails, **dbUser_Krista)
 
 experiment_name = 'skilled-reaching'
 reviewer_name = 'Krista K'
-num_folders_to_mask = 50
+num_folders_to_mask = 37
 
 sr_exp = Experiment.from_db(experiment_name)
 all_folders = Folder.list_all_folders(sr_exp.experiment_id)
@@ -35,7 +35,7 @@ for ii in range(num_folders_to_mask):
     folders_to_mask.append(all_not_blind_folders.pop())
 
 reviewer = Reviewer.from_db(reviewer_fullname=reviewer_name)
-for folder in folders_to_mask:
+for index, folder in enumerate(folders_to_mask):
     all_blind_names = BlindFolder.list_all_blind_names()
     blind_name = utils.random_string_generator(10)
     while blind_name in all_blind_names:
@@ -44,6 +44,7 @@ for folder in folders_to_mask:
     blind_folder_dir = Path(reviewer.toScore_dir).joinpath(blind_name)
     os.mkdir(blind_folder_dir)
     all_trials = Trial.list_trials_for_folder(folder.folder_id)
+    print(f'{index}: {blind_name} - {len(all_trials)}')
     count = 0
     for trial in all_trials:
         count += 1

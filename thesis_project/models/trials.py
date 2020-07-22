@@ -29,7 +29,7 @@ class Trial:
         return self.trial_id == compare_to.trial_id
 
     @classmethod
-    def __from_db(cls, cursor, trial_dir):
+    def __from_db_by_dir(cls, cursor, trial_dir):
         cursor.execute("SELECT * FROM trials WHERE trial_dir = %s", (trial_dir,))
         trial_data = cursor.fetchone()
         if trial_data is None:
@@ -39,13 +39,31 @@ class Trial:
                    trial_date=trial_data[4], trial_id=trial_data[0])
 
     @classmethod
-    def from_db(cls, trial_dir, testing=False, postgresql=None):
-        if testing:
-            with TestingCursor(postgresql) as cursor:
-                return cls.__from_db(cursor, trial_dir)
-        else:
-            with Cursor() as cursor:
-                return cls.__from_db(cursor, trial_dir)
+    def __from_db_by_id(cls, cursor, trial_id):
+        cursor.execute("SELECT * FROM trials WHERE trial_id = %s", (trial_id,))
+        trial_data = cursor.fetchone()
+        if trial_data is None:
+            print(f"No trial in the database with directory {trial_id}")
+            return None
+        return cls(experiment_id=trial_data[1], folder_id=trial_data[2], trial_dir=trial_data[3],
+                   trial_date=trial_data[4], trial_id=trial_data[0])
+
+    @classmethod
+    def from_db(cls, trial_dir=None, trial_id=None, testing=False, postgresql=None):
+        if trial_id is None:
+            if testing:
+                with TestingCursor(postgresql) as cursor:
+                    return cls.__from_db_by_dir(cursor, trial_dir)
+            else:
+                with Cursor() as cursor:
+                    return cls.__from_db_by_dir(cursor, trial_dir)
+        elif trial_dir is None:
+            if testing:
+                with TestingCursor(postgresql) as cursor:
+                    return cls.__from_db_by_id(cursor, trial_id)
+            else:
+                with Cursor() as cursor:
+                    return cls.__from_db_by_id(cursor, trial_id)
 
     def save_to_db(self, testing=False, postgresql=None):
 
@@ -106,4 +124,5 @@ class Trial:
     @classmethod
     def list_trials_for_folder(cls, folder_id, testing=False, postgresql=None):
         all_trial_dirs = cls.list_trial_dir_for_folder(folder_id, testing, postgresql)
-        return [cls.from_db(trial_dir, testing, postgresql) for trial_dir in all_trial_dirs]
+        return [cls.from_db(trial_dir=trial_dir, testing=testing, postgresql=postgresql) for trial_dir in
+                all_trial_dirs]
