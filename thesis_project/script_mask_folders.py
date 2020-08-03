@@ -15,7 +15,7 @@ Database.initialize(**dbDetails, **dbUser_Krista)
 
 experiment_name = 'skilled-reaching'
 reviewer_name = 'Krista K'
-num_folders_to_mask = 37
+num_folders_to_mask = 25
 
 sr_exp = Experiment.from_db(experiment_name)
 all_folders = Folder.list_all_folders(sr_exp.experiment_id)
@@ -34,6 +34,7 @@ folders_to_mask = list()
 for ii in range(num_folders_to_mask):
     folders_to_mask.append(all_not_blind_folders.pop())
 
+do_break = False
 reviewer = Reviewer.from_db(reviewer_fullname=reviewer_name)
 for index, folder in enumerate(folders_to_mask):
     all_blind_names = BlindFolder.list_all_blind_names()
@@ -53,8 +54,15 @@ for index, folder in enumerate(folders_to_mask):
         else:
             blind_trial_num = str(count)
         full_path = Path(reviewer.toScore_dir).joinpath(blind_name, f'{blind_name}_R{blind_trial_num}.mp4')
-        try:
-            shutil.copyfile(trial.trial_dir, str(full_path))
-            BlindTrial(trial.trial_id, folder.folder_id, str(full_path)).save_to_db()
-        except:
-            print(f'ISSUE {folder} {trial} {full_path}')
+        if Path(trial.trial_dir).exists():
+            try:
+                shutil.copyfile(trial.trial_dir, str(full_path))
+                BlindTrial(trial.trial_id, folder.folder_id, str(full_path)).save_to_db()
+            except:
+                print(f'ISSUE {folder} {trial} {full_path}')
+        else:
+            do_break = True
+            print('SharedX drive diconnected')
+            break
+    if do_break:
+        break

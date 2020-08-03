@@ -46,11 +46,15 @@ for blind_name in existing_folder_blind_names:
             else:
                 blind_trial_num = str(count)
             full_path = Path(reviewer.toScore_dir).joinpath(blind_name, f'{blind_name}_R{blind_trial_num}.mp4')
-            try:
-                shutil.copyfile(trial.trial_dir, str(full_path))
-                BlindTrial(trial.trial_id, blind_folder.folder_id, str(full_path)).save_to_db()
-            except:
-                print(f'ISSUE {blind_folder} {trial} {full_path}')
+            if Path(trial.trial_dir).exists():
+                try:
+                    shutil.copyfile(trial.trial_dir, str(full_path))
+                    BlindTrial(trial.trial_id, blind_folder.folder_id, str(full_path)).save_to_db()
+                except:
+                    print(f'ISSUE {blind_folder} {trial} {full_path}')
+            else:
+                print('SharedX drive disconnected')
+                break
         elif Path(blind_trial.full_path).exists:
             continue
         elif not Path(blind_trial.full_path).exists:

@@ -22,7 +22,8 @@ def update_from_data_dirs(experiment):
 
         if mouse is None:
             continue
-
+        if eartag_num == 713:
+            print('713')
         mouse_details = ParticipantDetails.from_db(eartag_num, experiment.experiment_name)
 
         if mouse_details is None:
@@ -37,6 +38,8 @@ def update_from_data_dirs(experiment):
             for folder_dir in all_folder_dirs:
                 folder = Folder(session.session_id, str(folder_dir)).save_to_db()
                 all_trial_dirs = folder_dir.glob('*R*.mp4')
+                if len(list(all_trial_dirs)) == 0:
+                    all_trial_dirs = folder_dir.glob('*R*.MP4')
                 for trial_dir in all_trial_dirs:
                     Trial(experiment.experiment_id,
                           folder.folder_id,

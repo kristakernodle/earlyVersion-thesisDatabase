@@ -72,7 +72,7 @@ class Trial:
                 "INSERT INTO trials (experiment_id, folder_id, trial_dir, trial_date) VALUES (%s, %s, %s, %s);",
                 (self.experiment_id, self.folder_id, self.trial_dir,
                  utils.convert_date_int_yyyymmdd(self.trial_date)))
-            return self.__from_db(a_cursor, trial_dir)
+            return self.__from_db_by_dir(a_cursor, trial_dir)
 
         if testing:
             with TestingCursor(postgresql) as cursor:
