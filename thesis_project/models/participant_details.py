@@ -83,7 +83,7 @@ class ParticipantDetails:
     def list_participants(cls, experiment_name, testing=False, postgresql=None):
 
         def list_participants_main(a_cursor, exp_id):
-            a_cursor.execute("SELECT scored_dir FROM all_participants_all_experiments WHERE experiment_id = %s;",
+            a_cursor.execute("SELECT mouse_id FROM all_participants_all_experiments WHERE experiment_id = %s;",
                              (exp_id,))
             return utils.list_from_cursor(cursor.fetchall())
 

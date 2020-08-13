@@ -104,5 +104,3 @@ class Folder:
             with Cursor() as cursor:
                 return main_list_all_folders(cursor)
 
-    def mask_folder(self):
-        Blin

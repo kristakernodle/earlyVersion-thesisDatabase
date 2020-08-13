@@ -84,11 +84,11 @@ class TestListParticipants(unittest.TestCase):
         all_participants = ParticipantDetails.list_participants(self.exp_seed[0],
                                                                 testing=True, postgresql=self.postgresql)
         self.assertTrue(len(all_participants) == 5)
-        if 'one' in self.exp_seed[0]:
-            for eartag in all_participants:
+        for mouse_id in all_participants:
+            eartag = Mouse.from_db_by_id(mouse_id, testing=True, postgresql=self.postgresql).eartag
+            if 'one' in self.exp_seed[0]:
                 self.assertTrue((eartag % 2) == 0)
-        else:
-            for eartag in all_participants:
+            else:
                 self.assertTrue((eartag % 2) != 0)
 
 
