@@ -32,6 +32,9 @@ class ParticipantDetails:
         cursor.execute("SELECT * FROM participant_details WHERE mouse_id = %s AND experiment_id = %s;",
                        (mouse.mouse_id, experiment.experiment_id))
         participant_details = cursor.fetchone()
+        if participant_details is None:
+            print('participant_details is none')
+            return None
         return cls(mouse, experiment, participant_dir=participant_details[6], start_date=participant_details[3],
                    end_date=participant_details[4],
                    exp_spec_details=participant_details[5], detail_id=participant_details[0])
