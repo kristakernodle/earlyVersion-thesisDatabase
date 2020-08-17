@@ -55,7 +55,7 @@ class TestLoadDeleteReviewer(unittest.TestCase):
         self.assertTrue(1)
 
     def test_from_db(self):
-        load_reviewer = Reviewer.from_db(self.seed_tup[-1], testing=True, postgresql=self.postgresql)
+        load_reviewer = Reviewer.from_db(scored_dir=self.seed_tup[-1], testing=True, postgresql=self.postgresql)
         self.assertEqual(self.seed_tup[0], load_reviewer.first_name)
         self.assertEqual(self.seed_tup[1], load_reviewer.last_name)
         self.assertEqual(self.seed_tup[2], load_reviewer.toScore_dir)
@@ -63,9 +63,9 @@ class TestLoadDeleteReviewer(unittest.TestCase):
         self.assertFalse(load_reviewer.reviewer_id is None)
 
     def test_delete_reviewer(self):
-        reviewer_to_delete = Reviewer.from_db(self.seed_tup[-1], testing=True, postgresql=self.postgresql)
+        reviewer_to_delete = Reviewer.from_db(scored_dir=self.seed_tup[-1], testing=True, postgresql=self.postgresql)
         reviewer_to_delete.delete_from_db(testing=True, postgresql=self.postgresql)
-        reload_reviewer = Reviewer.from_db(self.seed_tup[-1], testing=True, postgresql=self.postgresql)
+        reload_reviewer = Reviewer.from_db(scored_dir=self.seed_tup[-1], testing=True, postgresql=self.postgresql)
         self.assertIsNone(reload_reviewer)
 
 

@@ -83,6 +83,22 @@ class Session:
             with Cursor() as cursor:
                 return save_to_db_main(self.session_dir, cursor)
 
+    # TODO: Write test for this
+    @classmethod
+    def list_all_sessions(cls, mouse, experiment, testing=False, postgresql=None):
+
+        def main_list_all_sessions(a_cursor, mouse_id, experiment_id):
+            a_cursor.execute("SELECT session_dir FROM sessions WHERE mouse_id = %s AND experiment_id = %s",
+                             (mouse_id, experiment_id))
+            return list(Session.from_db(session_dir=item) for tup in a_cursor.fetchall() for item in tup)
+
+        if testing:
+            with TestingCursor(postgresql) as cursor:
+                return main_list_all_sessions(cursor, mouse.mouse_id, experiment.experiment_id)
+        else:
+            with Cursor() as cursor:
+                return main_list_all_sessions(cursor, mouse.mouse_id, experiment.experiment_id)
+
     # def __delete_from_db(self, cursor):
     #     cursor.execute("DELETE FROM sessions WHERE session_id = %s", (self.session_id,))
     #
