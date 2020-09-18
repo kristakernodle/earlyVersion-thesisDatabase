@@ -1,6 +1,7 @@
 import thesis_database_pkg.get as get
 import blind_review.utilities as util
-from thesis_database_pkg import BlindTrial, BlindFolder, Trial
+from thesis_database_pkg import BlindTrial, BlindFolder, Trial, Experiment
+import thesis_database_pkg
 import shutil
 from shutil import Error
 from pathlib import Path
@@ -39,3 +40,19 @@ def mask_folder(reviewer, folder):
         if not success:
             print("Issues copying")
             break
+
+
+def create_folders_for_review(database_name, experiment_name):
+    # Start the database
+    thesis_database_pkg.initialize_database(database_name)
+
+    # Load current experiment
+    experiment = Experiment.from_db(experiment_name=experiment_name)
+
+    # List all folder_ids AND all folder_ids associated with masked folders
+    all_folder_ids = set(get.list_folder_ids_for_experiment(experiment))
+    all_masked_folders_folder_ids = set(get.list_folder_ids_from_blind_folders(experiment))
+    all_folders_to_be_masked = all_folder_ids.difference(all_masked_folders_folder_ids)
+
+    if len([item for item in all_masked_folders_folder_ids if item in all_folders_to_be_masked]) > 0:
+        return False
