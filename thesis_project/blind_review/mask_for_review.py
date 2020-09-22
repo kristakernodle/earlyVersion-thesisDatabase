@@ -56,3 +56,4 @@ def create_folders_for_review(database_name, experiment_name):
 
     if len([item for item in all_masked_folders_folder_ids if item in all_folders_to_be_masked]) > 0:
         return False
+    return len(all_folders_to_be_masked)
