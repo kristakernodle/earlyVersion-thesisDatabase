@@ -4,3 +4,4 @@
 thesis_project/data
 *.DS_Store
 *.pyc
+*archive/*data*
