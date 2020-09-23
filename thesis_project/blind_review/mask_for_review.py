@@ -26,7 +26,8 @@ def mask_folder(reviewer, folder):
         blind_name = util.random_string_generator(10)
         while blind_name in get.list_all_blind_names():
             blind_name = util.random_string_generator(10)
-        masked_folder = BlindFolder(folder.folder_id, reviewer.reviewer_id, blind_name).save_to_db()
+        BlindFolder(folder.folder_id, reviewer.reviewer_id, blind_name).save_to_db()
+        masked_folder = BlindFolder.from_db(reviewer_id=reviewer.reviewer_id, folder_id=folder.folder_id)
 
     masked_folder_dir = Path(reviewer.toScore_dir).joinpath(masked_folder.blind_name)
 
