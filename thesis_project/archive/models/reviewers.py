@@ -1,1 +1,1 @@
-import thesis_database_pkg.models as dbmodels
+import thesis_database.models as dbmodels

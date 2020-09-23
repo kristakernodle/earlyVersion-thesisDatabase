@@ -1,7 +1,7 @@
-import thesis_database_pkg.get as get
+import thesis_database.tools.get as get
 import blind_review.utilities as util
-from thesis_database_pkg import BlindTrial, BlindFolder, Trial, Experiment
-import thesis_database_pkg
+from thesis_database import BlindTrial, BlindFolder, Trial, Experiment
+import thesis_database
 import shutil
 from shutil import Error
 from pathlib import Path
@@ -42,18 +42,13 @@ def mask_folder(reviewer, folder):
             break
 
 
-def create_folders_for_review(database_name, experiment_name):
-    # Start the database
-    thesis_database_pkg.initialize_database(database_name)
-
-    # Load current experiment
-    experiment = Experiment.from_db(experiment_name=experiment_name)
-
+def list_all_folders_not_blinded(experiment):
     # List all folder_ids AND all folder_ids associated with masked folders
     all_folder_ids = set(get.list_folder_ids_for_experiment(experiment))
-    all_masked_folders_folder_ids = set(get.list_folder_ids_from_blind_folders(experiment))
-    all_folders_to_be_masked = all_folder_ids.difference(all_masked_folders_folder_ids)
+    all_blinded_folders_folder_ids = set(get.list_folder_ids_from_blind_folders(experiment))
 
-    if len([item for item in all_masked_folders_folder_ids if item in all_folders_to_be_masked]) > 0:
-        return False
-    return len(all_folders_to_be_masked)
+    # Get the folder_ids that are NOT associated with masked folders
+    all_folder_ids_not_blinded = all_folder_ids.difference(all_blinded_folders_folder_ids)
+
+    # Load each folder as an object into a list for return
+    return [thesis_database.Folder.from_db(folder_id=folder_id) for folder_id in all_folder_ids_not_blinded]
