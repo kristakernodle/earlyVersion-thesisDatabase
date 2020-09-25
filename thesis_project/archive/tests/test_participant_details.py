@@ -37,7 +37,7 @@ class TestNewParticipantDetails(unittest.TestCase):
         test_details = ParticipantDetails(test_mouse, test_exp, self.mouse_seed[6], self.mouse_seed[7]).save_to_db(
             testing=True, postgresql=self.postgresql)
         self.assertTrue(test_mouse == test_details.mouse)
-        self.assertTrue(test_exp == test_details.experiment)
+        self.assertTrue(test_exp == test_details.the_experiment)
         self.assertFalse(test_details.detail_id is None)
 
 
@@ -61,7 +61,7 @@ class TestLoadParticipantDetails(unittest.TestCase):
         self.assertTrue(Mouse.from_db(self.mouse_seed[0],
                                       testing=True, postgresql=self.postgresql) == test_details.mouse)
         self.assertTrue(Experiment.from_db(self.mouse_seed[5],
-                                           testing=True, postgresql=self.postgresql) == test_details.experiment)
+                                           testing=True, postgresql=self.postgresql) == test_details.the_experiment)
         self.assertFalse(test_details.detail_id is None)
 
 

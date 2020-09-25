@@ -17,7 +17,7 @@ def tearDownModule():
 
 
 class TestNewExperiment(unittest.TestCase):
-    seed_exp = ('experiment-name', '/Volumes/SharedX/experiment/directory/')
+    seed_exp = ('the_experiment-name', '/Volumes/SharedX/the_experiment/directory/')
 
     def setUp(self):
         self.postgresql = Postgresql()

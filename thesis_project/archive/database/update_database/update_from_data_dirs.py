@@ -34,7 +34,7 @@ def update_from_data_dirs(experiment):
             training_dir = Path(mouse_details.participant_dir)
             all_session_dirs = training_dir.glob(f'et{eartag_num}_*_*G*/')
         else:
-            print('Need information about training and session directories for this experiment')
+            print('Need information about training and session directories for this the_experiment')
 
         for session_dir in all_session_dirs:
             session_date = int(session_dir.name.split('_')[1])
@@ -45,7 +45,7 @@ def update_from_data_dirs(experiment):
             elif experiment.experiment_name == 'grooming':
                 continue
             else:
-                print('Need information about folder and trial directories for this experiment')
+                print('Need information about folder and trial directories for this the_experiment')
 
             for folder_dir in all_folder_dirs:
                 folder = Folder(session.session_id, str(folder_dir)).save_to_db()

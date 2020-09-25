@@ -23,7 +23,7 @@ class TestNewSession(unittest.TestCase):
         archive.database.handlers.handlers.handler_seed_mouse(self.postgresql)
         archive.database.handlers.handlers.handler_seed_experiments(self.postgresql)
         self.mouse = Mouse.from_db(9990, testing=True, postgresql=self.postgresql)
-        self.experiment = Experiment.from_db('test-experiment-one', testing=True, postgresql=self.postgresql)
+        self.experiment = Experiment.from_db('test-the_experiment-one', testing=True, postgresql=self.postgresql)
         self.session_date = 20200503
         self.session_dir = '/exp/one/dir/9990/20200503_S2'
 
